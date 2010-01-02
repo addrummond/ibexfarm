@@ -1,0 +1,24 @@
+[% USE HTML %]
+[% META title = ' - Create an account' %]
+
+[% IF error %]
+<p class="error">
+[% HTML.escape(error) %]
+</p>
+[% END %]
+<form method="post" action="[% c.uri_for('/newaccount') %]">
+<table>
+<tr>
+<th>Username:</th><td><input type="text" name="username" size="20" /></td>
+</tr>
+<tr>
+<th>Password:</th><td><input type="password" name="password" size="20" /></td>
+</tr>
+<tr>
+<th>Email:</th><td><input type="text" name="email" size="20" /> <span class="field_comment">(optional)</span></td>
+</tr>
+<tr>
+<td colspan="2"><input type="submit" name="submit" value="Create account" /></td>
+</tr>
+</table>
+</form>

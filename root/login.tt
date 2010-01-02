@@ -1,0 +1,25 @@
+[% USE HTML %]
+[% META title = ' - Login' %]
+
+[% IF login_msg %]
+<p class="message">
+[% HTML.escape(login_msg) %]
+</p>
+[% END %]
+[% IF error %]
+<p class="error">
+[% HTML.escape(error) %]
+</p>
+[% END %]
+<form method="post" action="[% c.uri_for('/login') %]">
+<table>
+<tr>
+<th>Username:</th><td><input type="text" name="username" size="20" /></td>
+</tr>
+<tr>
+<th>Password:</th><td><input type="password" name="password" size="20" /></td>
+<tr>
+<td colspan="2"><input type="submit" name="submit" value="Login" /></td>
+</tr>
+</table>
+</form>

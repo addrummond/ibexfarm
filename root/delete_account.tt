@@ -1,0 +1,25 @@
+[% USE HTML %]
+[% META title = ' - Delete your account' %]
+
+<p>
+<a href="[% c.uri_for("/myaccount") %]">&laquo; back to my account</a>
+</p>
+<p>
+Deleting your account will <b>permanently</b> and <b>irrecoverably</b> delete all of your experiments
+(results, data files, <b>everything</b>).
+</p>
+<p>
+I purposefully <b>do not keep backups</b> of experiments, since I want it to be possible for people to delete
+all data that they have collected from participants, as may be required by the law and/or their own data protection
+policies.
+</p>
+<p>
+There is no limit on the number of experiments you may have set up at once,
+and I would recommed not deleting experiments at all unless for the aforementioned
+data protection reasons. (You can delete the results files without deleting the
+data files, etc. by going to the &lsquo;/manage/experiment_name&rsquo; page for a given experiment.)
+</p>
+
+<form class="delete_account" method="post" action="[% c.uri_for('/delete_account') %]">
+<input type="submit" name="submit" value="Delete my account" />
+</form>

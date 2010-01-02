@@ -1,0 +1,11 @@
+a { }
+.unwritable {
+    color: grey;
+}
+.dir .upload {
+    font-weight: normal;
+    text-decoration: none;
+}
+th {
+    text-align: left;
+}

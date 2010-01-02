@@ -1,0 +1,49 @@
+[% USE Filter.Minify.CSS %]
+[% USE Filter.Minify.JavaScript %]
+[% CSS_FILTER = c.debug ? "repeat" : "minify_css" %]
+[% JS_FILTER = c.debug ? "repeat" : "minify_js" %]
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+<script type="text/javascript">/* <![CDATA[ */ BASE_URI="[% c.uri_for('/') %]";[% IF experiment %]EXPERIMENT="[% experiment %]";[% END %] /* ]]> */</script>
+<script type="text/javascript">
+/* <![CDATA[ */
+[%# IE caches all ajax GET requests, so when using IE always use POST. %]
+/*@cc_on $.getJSON=function(uri,callback){return $.post(uri,{},callback,"json");} @*/
+/* ]]> */
+</script>
+[% FOREACH f IN template.js_scripts.split('\s+') %]
+<script type="text/javascript">
+/* <![CDATA[ */
+[% FILTER $JS_FILTER(1) %]
+[% INSERT $f %]
+[% END %]
+/* ]]> */
+</script>
+[% END %]
+<style type="text/css">
+/* <![CDATA[ */
+[% FILTER $CSS_FILTER(1) %]
+[% INCLUDE main.css.tt %]
+[% END %]
+/* ]]> */
+</style>
+<title>Ibex Farm [% template.title or '' %]</title>
+</head>
+<body>
+<div class="login_info">
+[% IF c.user_exists %]
+You are logged in as <a href="[% c.uri_for("/myaccount") %]">[% c.user.username %]</a> (<a href="[% c.uri_for("/logout") %]">logout</a>).
+[% ELSE %]
+<a href="[% c.uri_for("/login") %]">Login</a>
+|
+<a href="[% c.uri_for("/newaccount") %]">Create an account</a>
+[% END %]
+</div>
+<h1>The Ibex Farm</h1>
+[% content %]
+</body>
+</html>

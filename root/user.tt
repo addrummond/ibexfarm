@@ -1,0 +1,9 @@
+[% META title = '- User' %]
+[% META js_scripts = 'uicommon.js experiments.js' %]
+
+<h2>[% c.user.username %]</h2>
+<p>
+<a href="[% c.uri_for("/delete_account") %]">&raquo; delete my account</a>.
+<p>
+<h3>Experiments</h3>
+<div id="experiments"></div>
