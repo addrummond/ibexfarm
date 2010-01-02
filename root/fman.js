@@ -180,12 +180,11 @@ $.widget("ui.browseFile", {
                     // Poll server for progress info on file upload.
                     var first = 0;
                     intervalId = setInterval(function () {
-                        return;
                         if (! first++) return;
                         var xmlhttp = $.getJSON(
                             BASE_URI + 'progress?progress_id=' + progressId,
                             function (data) {
-                                if (! (data && data.bytes && data.size))
+                                if (! (data && ((data.received==0) || data.received) && data.size))
                                     clearInterval(intervalId);
                                 else if (data.aborted) {
                                     ulmsg.addClass("error");
@@ -193,7 +192,7 @@ $.widget("ui.browseFile", {
                                     clearInterval(intervalId);
                                 }
                                 else {
-                                    var bytes = data.bytes;
+                                    var bytes = data.received;
                                     var size = data.size;
                                     if (size > 0)
                                         ulmsg.text("Uploading: " + parseInt(bytes*100.0 / size) + "%");
@@ -284,7 +283,7 @@ $.widget("ui.browseDir", {
                             BASE_URI + 'progress?progress_id=' + progressId
                             ,
                             function (data) {
-                                if (! (data && data.received && data.size))
+                                if (! (data && ((data.received==0) || data.received) && data.size))
                                     clearInterval(intervalId);
                                 else if (data.aborted) {
                                     upload_msg.addClass("error");
