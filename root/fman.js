@@ -284,7 +284,7 @@ $.widget("ui.browseDir", {
                             BASE_URI + 'progress?progress_id=' + progressId
                             ,
                             function (data) {
-                                if (! (data && data.received && data.size))
+                                if (! (data && ((data.received == 0) || data.received) && data.size))
                                     clearInterval(intervalId);
                                 else if (data.aborted) {
                                     upload_msg.addClass("error");
