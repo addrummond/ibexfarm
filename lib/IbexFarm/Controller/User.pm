@@ -105,7 +105,7 @@ sub newaccount :Absolute :Args(0) {
                 $c->model('DB')->txn_commit(); # This should be redundant, but doesn't seem to be.
 
                 # Create the user's dir.
-                mkdir catdir(IbexFarm->config->{deployment_dir}, $username) or die "Unable to create dir for user.";
+                mkdir catdir(IbexFarm->config->{deployment_dir}, $username) or die "Unable to create dir for user: $!";
             });
 
             $c->stash->{login_msg} = "Your account was created; you may now log in.";

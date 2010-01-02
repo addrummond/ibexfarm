@@ -17,10 +17,13 @@ use Encode::Guess;
 use CGI qw( escapeHTML );
 
 my $get_default_config = sub {
-    return {
+    my %additions = @_;
+
+    my %h = (
         SERVER_MODE => "cgi",
         RESULT_FILES_DIR => "results",
         RESULT_FILE_NAME => "results",
+	RAW_RESULT_FILE_NAME => "raw_results",
         SERVER_STATE_DIR => "server_state",
         INCLUDE_HEADERS_IN_RESULTS_FILE => \1,
         INCLUDE_COMMENTS_IN_RESULTS_FILE => \1,
@@ -28,11 +31,14 @@ my $get_default_config = sub {
         CSS_INCLUDES_DIR => "css_includes",
         DATA_INCLUDES_DIR => "data_includes",
         OTHER_INCLUDES_DIR => "other_includes",
+        STATIC_FILES_DIR => "www",
         CACHE_DIR => "cache",
         JS_INCLUDES_LIST => ["block"],
         CSS_INCLUDES_LIST => ["block"],
         DATA_INCLUDES_LIST => ["block"]
-    };
+    );
+    for my $k (keys %additions) { $h{$k} = $additions{$k}; }
+    return \%h;
 };
 
 sub config_ : Path("config") :Args(0) { # 'config' seems to be reserved by Catalyst.
@@ -61,9 +67,11 @@ sub config_ : Path("config") :Args(0) { # 'config' seems to be reserved by Catal
     my $username = $rdir[$#rdir-1];
     my $experiment_name = $rdir[$#rdir];
 
-    # Authentication: we allow this if (a) it's a local request or (b)
-    # they're logged in as the user who owns this experiment.
+    # Authentication: we allow this if (a) it's a local request,
+    # (b) it's from one of the hosts specified in the config file
+    # or (c) they're logged in as the user who owns this experiment.
     unless ($c->req->hostname eq "localhost" ||
+            (grep { $_ eq $c->req->hostname } @{IbexFarm->config->{config_permitted_hosts}}) ||
             ($c->user_exists && $c->user->username eq $username)) {
         $c->detach('unauthorized');
     }
@@ -307,7 +315,7 @@ sub newexperiment :Path("newexperiment") :Args(0) {
                 ibex_archive => IbexFarm->config->{ibex_archive},
                 ibex_archive_root_dir => IbexFarm->config->{ibex_archive_root_dir},
                 name => $ps->{name},
-                external_config_url => "http://localhost/config",
+                external_config_url => "http://localhost/ajax/config",
                 pass_params => 1,
                 www_dir => $wwwdir
             );
@@ -315,7 +323,11 @@ sub newexperiment :Path("newexperiment") :Args(0) {
             # Write a record of the configuration (file containing JSON dict).
             my $ibexdir = catfile($dir, $ps->{name}, IbexFarm->config->{ibex_archive_root_dir});
             open my $cnf, ">" . catfile($ibexdir, "CONFIG") or die "Unable to open 'CONFIG' file: $!";
-            print $cnf JSON::encode_json($get_default_config->());
+            print $cnf JSON::encode_json(
+                $get_default_config->(
+                    IBEX_WORKING_DIR => catdir($dir, IbexFarm->config->{ibex_archive_root_dir})
+                )
+            );
             close $cnf or die "Unable to close 'CONFIG' file: $!";
 
             $c->detach($c->view("JSON")); # Empty dict indicates success.
