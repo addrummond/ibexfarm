@@ -24,6 +24,9 @@ use Catalyst qw/ConfigLoader
                 Session::State::Cookie
 
                 RequireSSL
+
+                Cache::FastMmap
+                UploadProgress
                 /;
 our $VERSION = '0.01';
 

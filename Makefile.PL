@@ -19,6 +19,7 @@ requires 'Catalyst::Plugin::Session';
 requires 'Catalyst::Plugin::Session::Store::FastMmap';
 requires 'Catalyst::Plugin::Session::State::Cookie';
 requires 'Catalyst::Plugin::RequireSSL';
+requires 'Catalyst::Plugin::UploadProgress';
 #requires 'Authentication::Store::Minimal';
 
 catalyst;

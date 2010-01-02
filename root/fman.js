@@ -2,6 +2,18 @@ function show_date (date) {
     return date[0] + '-' + date[1] + '-' + date[2] + ' ' + date[3] + ':' + date[4] + ':' + date[5];
 }
 
+var generateProgressID;
+(function () {
+var alpha = "0123456789abcdef";
+generateProgressID = function () {
+    var id = '';
+    for(var i=0; i < 32; i++) {
+        id += alpha.charAt(Math.round(Math.random()*14));
+    }
+    return id;
+}
+})();
+
 $.widget("ui.browseFile", {
     _init: function () {
         this.element.addClass("file").addClass(this.options.writable ? "writable" : "unwritable");
@@ -148,11 +160,13 @@ $.widget("ui.browseFile", {
         if (upload) {
             var intervalId;
 
+            var progressId = generateProgressID();
             new AjaxUpload(upload, {
                 action: BASE_URI + 'ajax/upload_file/' +
                         escape(EXPERIMENT) + '/' +
                         escape(t.options.dir) + '/' +
-                        escape(t.options.filename)
+                        escape(t.options.filename) +
+                       '?progress_id=' + progressId
                 ,
                 name: "userfile",
                 autoSubmit: true,
@@ -166,20 +180,25 @@ $.widget("ui.browseFile", {
                     // Poll server for progress info on file upload.
                     var first = 0;
                     intervalId = setInterval(function () {
+                        return;
                         if (! first++) return;
                         var xmlhttp = $.getJSON(
-                            BASE_URI + 'ajax/get_progress/' +
-                            escape(EXPERIMENT) + '/' +
-                            escape(t.options.dir) + '/' +
-                            escape(t.options.filename)
-                            ,
+                            BASE_URI + 'progress?progress_id=' + progressId,
                             function (data) {
                                 if (! (data && data.bytes && data.size))
                                     clearInterval(intervalId);
+                                else if (data.aborted) {
+                                    ulmsg.addClass("error");
+                                    ulmsg.text("Upload aborted.");
+                                    clearInterval(intervalId);
+                                }
                                 else {
                                     var bytes = data.bytes;
                                     var size = data.size;
-                                    ulmsg.text("Uploading: " + parseInt(bytes*100.0 / size) + "%");
+                                    if (size > 0)
+                                        ulmsg.text("Uploading: " + parseInt(bytes*100.0 / size) + "%");
+                                    if (bytes == size)
+                                        clearInterval(intervalId);
                                 }
                             }
                         );
@@ -240,14 +259,17 @@ $.widget("ui.browseDir", {
                                      .append($("<td>")
                                              .append(upload_msg = $("<div>").hide()))));
 
+            var progressId = generateProgressID();
+            var intervalId;
             new AjaxUpload(upload, {
                 action: BASE_URI + 'ajax/upload_file/' +
                         escape(EXPERIMENT) + '/' +
-                        escape(t.options.dir)
+                        escape(t.options.dir) +
+                        '?progress_id=' + progressId
                 ,
                 name: "userfile",
                 autoSubmit: true,
-                data: { },
+                data: { progress_id: progressId },
                 responseType: false,
                 onSubmit: function (file, extension) {
                     upload_msg.removeClass("error");
@@ -256,21 +278,26 @@ $.widget("ui.browseDir", {
 
                     // Poll server for progress info on file upload.
                     var first = 0;
-                    var intervalId = setInterval(function () {
+                    intervalId = setInterval(function () {
                         if (! first++) return;
                         var xmlhttp = $.getJSON(
-                            BASE_URI + 'ajax/get_progress/' +
-                            escape(EXPERIMENT) + '/' +
-                            escape(t.options.dir)  + '/' +
-                            escape(file)
+                            BASE_URI + 'progress?progress_id=' + progressId
                             ,
                             function (data) {
-                                if (! (data && data.bytes && data.size))
+                                if (! (data && data.received && data.size))
                                     clearInterval(intervalId);
+                                else if (data.aborted) {
+                                    upload_msg.addClass("error");
+                                    upload_msg.text("Upload aborted.");
+                                    clearInterval(intervalId);
+                                }
                                 else {
-                                    var bytes = data.bytes;
+                                    var bytes = data.received;
                                     var size = data.size;
-                                    upload_msg.text("Uploading: " + parseInt(bytes*100.0 / size) + "%");
+                                    if (size > 0)
+                                        upload_msg.text("Uploading: " + parseInt(bytes*100.0 / size) + "%");
+                                    if (bytes == size)
+                                        clearInterval(intervalId);
                                 }
                             }
                         );
@@ -282,6 +309,8 @@ $.widget("ui.browseDir", {
                     }, 500);
                 },
                 onComplete: function (file, response) {
+                    clearInterval(intervalId);
+
                     if (! response.match(/^\s*$/)) {
                         upload_msg.addClass("error");
                         upload_msg.html(response)

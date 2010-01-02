@@ -155,7 +155,7 @@ my $get_wables = sub {
     close $wable or die "Unable to close 'WRITABLE' file in browse request.";
     # Ditto for the UPLOADED file (users can modify files which they uploaded).
     open my $upl, catfile($base, 'UPLOADED') or die "Unable to open 'UPLOADED' file in browse request.";
-    my @upls = grep { $_ !~ /^\s*$/ } (map { chomp; $_; } <$wable>);
+    my @upls = grep { $_ !~ /^\s*$/ } (map { chomp; $_; } <$upl>);
     close $upl or die "Unable to close 'UPLOADED' file in browse request.";
     push @wables, @upls;
     return @wables;
@@ -393,8 +393,6 @@ sub delete_file :Path("delete_file") {
 # This is a bit unusual, in that it returns a string as its response (or the empty string
 # for success) rather than JSON. This is to compensate for the inadequacies of the nasty
 # Javascript handling the uploading.
-my %currently_being_uploaded = ( );
-my %currently_being_uploaded_sizes = ( );
 sub upload_file :Path("upload_file") {
     my ($self, $c) = (shift, shift);
     $c->detach('unauthorized') unless $c->user_exists;
@@ -419,7 +417,7 @@ sub upload_file :Path("upload_file") {
 
     my $file = $getfilename->($c, $expname, $dir, $fname);
 
-    if (defined $currently_being_uploaded{$file}) {
+    if (0) {#(defined $currently_being_uploaded{$file}) {
         $ajax_headers->($c, 'text/html', 'UTF-8');
         $c->res->body("This location is already being uploaded to.");
         return 0;
@@ -440,26 +438,12 @@ sub upload_file :Path("upload_file") {
                                               $expname,
                                               IbexFarm->config->{ibex_archive_root_dir}));
             my $fff = catfile($dir, $fname);
-            if ((-e $file) && (! grep { $_ == $fff } @wables)) {
+            if ((-e $file) && (! grep { $_ eq $fff } @wables)) {
                 $ajax_headers->($c, 'text/html', 'UTF-8');
                 $c->res->body("You do not have permission to upload to this location.");
             }
             else {
-                $currently_being_uploaded{$file} = 0;
-                $currently_being_uploaded_sizes{$file} = $u->size;
-                my $fh = $u->fh;
-
-                my $n;
-                while (($n = $fh->read(my $data, 1024*8)) > 0) {
-                    $currently_being_uploaded{$file} += $n;
-                }
-                die "Error reading upload(ed/ing) file: $!" if ($n < 0);
-                $fh->close or die "Unable to close temporary file handle during upload: $!";
-    
                 $u->copy_to($file) or die "Unable to copy uploaded file to final location: $!";
-
-                undef $currently_being_uploaded{$file};
-                undef $currently_being_uploaded_sizes{$file};
 
                 # Keep a record of the fact that the user uploaded this file, so that
                 # we know they're allowed to write to it. (First check that the user
@@ -489,21 +473,6 @@ sub upload_file :Path("upload_file") {
             }
         }
     }
-}
-
-sub get_progress :Path("get_progress") {
-    my ($self, $c) = (shift, shift);
-    $c->detach('unauthorized') unless $c->user_exists;
-    $c->detach('bad_request') unless scalar(@_) == 3;
-
-    my ($expname, $dir, $fname) = @_;
-    my $file = $getfilename->($c, $expname, $dir, $fname);
-
-    $c->detach('default') unless (defined $currently_being_uploaded{$file});
-
-    $c->stash->{bytes} = $currently_being_uploaded{$file};
-    $c->stash->{size} = $currently_being_uploaded_sizes{$file};
-    $c->detach($c->view("JSON"));
 }
 
 sub rename_experiment :Path("rename_experiment") {
