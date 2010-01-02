@@ -16,6 +16,18 @@ use Encode;
 use Encode::Guess;
 use CGI qw( escapeHTML );
 
+my $ajax_headers = sub {
+    my ($c, $content_type, $encoding, $code) = @_;
+    $code //= 200;
+
+    $c->res->code($code);
+    $c->res->content_type($content_type);
+    $c->res->content_encoding($encoding);
+    $c->res->headers->header(Pragma => 'no-cache');
+    $c->res->headers->header(Expires => 'Thu, 01 Jan 1970 00:00:00 GMT');
+    $c->res->headers->header('Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+};
+
 my $get_default_config = sub {
     my %additions = @_;
 
@@ -250,9 +262,7 @@ sub download :Path("download") {
     my $decoder = Encode::Guess->guess($contents);
     my $encoding = ref($decoder) ? $decoder->name : "UTF-8";
 
-    $c->res->code(200);
-    $c->res->content_type($DIRS_TO_TYPES{$dir});
-    $c->res->content_encoding($encoding);
+    $ajax_headers->($c, $DIRS_TO_TYPES{$dir}, $encoding);
     $c->res->body($contents);
 }
 
@@ -402,9 +412,7 @@ sub upload_file :Path("upload_file") {
     }
     # Check that the filename is ok.
     unless (IbexFarm::FNames::is_ok_fname($fname)) {
-        $c->res->code(200);
-        $c->res->content_type('text/html');
-        $c->res->content_encoding('UTF-8');
+        $ajax_headers->($c, 'text/html', 'UTF-8');
         $c->res->body("Filenames may contain only " . escapeHTML(IbexFarm::FNames::OK_CHARS_DESCRIPTION));
         return 0;
     }
@@ -412,9 +420,7 @@ sub upload_file :Path("upload_file") {
     my $file = $getfilename->($c, $expname, $dir, $fname);
 
     if (defined $currently_being_uploaded{$file}) {
-        $c->res->code(200);
-        $c->res->content_type('text/html');
-        $c->res->content_encoding('UTF-8');
+        $ajax_headers->($c, 'text/html', 'UTF-8');
         $c->res->body("This location is already being uploaded to.");
         return 0;
     }
@@ -422,9 +428,7 @@ sub upload_file :Path("upload_file") {
         my $u = $c->req->upload('userfile');
         if (! $u) { $c->detach('bad_request'); return; }
         if ($u->size > IbexFarm->config->{max_upload_size_bytes}) {
-            $c->res->code(200);
-            $c->res->content_type("text/html");
-            $c->res->content_encoding("UTF-8");
+            $ajax_headers->($c, 'text/html', 'UTF-8');
             $c->res->body("The file is too large (maximum size is " . sprintf("%.1f", IbexFarm->config->{max_upload_size_bytes}/1024.0/1024.0) . " MB).");
             return 0;
         }
@@ -437,9 +441,7 @@ sub upload_file :Path("upload_file") {
                                               IbexFarm->config->{ibex_archive_root_dir}));
             my $fff = catfile($dir, $fname);
             if ((-e $file) && (! grep { $_ == $fff } @wables)) {
-                $c->res->code(200);
-                $c->res->content_type('text/html');
-                $c->res->content_encoding('UTF-8');
+                $ajax_headers->($c, 'text/html', 'UTF-8');
                 $c->res->body("You do not have permission to upload to this location.");
             }
             else {
@@ -481,9 +483,7 @@ sub upload_file :Path("upload_file") {
                     close $upl or die "Unable to close 'UPLOADED' file in 'upload_file' request: $!";
                 }
 
-                $c->res->code(200);
-                $c->res->content_type('text/html');
-                $c->res->content_encoding("UTF-8");
+                $ajax_headers->($c, 'text/html', 'UTF-8');
                 $c->res->body(" "); # Have to set it to something because otherwise Catalyst thinks it hasn't been set (!)
                 return 0;
             }
@@ -590,9 +590,7 @@ sub delete_experiment :Path("delete_experiment") {
 
 my $ereq = sub {
     my ($self, $c, $code) = @_;
-    $c->res->code($code);
-    $c->res->content_type("text/json");
-    $c->res->content_encoding("UTF-8");
+    $ajax_headers->($c, 'text/json', 'UTF-8', $code);
     $c->res->body('null');
     return 0;
 };
