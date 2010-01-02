@@ -1,8 +1,14 @@
+[% USE HTML %]
+[% USE URL %]
 [% META title = '- Manage Experiment' %]
 [% META js_scripts = 'uicommon.js ajaxupload.js fman.js' %]
 
 <p>
 Go to the <a href="[% c.uri_for("/myaccount") %]">my account</a> page to view your other experiments or to create/delete experiments.
+</p>
+<p>
+[% eurl = experiment_base_url _ c.user.username _ '/' _ experiment _ '/experiment.html' | url %]
+This experiment is up at <a href="[% eurl %]">[% HTML.escape(eurl) %]</a>.
 </p>
 <h2>Experiment &lsquo;[% experiment %]&rsquo;</h2>
 <h3>files</h3>

@@ -315,7 +315,7 @@ sub newexperiment :Path("newexperiment") :Args(0) {
                 ibex_archive => IbexFarm->config->{ibex_archive},
                 ibex_archive_root_dir => IbexFarm->config->{ibex_archive_root_dir},
                 name => $ps->{name},
-                external_config_url => "http://localhost/ajax/config",
+                external_config_url => IbexFarm->config->{config_url},
                 pass_params => 1,
                 www_dir => $wwwdir
             );
@@ -325,7 +325,7 @@ sub newexperiment :Path("newexperiment") :Args(0) {
             open my $cnf, ">" . catfile($ibexdir, "CONFIG") or die "Unable to open 'CONFIG' file: $!";
             print $cnf JSON::encode_json(
                 $get_default_config->(
-                    IBEX_WORKING_DIR => catdir($dir, IbexFarm->config->{ibex_archive_root_dir})
+                    IBEX_WORKING_DIR => $ibexdir
                 )
             );
             close $cnf or die "Unable to close 'CONFIG' file: $!";
