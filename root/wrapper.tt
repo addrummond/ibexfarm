@@ -1,8 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
 [% USE Filter.Minify.CSS %]
 [% USE Filter.Minify.JavaScript %]
 [% CSS_FILTER = c.debug ? "repeat" : "minify_css" %]
 [% JS_FILTER = c.debug ? "repeat" : "minify_js" %]
-<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -11,8 +11,9 @@
 <script type="text/javascript">/* <![CDATA[ */ BASE_URI="[% c.uri_for('/') %]";[% IF experiment %]EXPERIMENT="[% experiment %]";[% END %] /* ]]> */</script>
 <script type="text/javascript">
 /* <![CDATA[ */
-[%# IE caches all ajax GET requests, so when using IE always use POST. %]
-/*@cc_on $.getJSON=function(uri,callback){return $.post(uri,{},callback,"json");} @*/
+[% FILTER $JS_FILTER(1) %]
+[% INSERT common.js %]
+[% END %]
 /* ]]> */
 </script>
 [% FOREACH f IN template.js_scripts.split('\s+') %]

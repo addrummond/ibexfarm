@@ -315,7 +315,8 @@ $.widget("ui.browseDir", {
                         dir: t.options.dir,
                         modified: modified,
                         writable: writable,
-                        deletedCallback: refresh
+                        deletedCallback: refresh,
+                        renamedCallback: refresh
                     }))));
                 }
             }
