@@ -79,7 +79,7 @@ sub config_ : Path("config") :Args(0) { # 'config' seems to be reserved by Catal
     my $username = $rdir[$#rdir-1];
     my $experiment_name = $rdir[$#rdir];
 
-    # Authentication: we allow this if (a) it's a local request,
+    # Authentication: we allow this if either (a) it's a local request,
     # (b) it's from one of the hosts specified in the config file
     # or (c) they're logged in as the user who owns this experiment.
     unless ($c->req->hostname eq "localhost" ||
