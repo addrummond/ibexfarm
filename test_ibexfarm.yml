@@ -1,0 +1,31 @@
+---
+name: IbexFarm
+
+ibex_archive: "/tmp/ibex-beta.tar.gz"
+ibex_archive_root_dir: "ibex-beta"
+ibex_version: "3.0"
+deployment_dir: "/tmp"
+deployment_www_dir: "/tmp/www/"
+
+db_name: ibexfarm
+db_user: lfuser
+db_host: localhost
+db_port: 5432
+db_password: abcd
+
+max_upload_size_bytes: 1048576000000000000000
+
+#'Plugin::Authentication':
+#    default_realm: users
+#    realms:
+#        users:
+#            credential:
+#                class: Password
+#                password_field: password
+#                password_type: clear
+#            store:
+#                class: Minimal
+#                users:
+#                    alex:
+#                        password: abcd
+#                        roles: ["read"]
