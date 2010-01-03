@@ -1,9 +1,10 @@
 CREATE TABLE ibex_user (
     id SERIAL NOT NULL PRIMARY KEY,
     username VARCHAR NOT NULL UNIQUE
-        CHECK ( username ~* '^[A-Za-z0-9_-]+$' ), -- Keep in sync with mkdb.sql.
+        CHECK ( username ~* '^[A-Za-z0-9_-]+$' ),
     password VARCHAR NOT NULL,
-    email_address VARCHAR,
+    email_address VARCHAR
+        CHECK ( email_address ~* E'^[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+(?:[A-Z]{2}|com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum)\\b\$' ),
     active BOOLEAN NOT NULL
 );
 CREATE TABLE role (
