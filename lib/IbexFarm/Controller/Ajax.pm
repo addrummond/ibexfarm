@@ -82,7 +82,8 @@ sub config_ : Path("config") :Args(0) { # 'config' seems to be reserved by Catal
     # Authentication: we allow this if either (a) it's a local request,
     # (b) it's from one of the hosts specified in the config file
     # or (c) they're logged in as the user who owns this experiment.
-    unless ($c->req->hostname eq "localhost" ||
+    unless ((! $c->req->hostname) ||
+            $c->req->hostname eq "localhost" ||
             (grep { $_ eq $c->req->hostname } @{IbexFarm->config->{config_permitted_hosts}}) ||
             ($c->user_exists && $c->user->username eq $username)) {
         $c->detach('unauthorized');
@@ -325,6 +326,7 @@ sub newexperiment :Path("newexperiment") :Args(0) {
                 ibex_archive => IbexFarm->config->{ibex_archive},
                 ibex_archive_root_dir => IbexFarm->config->{ibex_archive_root_dir},
                 name => $ps->{name},
+                hashbang => IbexFarm->config->{python_hashbang},
                 external_config_url => IbexFarm->config->{config_url},
                 pass_params => 1,
                 www_dir => $wwwdir
