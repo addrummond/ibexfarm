@@ -2,7 +2,7 @@
 // "before_toggle", "after_toggle", "before_toggle_or_show" and "after_toggle_or_show"
 // events to jQuery. What a mess!
 (function () {
-function add2(f) { // Note that this is speficially designed for 'show', 'hide' and 'toggle'.
+function add2(f) { // Note that this is specifically designed for 'show', 'hide' and 'toggle'.
     var original = $.prototype[f];
     $.prototype[f] = function (a, b) {
         // If we use 'trigger' instead of 'triggerHandler', we get nasty infinite
@@ -102,8 +102,8 @@ $.widget("ui.rename", {
         this.rename_error = rename_error;
 
         // Highlight the input field text when it's shown.
-        rename_inp[0].select();
-        $(this.element).bind("after_toggle_or_show", null, function () { rename_inp[0].select(); });
+        rename_inp[0].focus();
+        $(this.element).bind("after_toggle_or_show", null, function () { rename_inp[0].focus(); });
         // Hide the error message when the whole thing is hidden.
         $(this.element).bind("before_hide", null, function () { rename_error.hide(); });
     },

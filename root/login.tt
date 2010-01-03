@@ -1,5 +1,6 @@
 [% USE HTML %]
 [% META title = ' - Login' %]
+[% META js_scripts = 'newaccount.js' %]
 
 [% IF login_msg %]
 <p class="message">

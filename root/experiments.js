@@ -20,7 +20,7 @@ $.widget("ui.addExperimentDialog", {
                                     .text("Create Experiment"))))
 
         // Make sure the text box gets focus when it's shown.
-        $(this.element).bind("after_toggle_or_show", null, function () { input[0].select(); });
+        $(this.element).bind("after_toggle_or_show", null, function () { input[0].focus(); });
 
         var t = this;
         function create () {

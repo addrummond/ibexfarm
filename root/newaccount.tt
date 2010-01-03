@@ -1,5 +1,6 @@
 [% USE HTML %]
 [% META title = ' - Create an account' %]
+[% META js_scripts = 'newaccount.js' %]
 
 [% IF error %]
 <p class="error">
