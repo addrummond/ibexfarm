@@ -133,6 +133,7 @@ sub newaccount :Absolute :Args(0) {
             });
 
             $c->stash->{login_msg} = "Your account was created; you may now log in.";
+            $c->stash->{username} = $c->request->params->{username};
             undef $c->request->params->{username};
             undef $c->request->params->{password};
             $c->detach('login');

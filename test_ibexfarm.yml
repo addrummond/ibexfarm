@@ -1,11 +1,19 @@
 ---
 name: IbexFarm
 
+webmaster_name: "Alex"
+webmaster_email: "a.d.drummond@gmail.com"
+
 ibex_archive: "/tmp/ibex-beta.tar.gz"
 ibex_archive_root_dir: "ibex-beta"
 ibex_version: "3.0"
 deployment_dir: "/tmp"
 deployment_www_dir: "/tmp/www/"
+
+quota_max_files_in_dir: 3
+quota_max_file_size: 10485760000000000
+quota_max_total_size: 10000000000
+quota_record_dir: "/tmp/quota"
 
 db_name: ibexfarm
 db_user: lfuser

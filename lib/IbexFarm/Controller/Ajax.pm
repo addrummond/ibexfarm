@@ -7,6 +7,7 @@ use parent 'Catalyst::Controller';
 use IbexFarm;
 use IbexFarm::FNames;
 use IbexFarm::DeployIbex;
+use IbexFarm::Quota;
 use File::Spec::Functions qw( splitdir catdir catfile splitpath no_upwards );
 use File::stat;
 use File::Path qw( make_path rmtree );
@@ -51,6 +52,38 @@ my $get_default_config = sub {
     );
     for my $k (keys %additions) { $h{$k} = $additions{$k}; }
     return \%h;
+};
+
+my $pre_check_quota = sub {
+    my $c = shift;
+
+    return ! -f catfile(IbexFarm->config->{quota_record_dir}, "BAD_" . $c->user->username);
+};
+
+my $post_check_quota = sub {
+    my $c = shift;
+
+    my $qdir = catdir(IbexFarm->config->{deployment_dir},
+                       $c->user->username);
+    my $qwwdir = catdir(IbexFarm->config->{deployment_www_dir},
+                        $c->user->username);
+    my ($ok, $e) = IbexFarm::Quota::check_quota({
+        max_files_in_dir => IbexFarm->config->{quota_max_files_in_dir},
+        max_file_size => IbexFarm->config->{quota_max_file_size},
+        max_total_size => IbexFarm->config->{quota_max_total_size}
+    }, $qdir, $qwwdir);
+
+    # Keep a record of their quota violation.
+    if (! $ok) {
+        die "Oh no!" if (-e IbexFarm->config->{quota_record_dir} && ! -d IbexFarm->config->{quota_record_dir});
+        if (! -d IbexFarm->config->{quota_record_dir}) {
+            mkdir IbexFarm->config->{quota_record_dir} or die "Unable to make quota record: $!";
+        }
+
+        open my $t, ">" . catfile(IbexFarm->config->{quota_record_dir}, 'BAD_' . $c->user->username) or die "Unable to touch 'BAD_' record: $!";
+        close $t or die "Error closing after touch: $!";
+    }
+    return ($ok, $e);
 };
 
 sub config_ : Path("config") :Args(0) { # 'config' seems to be reserved by Catalyst.
@@ -400,6 +433,17 @@ sub upload_file :Path("upload_file") {
     $c->detach('unauthorized') unless $c->user_exists;
     $c->detach('bad_request') unless (scalar(@_) == 3 || scalar(@_) == 2) && $c->req->method eq "POST";
 
+    # Check that the user hasn't exceeded their quota.
+    my ($ok, $qerror) = $pre_check_quota->($c);
+    if (! $ok) {
+        $ajax_headers->($c, 'text/html', 'UTF-8');
+        $c->res->body("You have exceeded your quota.");
+#                      escapeHTML(IbexFarm->config->{webmaster_name}));# .
+#                      " (<a href='mailto:'" . escapeHTML(IbexFarm->config->{webmaster_email}) . "'>" .
+#                      escapeHTML(IbexFarm->config->{webmaster_email}) . "</a>) to resolve this issue.");
+        return 0;
+    }
+
     my ($expname, $dir, $fname) = @_;
     my $up = $c->req->upload('userfile') or $c->detach('bad_request');
     # If the filename wasn't given, just use the name of the file that's being uploaded.
@@ -482,6 +526,8 @@ sub upload_file :Path("upload_file") {
                     print $upl catfile($dir, $fname), "\n";
                     close $upl or die "Unable to close 'UPLOADED' file in 'upload_file' request: $!";
                 }
+
+                $post_check_quota->($c);
 
                 $ajax_headers->($c, 'text/html', 'UTF-8');
                 $c->res->body(" "); # Have to set it to something because otherwise Catalyst thinks it hasn't been set (!)
