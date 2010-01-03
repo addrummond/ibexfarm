@@ -399,15 +399,10 @@ sub upload_file :Path("upload_file") {
     $c->detach('bad_request') unless (scalar(@_) == 3 || scalar(@_) == 2) && $c->req->method eq "POST";
 
     my ($expname, $dir, $fname) = @_;
+    my $up = $c->req->upload('userfile') or $c->detach('bad_request');
     # If the filename wasn't given, just use the name of the file that's being uploaded.
-    if (! $fname) {
-        if ($c->req->upload('userfile')) {
-            $fname = $c->req->upload('userfile')->filename;
-        }
-        else {
-            $c->detach('bad_request');
-        }
-    }
+    $fname ||= $up->filename;
+
     # Check that the filename is ok.
     unless (IbexFarm::FNames::is_ok_fname($fname)) {
         $ajax_headers->($c, 'text/html', 'UTF-8');
@@ -423,7 +418,7 @@ sub upload_file :Path("upload_file") {
         return 0;
     }
     else {
-        my $u = $c->req->upload('userfile');
+        my $u = $up;
         if (! $u) { $c->detach('bad_request'); return; }
         if ($u->size > IbexFarm->config->{max_upload_size_bytes}) {
             $ajax_headers->($c, 'text/html', 'UTF-8');
