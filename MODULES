@@ -1,0 +1,14 @@
+# Modules used that aren't installed with Catalyst
+# (not a complete list, but installing all these should
+# pull in the necessary dependencies).
+Catalyst::Plugin::RequireSSL
+Catalyst::Plugin::Session::Store::FastMmap
+Catalyst::View::JSON
+DBIx::Class::TimeStamp
+DBIx::Class::EncodedColumn
+Template::Plugin::Filter::Minify::CSS
+Template::Plugin::Filter::Minify::JavaScript
+DBD::Pg
+Catalyst::Plugin::Cache::FastMmap
+Catalyst::Plugin::UploadProgress
+HTML::GenerateUtil

@@ -8,6 +8,7 @@ use IbexFarm;
 use IbexFarm::FNames;
 use IbexFarm::DeployIbex;
 use IbexFarm::Quota;
+use IbexFarm::AjaxHeaders qw( ajax_headers );
 use File::Spec::Functions qw( splitdir catdir catfile splitpath no_upwards );
 use File::stat;
 use File::Path qw( make_path rmtree );
@@ -15,19 +16,7 @@ use File::Copy qw( move );
 use DateTime;
 use Encode;
 use Encode::Guess;
-use CGI qw( escapeHTML );
-
-my $ajax_headers = sub {
-    my ($c, $content_type, $encoding, $code) = @_;
-    $code //= 200;
-
-    $c->res->code($code);
-    $c->res->content_type($content_type);
-    $c->res->content_encoding($encoding);
-    $c->res->headers->header(Pragma => 'no-cache');
-    $c->res->headers->header(Expires => 'Thu, 01 Jan 1970 00:00:00 GMT');
-    $c->res->headers->header('Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
-};
+use HTML::GenerateUtil qw( escape_html );
 
 my $get_default_config = sub {
     my %additions = @_;
@@ -296,7 +285,7 @@ sub download :Path("download") {
     my $decoder = Encode::Guess->guess($contents);
     my $encoding = ref($decoder) ? $decoder->name : "UTF-8";
 
-    $ajax_headers->($c, $DIRS_TO_TYPES{$dir}, $encoding);
+    ajax_headers($c, $DIRS_TO_TYPES{$dir}, $encoding);
     $c->res->body($contents);
 }
 
@@ -342,7 +331,7 @@ sub newexperiment :Path("newexperiment") :Args(0) {
     }
     else {
         if (! IbexFarm::FNames::is_ok_fname($ps->{name})) {
-            $c->stash->{error} = "Experiment names may contain only " . escapeHTML(IbexFarm::FNames::OK_CHARS_DESCRIPTION) . '.';
+            $c->stash->{error} = "Experiment names may contain only " . escape_html(IbexFarm::FNames::OK_CHARS_DESCRIPTION) . '.';
             $c->detach($c->view("JSON"));
         }
         else {
@@ -388,7 +377,7 @@ sub rename_file :Path("rename_file") {
     my $newname = $c->req->params->{newname};
 
     unless (IbexFarm::FNames::is_ok_fname($newname)) {
-        $c->stash->{error} = "Filenames may contain only " . escapeHTML(IbexFarm::FNames::OK_CHARS_DESCRIPTION);
+        $c->stash->{error} = "Filenames may contain only " . escape_html(IbexFarm::FNames::OK_CHARS_DESCRIPTION);
         $c->detach($c->view("JSON"));
         return;
     }
@@ -428,6 +417,9 @@ sub delete_file :Path("delete_file") {
 # This is a bit unusual, in that it returns a string as its response (or the empty string
 # for success) rather than JSON. This is to compensate for the inadequacies of the nasty
 # Javascript handling the uploading.
+#
+# Note that the 'UploadEnforcer' plugin checks file names and file size (it is able to
+# check these things before the file data itself is transmitted).
 sub upload_file :Path("upload_file") {
     my ($self, $c) = (shift, shift);
     $c->detach('unauthorized') unless $c->user_exists;
@@ -436,11 +428,11 @@ sub upload_file :Path("upload_file") {
     # Check that the user hasn't exceeded their quota.
     my ($ok, $qerror) = $pre_check_quota->($c);
     if (! $ok) {
-        $ajax_headers->($c, 'text/html', 'UTF-8');
-        $c->res->body("You have exceeded your quota.");
-#                      escapeHTML(IbexFarm->config->{webmaster_name}));# .
-#                      " (<a href='mailto:'" . escapeHTML(IbexFarm->config->{webmaster_email}) . "'>" .
-#                      escapeHTML(IbexFarm->config->{webmaster_email}) . "</a>) to resolve this issue.");
+        ajax_headers($c, 'text/html', 'UTF-8');
+        $c->res->body("You have exceeded your quota. Please contact " .
+                      escape_html(IbexFarm->config->{webmaster_name}) .
+                      " (<a href='mailto:'" . escape_html(IbexFarm->config->{webmaster_email}) . "'>" .
+                      escape_html(IbexFarm->config->{webmaster_email}) . "</a>) to resolve this issue.");
         return 0;
     }
 
@@ -448,13 +440,6 @@ sub upload_file :Path("upload_file") {
     my $up = $c->req->upload('userfile') or $c->detach('bad_request');
     # If the filename wasn't given, just use the name of the file that's being uploaded.
     $fname ||= $up->filename;
-
-    # Check that the filename is ok.
-    unless (IbexFarm::FNames::is_ok_fname($fname)) {
-        $ajax_headers->($c, 'text/html', 'UTF-8');
-        $c->res->body("Filenames may contain only " . escapeHTML(IbexFarm::FNames::OK_CHARS_DESCRIPTION));
-        return 0;
-    }
 
     # Check that the dir is ok.
     $c->detach('bad_request') unless (grep { $_ eq $dir } @DIRS );
@@ -478,19 +463,14 @@ sub upload_file :Path("upload_file") {
     # plugin without modifying its code). I should fix this at some point, but it's not a
     # huge deal -- the second upload will just overwrite the first.
     if (0) {#(defined $currently_being_uploaded{$file}) {
-        $ajax_headers->($c, 'text/html', 'UTF-8');
+        ajax_headers($c, 'text/html', 'UTF-8');
         $c->res->body("This location is already being uploaded to.");
         return 0;
     }
     else {
         my $u = $up;
         if (! $u) { $c->detach('bad_request'); return; }
-        if ($u->size > IbexFarm->config->{max_upload_size_bytes}) {
-            $ajax_headers->($c, 'text/html', 'UTF-8');
-            $c->res->body("The file is too large (maximum size is " . sprintf("%.1f", IbexFarm->config->{max_upload_size_bytes}/1024.0/1024.0) . " MB).");
-            return 0;
-        }
-        else {
+        else { # TODO: Else not actually necessary here.
             # Check that either (a) the file doesn't currently exist
             # or (b) that the user has permission to write to this file.
             my @wables = $get_wables->(catdir(IbexFarm->config->{deployment_dir},
@@ -499,7 +479,7 @@ sub upload_file :Path("upload_file") {
                                               IbexFarm->config->{ibex_archive_root_dir}));
             my $fff = catfile($dir, $fname);
             if ((-e $file) && (! grep { $_ eq $fff } @wables)) {
-                $ajax_headers->($c, 'text/html', 'UTF-8');
+                ajax_headers($c, 'text/html', 'UTF-8');
                 $c->res->body("You do not have permission to upload to this location.");
             }
             else {
@@ -529,7 +509,7 @@ sub upload_file :Path("upload_file") {
 
                 $post_check_quota->($c);
 
-                $ajax_headers->($c, 'text/html', 'UTF-8');
+                ajax_headers($c, 'text/html', 'UTF-8');
                 $c->res->body(" "); # Have to set it to something because otherwise Catalyst thinks it hasn't been set (!)
                 return 0;
             }
@@ -546,7 +526,7 @@ sub rename_experiment :Path("rename_experiment") {
     my $newname = $c->req->params->{newname};
 
     unless (IbexFarm::FNames::is_ok_fname($newname)) {
-        $c->stash->{error} = "Experiment names may contain only " . escapeHTML(IbexFarm::FNames::OK_CHARS_DESCRIPTION);
+        $c->stash->{error} = "Experiment names may contain only " . escape_html(IbexFarm::FNames::OK_CHARS_DESCRIPTION);
         $c->detach($c->view("JSON"));
         return;
     }
@@ -621,7 +601,7 @@ sub delete_experiment :Path("delete_experiment") {
 
 my $ereq = sub {
     my ($self, $c, $code) = @_;
-    $ajax_headers->($c, 'text/json', 'UTF-8', $code);
+    ajax_headers($c, 'text/json', 'UTF-8', $code);
     $c->res->body('null');
     return 0;
 };

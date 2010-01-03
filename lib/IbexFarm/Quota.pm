@@ -19,7 +19,7 @@ sub check_quota {
     eval {
         find(sub {
             if (-f $File::Find::name) {
-                print STDERR $File::Find::name, "\n";
+#                print STDERR $File::Find::name, "\n";
                 if (defined $dirs_file_counts{$File::Find::dir}) {
                     my $n = ++($dirs_file_counts{$File::Find::dir});
                     if ($n > $opts->{max_files_in_dir}) {
