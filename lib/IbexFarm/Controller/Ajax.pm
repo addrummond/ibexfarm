@@ -412,8 +412,27 @@ sub upload_file :Path("upload_file") {
         return 0;
     }
 
+    # Check that the dir is ok.
+    $c->detach('bad_request') unless (grep { $_ eq $dir } @DIRS );
+    # It may be that the dir doesn't exist yet ('results', 'server_state'), in
+    # which case we create it.
+    my $absdir = catdir(IbexFarm->config->{deployment_dir},
+                        $c->user->username,
+                        $expname,
+                        IbexFarm->config->{ibex_archive_root_dir},
+                        $dir);
+    # If it exists, but as as something other than a dir, then...uh oh.
+    die "Very weird" if (-e $absdir && ! -d $absdir);
+    if (! -d $absdir) {
+        mkdir $absdir or die "Unable to create dir '$absdir': $!";
+    }
+
     my $file = $getfilename->($c, $expname, $dir, $fname);
 
+    # Currently, haven't figured out a good way of checking that they're not uploading
+    # concurrently to the same location (have to find a way of interfacing with the UploadProgress
+    # plugin without modifying its code). I should fix this at some point, but it's not a
+    # huge deal -- the second upload will just overwrite the first.
     if (0) {#(defined $currently_being_uploaded{$file}) {
         $ajax_headers->($c, 'text/html', 'UTF-8');
         $c->res->body("This location is already being uploaded to.");
