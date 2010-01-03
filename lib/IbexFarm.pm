@@ -15,7 +15,6 @@ use Catalyst::Runtime 5.80;
 
 use parent qw/Catalyst/;
 use Catalyst qw/ConfigLoader
-                Static::Simple
 
                 Authentication
 
@@ -52,7 +51,9 @@ __PACKAGE__->config(
 );
 
 # Start the application
-__PACKAGE__->setup();
+my @args;
+push @args, 'Static::Simple' if __PACKAGE__->debug;
+__PACKAGE__->setup(@args);
 
 =head1 NAME
 

@@ -76,6 +76,8 @@ sub deploy {
             print $sdotpyfh "EXTERNAL_CONFIG_METHOD = 'GET'\n\n";
             print $sdotpyfh $contents;
             close $sdotpyfh or die "Unable to close server.py: $!";
+
+            chmod 0755, $f or die "Unable to chmod 0755 server.py: $!";
         }
 
         if ($args{www_dir}) {
@@ -85,6 +87,9 @@ sub deploy {
                 if (! -d $ddd) { mkdir $ddd or die "Unable to create www dir '$ddd': $!"; }
                 # Copy the file.
                 copy $f, $ddd or die "Unable to copy file in www dir: $!";
+                if ($fname eq "server.py") {
+                    chmod 0755, catfile($ddd, $fname) or die "Unable to chmod 0755 server.py after copying: $!";
+                }
             }
         }
     }

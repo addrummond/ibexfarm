@@ -166,7 +166,7 @@ $.widget("ui.browseFile", {
                         escape(EXPERIMENT) + '/' +
                         escape(t.options.dir) + '/' +
                         escape(t.options.filename) +
-                       '?progress_id=' + progressId
+                        '?progress_id=' + progressId
                 ,
                 name: "userfile",
                 autoSubmit: true,
@@ -264,11 +264,11 @@ $.widget("ui.browseDir", {
                 action: BASE_URI + 'ajax/upload_file/' +
                         escape(EXPERIMENT) + '/' +
                         escape(t.options.dir) +
-                        '?progress_id=' + progressId
+	                '?progress_id=' + progressId
                 ,
                 name: "userfile",
                 autoSubmit: true,
-                data: { progress_id: progressId },
+                data: { },
                 responseType: false,
                 onSubmit: function (file, extension) {
                     upload_msg.removeClass("error");

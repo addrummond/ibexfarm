@@ -82,7 +82,8 @@ sub config_ : Path("config") :Args(0) { # 'config' seems to be reserved by Catal
     # Authentication: we allow this if either (a) it's a local request,
     # (b) it's from one of the hosts specified in the config file
     # or (c) they're logged in as the user who owns this experiment.
-    unless ($c->req->hostname eq "localhost" ||
+    unless ((! $c->req->hostname) ||
+            $c->req->hostname eq "localhost" ||
             (grep { $_ eq $c->req->hostname } @{IbexFarm->config->{config_permitted_hosts}}) ||
             ($c->user_exists && $c->user->username eq $username)) {
         $c->detach('unauthorized');
@@ -325,6 +326,7 @@ sub newexperiment :Path("newexperiment") :Args(0) {
                 ibex_archive => IbexFarm->config->{ibex_archive},
                 ibex_archive_root_dir => IbexFarm->config->{ibex_archive_root_dir},
                 name => $ps->{name},
+                hashbang => IbexFarm->config->{python_hashbang},
                 external_config_url => IbexFarm->config->{config_url},
                 pass_params => 1,
                 www_dir => $wwwdir
@@ -399,15 +401,10 @@ sub upload_file :Path("upload_file") {
     $c->detach('bad_request') unless (scalar(@_) == 3 || scalar(@_) == 2) && $c->req->method eq "POST";
 
     my ($expname, $dir, $fname) = @_;
+    my $up = $c->req->upload('userfile') or $c->detach('bad_request');
     # If the filename wasn't given, just use the name of the file that's being uploaded.
-    if (! $fname) {
-        if ($c->req->upload('userfile')) {
-            $fname = $c->req->upload('userfile')->filename;
-        }
-        else {
-            $c->detach('bad_request');
-        }
-    }
+    $fname ||= $up->filename;
+
     # Check that the filename is ok.
     unless (IbexFarm::FNames::is_ok_fname($fname)) {
         $ajax_headers->($c, 'text/html', 'UTF-8');
@@ -423,7 +420,7 @@ sub upload_file :Path("upload_file") {
         return 0;
     }
     else {
-        my $u = $c->req->upload('userfile');
+        my $u = $up;
         if (! $u) { $c->detach('bad_request'); return; }
         if ($u->size > IbexFarm->config->{max_upload_size_bytes}) {
             $ajax_headers->($c, 'text/html', 'UTF-8');
