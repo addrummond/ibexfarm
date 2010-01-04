@@ -235,6 +235,8 @@ $.widget("ui.browseFile", {
 
 $.widget("ui.browseDir", {
     _init: function () {
+        this.element.addClass("browseDir");
+
         var t = this;
         var xmlhttp = $.getJSON(BASE_URI + 'ajax/browse?dir=' + escape(this.options.dir) + '&experiment=' + escape(EXPERIMENT), function (data) {
             t.element.addClass("dir");

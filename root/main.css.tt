@@ -11,24 +11,21 @@
 [% stdsmall = "10pt" %]
 [% light = "#E6E6E6" %]
 [% lightish = "#4c4346" %]
+[% lilgap = "25px" %]
+[% bgap = "30px" %]
 
 [% round = "-moz-border-radius: $rounding; -webkit-border-radius: $rounding;" %]
 
-html {
-    min-height: 100%;
-}
 body {
     font-family: Verdana, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: [% outer_background %];
-    min-height: 100%;
 }
 div#outer1 {
     position: absolute;
     left: 0;
-    top: 25px;
-    height: 100%;
+    top: [% lilgap %];
     width: 100%;
     background-color: [% outer_background %];
     padding-bottom: 100px;
@@ -36,14 +33,13 @@ div#outer1 {
 div#outer2 {
     [% round %]
     width: 60%;
-    min-height: 100%;
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 25px;
-    padding-top: 2em;
+    margin-bottom: [% lilgap %];
+    padding-top: [% bgap %];
     padding-left: 2em;
     padding-right: 2em;
-    padding-bottom: 25px;
+    padding-bottom: [% bgap %];
     background-color: [% inner_background %];
     color: [% text_color %];
     font-size: [% stdsize %];
@@ -134,6 +130,9 @@ input {
     background-color: [% heading_color %];
 }
 
+/* For 'this experiment is up at */
+div.message_ div { margin-top: 0.5em; text-align: center; }
+
 .areYouSure p {
     margin-top: 0.5em;
     padding-top: 0;
@@ -216,3 +215,7 @@ p.smallprint {
    margin-top: 3em;
    font-size: [% stdsmall %];
 }
+
+.browseDir { margin-bottom: 1em; }
+.browseDir a { font-size: [% stdsmall %]; }
+.browseDir .linklike { font-size: [% stdsmall %]; }
