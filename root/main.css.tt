@@ -49,15 +49,13 @@ div#outer2 {
     font-size: [% stdsize %];
 }
 
-img {
+a#ibex {
     display: block;
-/*    margin-left: auto;
-    margin-right: auto;*/
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    position: relative;
-    left: -10px;
+    width: 250px;
+    height: 193px;
+    background-color: [% inner_background %];
+    background-image: url('static/images/ibex.jpg');
+    background-repeat: no-repeat;
 }
 
 div#login_info {
@@ -92,7 +90,6 @@ h3 {
     color: [% text_color %];
 }
 
-table { cell-padding: 0; }
 td {
     padding-left: 0;
     margin-left: 0;
