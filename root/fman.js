@@ -251,7 +251,7 @@ $.widget("ui.browseDir", {
             t.element.append(table = $("<table>")
                              .append($("<tr>")
                                      .append($("<th>")
-                                             .text(t.options.dir + " (")
+                                             .text("/" + t.options.dir + " (")
                                              .append(upload = $("<span>")
                                                      .addClass("linklike")
                                                      .text("upload a file to this directory"))
