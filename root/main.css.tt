@@ -212,8 +212,12 @@ form.login td.submit input {
 }
 
 p.smallprint {
-   margin-top: 3em;
-   font-size: [% stdsmall %];
+    margin-top: 3em;
+    font-size: [% stdsmall %];
+    color: [% lightish %];
+}
+p.smallprint a {
+    color: [% lightish %];
 }
 
 .browseDir { margin-bottom: 1em; }
