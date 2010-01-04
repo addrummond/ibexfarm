@@ -1,3 +1,13 @@
+<h2>Welcome to the Ibex farm</h2>
+<!--<img src="[% c.uri_for('/static/images/ibex.jpg') %]" width="400" height="292" />-->
 <p>
-Welcome to the Ibex farm.
+This site provides free hosting for <a href="http://code.google.com/p/webspr">ibex</a> experiments.
 </p>
+<p>
+Upload data files via a web interface, then send your participants a link to the experiment (<a href="[% experiment_base_url _ "example/example/experiment.html" | url %]">example</a>).
+</p>
+[% IF c.user_exists %]
+<p>
+<a href="[% c.uri_for("/myaccount") %]">&raquo; manage my experiments</a>
+</p>
+[% END %]

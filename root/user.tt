@@ -2,8 +2,19 @@
 [% META title = '- User' %]
 [% META js_scripts = 'uicommon.js experiments.js' %]
 
-<h2>[% c.user.username %]</h2>
-<h3>Experiments</h3>
+<h2>Experiments</h2>
+<div id="experiments"></div>
+
+<h2 class="sep">Account admin</h2>
+<h3>Email</h3>
+<form action="[% c.uri_for("/update_email") %]" method="POST">
+<table>
+<tr>
+<td><input type="text" name="email" value="[% HTML.escape(email_address) %]"/></td>
+<td><input type="submit" name="submit" value="[% IF email_address %]Update[% ELSE %]Add[% END %] email" /></td>
+</tr>
+</table>
+</form>
 [% IF message %]
 <div class="message">
 [% HTML.escape(message) %]
@@ -14,18 +25,7 @@
 [% HTML.escape(error) %]
 </div>
 [% END %]
-<div id="experiments"></div>
-
-<p>
-<form action="[% c.uri_for("/update_email") %]" method="POST">
-<table>
-<tr>
-<td><input type="text" name="email" value="[% HTML.escape(email_address) %]"/></td>
-<td><input type="submit" name="submit" value="[% IF email_address %]Update[% ELSE %]Add[% END %] email" /></td>
-</tr>
-</table>
-</form>
-</p>
+<h3>Deletion</h3>
 <p>
 <a href="[% c.uri_for("/delete_account") %]">&raquo; delete my account</a>.
 <p>

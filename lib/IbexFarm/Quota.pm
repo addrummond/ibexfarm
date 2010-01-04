@@ -31,7 +31,7 @@ sub check_quota {
 
                 my $s = -s $File::Find::name;
                 if ($s > $opts->{max_file_size}) {
-                    die [0, "File '$_' exceeded maximum file size of $opts->{max_file_size} bytes."];
+                    die [0, "The file '$_' exceeded the maximum file size of $opts->{max_file_size} bytes."];
                 }
                 $total += $s;
             }
@@ -43,7 +43,7 @@ sub check_quota {
     }
 
     if ($total > $opts->{max_total_size}) {
-        return (0, "The directory's size ($total bytes) is greater than the maximum permitted ($opts->{max_total_size} bytes).");
+        return (0, "The size of the directory " . $File::Find::dir . " ($total bytes) is greater than the maximum permitted ($opts->{max_total_size} bytes).");
     }
     return (1, "");
 }

@@ -9,15 +9,20 @@ $(document).ready(function () {
 
     // Move to error/message div if there is one on the page.
     var e = $(".error");
-    if (e.length) {
+    if (e.length && ! $(e[0]).hasClass("noskipto")) {
         $(e[0]).attr('id', 'error');
         window.location = '#error';
     }
     else {
         var m = $(".message");
-        if (m.length) {
+        if (m.length && ! $(m[0]).hasClass("noskipto")) {
             $(m[0]).attr('id', 'message');
             window.location = '#message';
         }
     }
+
+    // Message divs dissapear after a few seconds.
+    setTimeout(function () {
+        $(".message").fadeOut("slow");
+    }, 3000);
 });

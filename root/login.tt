@@ -3,7 +3,7 @@
 [% META js_scripts = 'newaccount.js' %]
 
 [% IF login_msg %]
-<p class="message">
+<p class="message noskipto">
 [% HTML.escape(login_msg) %]
 </p>
 [% END %]

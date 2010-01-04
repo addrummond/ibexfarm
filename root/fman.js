@@ -51,17 +51,18 @@ $.widget("ui.browseFile", {
                                 .append($("<div>")
                                         .addClass("delete_file")
                                         .append(" | ")
-                                        .append($("<span>").text("delete")))))
+                                        .append($("<span>").addClass("linklike").text("delete")))))
                         .append(rename = ((! this.options.writable) ? null : ++ncols && $("<td>")
                                 .append($("<div>")
                                         .addClass("rename")
                                         .append(" | ")
-                                        .append($("<span>").text("rename")))))
-                        .append(upload = ((! this.options.writable) ? null : ++ncols && $("<td>")
+                                        .append($("<span>").addClass("linklike").text("rename")))))
+                        .append(((! this.options.writable) ? null : ++ncols && $("<td>")
                                 .append($("<div>")
-                                        .addClass("upload_file")
                                         .append(" | ")
-                                        .append($("<span>").text("upload new version"))
+                                        .append(upload = $("<span>")
+                                                             .addClass("linklike")
+                                                             .text("upload new version"))
                                         .append(")"))))
                         .attr('title', 'Modified ' + show_date(this.options.modified)))
                 .append((! this.options.writable) ? null : $("<tr>")
@@ -132,8 +133,7 @@ $.widget("ui.browseFile", {
         );
 
         if (this.options.highlight) {
-            fname.css('background', 'yellow');
-            fname.attr('id', 'highlighted');
+            fname.flash();
             window.location = "#highlighted";
         }
 
@@ -162,6 +162,7 @@ $.widget("ui.browseFile", {
 
             var progressId = generateProgressID();
             new AjaxUpload(upload, {
+                hoverClass: 'hoverClass',
                 action: BASE_URI + 'ajax/upload_file/' +
                         escape(EXPERIMENT) + '/' +
                         escape(t.options.dir) + '/' +
@@ -250,10 +251,11 @@ $.widget("ui.browseDir", {
             t.element.append(table = $("<table>")
                              .append($("<tr>")
                                      .append($("<th>")
-                                             .text(t.options.dir + " ")
+                                             .text(t.options.dir + " (")
                                              .append(upload = $("<span>")
-                                                     .addClass("upload")
-                                                     .text("(upload a file to this directory)"))))
+                                                     .addClass("linklike")
+                                                     .text("upload a file to this directory"))
+                                             .append(")")))
                              .append($("<tr>")
                                      .append($("<td>")
                                              .append(upload_msg = $("<div>").hide()))));
@@ -261,6 +263,7 @@ $.widget("ui.browseDir", {
             var progressId = generateProgressID();
             var intervalId;
             new AjaxUpload(upload, {
+                hoverClass: 'hoverClass',
                 action: BASE_URI + 'ajax/upload_file/' +
                         escape(EXPERIMENT) + '/' +
                         escape(t.options.dir) +

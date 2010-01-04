@@ -5,19 +5,17 @@ $.widget("ui.addExperimentDialog", {
         var input;
         var action;
         this.element
-            .append($("<table>")
-                    .append($("<tr>")
-                            .append($("<th>").text("Experiment name:"))
-                            .append($("<td>")
-                                    .append(input = $("<input>")
-                                            .attr('type', 'text')
-                                            .attr('name', 'name')
-                                            .attr('size', 20))))
-                    .append($("<tr>")
-                            .attr('colspan', 2)
-                            .append(action = $("<span>")
-                                    .addClass("add_experiment_submit")
-                                    .text("Create Experiment"))))
+            .append($("<div>").addClass("box")
+                    .append($("<table>")
+                            .append($("<tr>")
+                                    .append($("<th>").text("Name:"))
+                                    .append($("<td>")
+                                            .append(input = $("<input>")
+                                                    .attr('type', 'text')
+                                                    .attr('name', 'name')
+                                                    .attr('size', 20)))
+                                    .append($("<td>")
+                                            .append(action = $("<input type='button' value='Create'>"))))));
 
         // Make sure the text box gets focus when it's shown.
         $(this.element).bind("after_toggle_or_show", null, function () { input[0].focus(); });
@@ -78,8 +76,8 @@ $.widget("ui.showExperiment", {
             .append(lnk = $("<a>").attr('href', BASE_URI + 'manage/' + escape(this.options.experiment[0]))
                                   .text(this.options.experiment[0]))
             .append(" (ibex ").append(version).append(") ")
-            .append(" (").append(delete_ = $("<span>").text("delete"))
-            .append(" | ").append(rename = $("<span>").text("rename")).append(")")
+            .append(" (").append(delete_ = $("<span>").addClass("linklike").text("delete"))
+            .append(" | ").append(rename = $("<span>").addClass("linklike").text("rename")).append(")")
             .append(rename_opts = $("<div>")
                     .rename({
                         name: t.options.experiment[0],
@@ -111,7 +109,7 @@ $.widget("ui.showExperiment", {
                     }))
             .append(ays = $("<div>").areYouSure({
                 question: "Are you sure you want to delete this experiment?",
-                actionText: "yes, delete it",
+                actionText: "delete",
                 uncheckedMessage: "Check the box before clicking to confirm that you want to delete the experiment.",
                 cancelCallback: function () {
                     ays.hide("normal", function () { lock = false; });
@@ -134,8 +132,7 @@ $.widget("ui.showExperiment", {
             }).hide());
 
         if (this.options.highlight) {
-            lnk.css('background', 'yellow');
-            lnk.attr('id', 'highlighted');
+            lnk.flash();
             window.location = "#highlighted";
         }
 
@@ -155,6 +152,7 @@ $.widget("ui.showExperiment", {
             rename_opts.toggle("normal", function () {
                 lock = lock ? false : "rename";
             });
+            return true;
         });
     }
 });
@@ -194,6 +192,7 @@ $.widget("ui.experimentList", {
             var opts;
             t.element.append($("<p>")
                              .append(cexp = $("<span>")
+                                     .addClass("linklike")
                                      .addClass("create_experiment")
                                      .html("&raquo; Create a new experiment"))
                              .append(opts = $("<div>")

@@ -54,7 +54,7 @@ __PACKAGE__->config(
 
 # Start the application
 my @args;
-push @args, 'Static::Simple' if __PACKAGE__->debug;
+push @args, 'Static::Simple' if ($ENV{STATIC});
 __PACKAGE__->setup(@args);
 
 =head1 NAME

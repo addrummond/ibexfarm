@@ -6,8 +6,9 @@ use parent 'Catalyst::Controller';
 
 sub manage :Absolute {
     my ($self, $c, $experiment) = (shift, shift, shift);
-    $c->res->redirect('/login') unless $c->user_exists;
-    $c->detach('default') unless $experiment && (! scalar(@_));
+    return $c->res->redirect('/login') unless $c->user_exists;
+    return $c->res->redirect('/myaccount') unless $experiment;
+    $c->detach('Root', 'default') if scalar(@_);
 
     $c->stash->{experiment_base_url} = IbexFarm->config->{experiment_base_url};
     $c->stash->{experiment} = $experiment;

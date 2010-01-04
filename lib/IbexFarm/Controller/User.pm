@@ -54,24 +54,26 @@ sub delete_account :Absolute :Args(0) {
             die "Inconsistency when deleting user account!";
         }
 
+        $c->logout;
+
         $c->stash->{template} = "deleted.tt";
     }
     else {
-        $c->detach('bad_request');
+        $c->detach('Root', 'bad_request');
     }
 }
 
 sub update_email :Absolute :Args(0) {
     my ($self, $c) = @_;
 
-    $c->detach('bad_request') unless defined $c->req->params->{email};
+    $c->detach('Root', 'bad_request') unless defined $c->req->params->{email};
 
     if (! $c->user_exists) {
         $c->stash->{error} = "You must be logged in to update your email.";
         $c->stash->{template} = "login.tt";
     }
     else {
-        if (! IbexFarm::CheckEmail::is_ok_email($c->req->params->{email})) {
+        if ($c->req->params->{email} && ! IbexFarm::CheckEmail::is_ok_email($c->req->params->{email})) {
             $c->stash->{error} = "The email address you entered is not valid.";
             $c->stash->{template} = 'user.tt';
         }
@@ -79,6 +81,7 @@ sub update_email :Absolute :Args(0) {
             my $u = $c->model('DB::IbexUser')->find({ id => $c->user->id }) or die "Oh no";
             $u->update({ 'email_address' =>  $c->req->params->{email} }) or die "Oh no 2";
             $c->model('DB')->txn_commit;
+            $c->stash->{email_address} = $c->req->params->{email};
             $c->stash->{message} = "Your email has been updated.";
             $c->stash->{template} = 'user.tt';
         }
@@ -91,6 +94,11 @@ sub newaccount :Absolute :Args(0) {
     my $username = $c->request->params->{username};
     my $password = $c->request->params->{password};
     my $email = $c->request->params->{email};
+
+    if (! $username) {
+        $c->stash->{template} = "newaccount.tt";
+        return;
+    }
 
     if (! IbexFarm::FNames::is_ok_fname($username)) {
         $c->stash->{error} = "Usernames may contain only " . IbexFarm::FNames::OK_CHARS_DESCRIPTION . ".";
@@ -105,7 +113,7 @@ sub newaccount :Absolute :Args(0) {
     }
     else {
         # It had better be a post request if they're trying to create a new account.
-        $c->detach('bad_request') unless ($c->req->method eq "POST");
+        $c->detach('Root', 'bad_request') unless ($c->req->method eq "POST");
 
         # Check that a user with that username doesn't already exist.
         if ($c->model('DB::IbexUser')->find({ username => $username })) {
@@ -145,7 +153,7 @@ sub newaccount :Absolute :Args(0) {
 sub myaccount :Absolute :Args(0) {
     my ($self, $c) = @_;
 
-    $c->response->redirect($c->uri_for('/login')) unless ($c->user_exists);
+    return $c->response->redirect($c->uri_for('/login')) unless ($c->user_exists);
 
     my $u = $c->model('DB::IbexUser')->find({ id => $c->user->id }) or die "Oh no 3";
     $c->stash->{email_address} = $u->email_address;

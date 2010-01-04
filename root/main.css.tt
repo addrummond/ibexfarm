@@ -1,11 +1,207 @@
-a { }
+[% rounding = "8px" %]
+[% outer_background = "#231F20" %]
+[% inner_background = "#FFFFFF" %]
+[% heading_color = "#BD2031" %]
+[% text_color = outer_background %]
+[% link_color = "#006295" %]
+[% nice_color = "#C5EFFD" %]
+[% stdsize = "12pt" %]
+[% stdindent = "2em" %]
+[% stdindent_2 = "1em" %]
+[% stdsmall = "10pt" %]
+[% light = "#E6E6E6" %]
+[% lightish = "#4c4346" %]
+
+[% round = "-moz-border-radius: $rounding; -webkit-border-radius: $rounding;" %]
+
+html {
+    min-height: 100%;
+}
+body {
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: [% outer_background %];
+    min-height: 100%;
+}
+div#outer1 {
+    position: absolute;
+    left: 0;
+    top: 25px;
+    height: 100%;
+    width: 100%;
+    background-color: [% outer_background %];
+    padding-bottom: 100px;
+}
+div#outer2 {
+    [% round %]
+    width: 60%;
+    min-height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 25px;
+    padding-top: 2em;
+    padding-left: 2em;
+    padding-right: 2em;
+    padding-bottom: 25px;
+    background-color: [% inner_background %];
+    color: [% text_color %];
+    font-size: [% stdsize %];
+}
+
+img {
+    display: block;
+    width: 400px;
+    height: 292px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+div#login_info {
+    font-size: [% stdsmall %];
+    text-align: center;
+    margin-bottom: 2em;
+}
+
+h1 {
+    text-align: center;
+    padding-top: 0;
+    margin-top: 0;
+    font-size: 20pt;
+    color: [% heading_color %];
+    font-weight: bold;
+    text-decoration: none;
+}
+h2 {
+    margin-top: 1em;
+    font-size: 16pt;
+    color: [% text_color %];
+    font-weight: bold;
+    text-decoration: none;
+}
+h2.sep {
+    margin-top: 2em;
+}
+h3 {
+    font-size: [% stdsize %];
+    font-weight: bold;
+    text-decoration: none;
+    color: [% text_color %];
+}
+
+table { cell-padding: 0; }
+td {
+    padding-left: 0;
+    margin-left: 0;
+}
+th {
+    text-align: left;
+    padding-left: 0;
+    padding-right: 0.5em;
+    margin-left: 0;
+    font-weight: bold;
+    text-decoration: none;
+    color: [% text_color %];
+}
+form th {
+    font-size: [% stdsize %];
+    text-align: right;
+}
+input {
+    font-size: [% stdsize %];
+    margin-right: 0.5em;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+.message, .message_, .box, .error {
+    display: table;
+    padding: 0.5em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    [% round %]
+}
+.message, .message_ {
+    color: [% text_color %];
+    background-color: [% nice_color %];
+}
+.box {
+    color: [% text_color %];
+    background-color: [% light %];
+}
+.error {
+    color: [% inner_background %];
+    background-color: [% heading_color %];
+}
+
+.areYouSure p {
+    margin-top: 0.5em;
+    padding-top: 0;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+a {
+    color: [% link_color %];
+    text-decoration: none;
+    font-weight: bold;
+}
+.message_ a { color: [% text_color %]; }
+.message a { color: [% text_color %]; }
+a:visited {
+    color: [% link_color %];
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+.linklike {
+    color: [% link_color %];
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+.linklike:hover {
+    text-decoration: underline;
+}
+
+.add_experiment {
+    margin-top: 0.5em;
+    position: relative;
+    left: [% stdindent %];
+}
+li { margin-left: [% stdindent_2 %]; padding-left: 0; }
+.add_experiment_submit {
+    font-size: [% stdsmall %];
+}
+
 .unwritable {
-    color: grey;
+    color: [% lightish %];
 }
 .dir .upload {
     font-weight: normal;
     text-decoration: none;
 }
-th {
-    text-align: left;
+
+#login_info p {
+    margin-top: 0.5em;
+    padding-top: 0;
+}
+
+.field_comment {
+    color: [% lightish %];
+    font-size: [% stdsmall %];
+}
+form.create_account td.submit {
+    padding-top: 0.5em;
+}
+form.create_account td.submit input {
+    float: right;
+}
+
+/* For AJAX file upload weirdness. */
+.hoverClass {
+    text-decoration: underline;
+    cursor: pointer;
 }

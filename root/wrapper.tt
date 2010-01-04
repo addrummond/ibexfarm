@@ -32,19 +32,32 @@
 [% END %]
 /* ]]> */
 </style>
-<title>Ibex Farm [% template.title or '' %]</title>
+<title>Ibex farm [% template.title or '' %]</title>
 </head>
 <body>
-<div class="login_info">
-[% IF c.user_exists %]
-You are logged in as <a href="[% c.uri_for("/myaccount") %]">[% c.user.username %]</a> (<a href="[% c.uri_for("/logout") %]">logout</a>).
-[% ELSE %]
-<a href="[% c.uri_for("/login") %]">Login</a>
+
+<div id="outer1">
+<div id="outer2">
+
+<h1>Ibex Farm</h1>
+
+<div id="login_info">
+
+<a href="[% c.uri_for("/") %]">home</a>
+[% IF ! c.user_exists %] | <a href="[% c.uri_for("/login") %]">login</a>[% END %]
 |
-<a href="[% c.uri_for("/newaccount") %]">Create an account</a>
+<a href="[% c.uri_for("/newaccount") %]">create an account</a>
+|
+<a href="http://code.google.com/p/webspr/wiki/Documentation">ibex docs</a>
+[% IF c.user_exists %]
+<p>
+You are logged in as <a href="[% c.uri_for("/myaccount") %]">[% c.user.username %]</a> (<a href="[% c.uri_for("/logout") %]">logout</a>).
+</p>
 [% END %]
 </div>
-<h1>The Ibex Farm</h1>
 [% content %]
+
+</div> [%# outer2 %]
+</div> [%# outer1 %]
 </body>
 </html>

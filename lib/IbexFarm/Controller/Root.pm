@@ -13,6 +13,7 @@ __PACKAGE__->config->{namespace} = '';
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
+    $c->stash->{experiment_base_url} = IbexFarm->config->{experiment_base_url};
     $c->stash->{template} = "frontpage.tt";
 }
 

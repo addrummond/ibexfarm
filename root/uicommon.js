@@ -12,7 +12,8 @@ function add2(f) { // Note that this is specifically designed for 'show', 'hide'
         var cache = $(this);
 
         // We raise an event only if there is no registered handler for "before_toggle_or_show";
-        if ((f != "show" && f != "toggle") || ! (cache.data('events') && cache.data('events').before_toggle_or_show))
+        var cde = cache.data('events');
+        if ((f != "show" && f != "toggle") || ! (cde && cde.before_toggle_or_show))
             cache.triggerHandler("before_" + f);
         else cache.triggerHandler("before_toggle_or_show");
         var t = this;
@@ -21,7 +22,7 @@ function add2(f) { // Note that this is specifically designed for 'show', 'hide'
                 var r;
                 if (b)
                     r = b();
-                if ((f != "show" && f != "toggle") || ! (cache.data('events') && cache.data('events').after_toggle_or_show))
+                if ((f != "show" && f != "toggle") || ! (cde && cde.after_toggle_or_show))
                     $(t).triggerHandler("after_" + f);
                 else cache.triggerHandler("after_toggle_or_show");
                 return r;
@@ -29,7 +30,7 @@ function add2(f) { // Note that this is specifically designed for 'show', 'hide'
         }
         else {
             var r = original.call(this, a);
-            if ((f != "show" && f != "toggle") || ! (cache.data('events') && cache.data('events').after_toggle_or_show))
+            if ((f != "show" && f != "toggle") || ! (cde && cde.after_toggle_or_show))
                 $(t).triggerHandler("after_" + f);
             else cache.triggerHandler("after_toggle_or_show");
             return r;
@@ -41,17 +42,32 @@ add2("hide");
 add2("toggle");
 })();
 
+$.widget("ui.flash", {
+    _init: function () {
+        this.element.css('background-color', 'white');
+        this.element.attr('id', 'highlighted');
+        var t = this;
+        this.element.effect("highlight", {color: '#BD2031'}, 5000, function () {
+            t.element.attr('id', null);
+        });
+    }
+});
+
 $.widget("ui.areYouSure", {
     _init: function () {
+        this.element.addClass("areYouSure");
+
         var cancel;
         var chk;
         var del;
         this.element
-            .append(this.options.question)
-            .append(cancel = $("<span>").addClass("cancel").text(" cancel"))
-            .append(" / ")
-            .append(chk = $("<input type='checkbox'>"))
-            .append(del = $("<span>").addClass("delete").text(" " + this.options.actionText));
+            .append($("<div>").addClass("box")
+                .append(this.options.question)
+                .append($("<p>")
+                        .append(cancel = $("<span>").addClass("linklike").addClass("cancel").text(" cancel"))
+                        .append(" / ")
+                        .append(chk = $("<input type='checkbox'>"))
+                        .append(del = $("<input type='button'>").attr('value', this.options.actionText))));
 
         var t = this;
 
@@ -78,16 +94,17 @@ $.widget("ui.rename", {
         var rename_error;
         this.element
             .addClass("rename")
-            .append(rename_inp = $("<input>")
-                    .attr('size', 20)
-                    .attr('type', 'text')
-                    .attr('value', this.options.name))
-            .append(rename_cancel = $("<span>").text("cancel"))
-            .append(" / ")
-            .append(rename_btn = $("<span>").text("rename"))
-            .append(rename_error = $("<div>")
-                    .hide()
-                    .addClass("error"))
+            .append($("<div>").addClass("box")
+                    .append(rename_inp = $("<input>")
+                            .attr('size', 20)
+                            .attr('type', 'text')
+                            .attr('value', this.options.name))
+                    .append(rename_cancel = $("<span>").addClass("linklike").text("cancel"))
+                    .append(" / ")
+                    .append(rename_btn = $("<input type='button'>").attr("value", "rename"))
+                    .append(rename_error = $("<div>")
+                            .hide()
+                            .addClass("error")))
             .hide();
 
         var t = this;
