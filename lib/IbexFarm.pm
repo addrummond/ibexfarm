@@ -26,8 +26,8 @@ use Catalyst qw/ConfigLoader
 
                 Cache::FastMmap
 
-                UploadEnforcer
                 UploadProgress
+                UploadEnforcer
                 /;
 our $VERSION = '0.01';
 
