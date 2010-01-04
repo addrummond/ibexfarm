@@ -51,11 +51,13 @@ div#outer2 {
 
 img {
     display: block;
-    width: 400px;
-    height: 292px;
-    margin-left: auto;
-    margin-right: auto;
+/*    margin-left: auto;
+    margin-right: auto;*/
     text-align: center;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    left: -10px;
 }
 
 div#login_info {

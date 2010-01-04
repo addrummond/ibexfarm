@@ -1,5 +1,5 @@
 <h2>Welcome to the Ibex farm</h2>
-<!--<img src="[% c.uri_for('/static/images/ibex.jpg') %]" width="400" height="292" />-->
+<img src="[% c.uri_for('/static/images/ibex.jpg') %]" width="250" height="193" />
 <p>
 This site provides free hosting for <a href="http://code.google.com/p/webspr">ibex</a> experiments.
 </p>
