@@ -211,3 +211,8 @@ form.login td.submit input {
     text-decoration: underline;
     cursor: pointer;
 }
+
+p.smallprint {
+   margin-top: 3em;
+   font-size: [% stdsmall %];
+}
