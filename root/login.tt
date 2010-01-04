@@ -2,6 +2,8 @@
 [% META title = ' - Login' %]
 [% META js_scripts = 'newaccount.js' %]
 
+<h2>Login</h2>
+
 [% IF login_msg %]
 <p class="message noskipto">
 [% HTML.escape(login_msg) %]
@@ -12,7 +14,7 @@
 [% HTML.escape(error) %]
 </p>
 [% END %]
-<form method="post" action="[% c.uri_for('/login') %]">
+<form class="login" method="post" action="[% c.uri_for('/login') %]">
 <table>
 <tr>
 <th>Username:</th><td><input type="text" name="username" size="20" [% IF username %]value="[% HTML.escape(username) %]"[% END %] /></td>
@@ -20,7 +22,7 @@
 <tr>
 <th>Password:</th><td><input type="password" name="password" size="20" /></td>
 <tr>
-<td colspan="2"><input type="submit" name="submit" value="Login" /></td>
+<td class="submit" colspan="2"><input type="submit" name="submit" value="Login" /></td>
 </tr>
 </table>
 </form>

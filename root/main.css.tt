@@ -199,6 +199,13 @@ form.create_account td.submit input {
     float: right;
 }
 
+form.login td.submit {
+    padding-top: 0.5em;
+}
+form.login td.submit input {
+    float: right;
+}
+
 /* For AJAX file upload weirdness. */
 .hoverClass {
     text-decoration: underline;
