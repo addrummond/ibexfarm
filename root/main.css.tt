@@ -50,7 +50,7 @@ a#ibex {
     width: 250px;
     height: 193px;
     background-color: [% inner_background %];
-    background-image: url('static/images/ibex.jpg');
+    background-image: url('[% BASE_URI _ 'static/images/ibex.jpg'%]');
     background-repeat: no-repeat;
 }
 

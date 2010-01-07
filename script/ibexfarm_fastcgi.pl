@@ -1,4 +1,5 @@
-#!/usr/bin/env perl
+#!/opt/local/bin/perl5.10.1
+##!/usr/bin/env perl
 
 BEGIN { $ENV{CATALYST_ENGINE} ||= 'FastCGI' }
 
