@@ -1,3 +1,5 @@
+var MAX_GETPROG_FAILS = 10;
+
 function show_date (date) {
     return date[0] + '-' + date[1] + '-' + date[2] + ' ' + date[3] + ':' + date[4] + ':' + date[5];
 }
@@ -180,8 +182,14 @@ $.widget("ui.browseFile", {
 
                     // Poll server for progress info on file upload.
                     var first = 0;
+                    var nojoy = 0;
+                    var lastbytes = 0;
                     intervalId = setInterval(function () {
                         if (! first++) return;
+                        if (nojoy > MAX_GETPROG_FAILS) {
+                            clearInterval(intervalId);
+                            return;
+                        }
                         var xmlhttp = $.getJSON(
                             BASE_URI + 'progress?progress_id=' + progressId,
                             function (data) {
@@ -195,6 +203,9 @@ $.widget("ui.browseFile", {
                                 else {
                                     var bytes = data.received;
                                     var size = data.size;
+                                    if (bytes == lastbytes) ++nojoy;
+                                    lastbytes = bytes;
+
                                     if (size > 0)
                                         ulmsg.text("Uploading: " + parseInt(bytes*100.0 / size) + "%");
                                     if (bytes == size)
@@ -282,8 +293,14 @@ $.widget("ui.browseDir", {
 
                     // Poll server for progress info on file upload.
                     var first = 0;
+                    var nojoy = 0;
+                    var lastbytes = 0;
                     intervalId = setInterval(function () {
                         if (! first++) return;
+                        if (nojoy > MAX_GETPROG_FAILS) {
+                            clearInterval(intervalId);
+                            return;
+                        }
                         var xmlhttp = $.getJSON(
                             BASE_URI + 'progress?progress_id=' + progressId
                             ,
@@ -298,6 +315,10 @@ $.widget("ui.browseDir", {
                                 else {
                                     var bytes = data.received;
                                     var size = data.size;
+
+                                    if (bytes == lastbytes) ++nojoy;
+                                    lastbytes = bytes;
+
                                     if (size > 0)
                                         upload_msg.text("Uploading: " + parseInt(bytes*100.0 / size) + "%");
                                     if (bytes == size)
