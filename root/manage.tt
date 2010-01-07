@@ -6,7 +6,6 @@
 <p>
 Go to the <a href="[% c.uri_for("/myaccount") %]">my account</a> page to view your other experiments or to create/delete experiments.
 </p>
-<form enctype="multipart/form-data" action="[% c.uri_for('/ajax/upload_file/foo/js_includes/') %]" method="POST"><input type="file" name="userfile"/><input type="submit" value="submit"/></form>
 <div class="message_">
 [% eurl = experiment_base_url _ c.user.username _ '/' _ experiment _ '/experiment.html' | url %]
 This experiment is up at:
