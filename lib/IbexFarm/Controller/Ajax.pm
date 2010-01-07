@@ -441,7 +441,7 @@ sub upload_file :Path("upload_file") {
     unless ($c->req->content_length <= IbexFarm->config->{max_upload_size_bytes}) {
         $finalize->();
         ajax_headers($c, 'text/html', 'UTF-8');
-        $c->res->body("The maximum size for uploaded files is " . sprintf("%.2f", IbexFarm->config->{max_upload_size_bytes} / 1024.0 / 1024.0));
+        $c->res->body("The maximum size for uploaded files is " . sprintf("%.2f", IbexFarm->config->{max_upload_size_bytes} / 1024.0 / 1024.0) . "MB.");
         return 0;
     }
 
