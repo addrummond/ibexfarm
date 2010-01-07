@@ -25,6 +25,7 @@ use Catalyst qw/ConfigLoader
                 RequireSSL
 
                 Cache::FastMmap
+                UploadProgress
                 /;
 our $VERSION = '0.01';
 
