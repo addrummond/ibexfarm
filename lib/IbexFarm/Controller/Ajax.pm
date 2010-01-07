@@ -454,7 +454,7 @@ sub upload_file :Path("upload_file") {
 
     if (! IbexFarm::FNames::is_ok_fname($fname)) {
         ajax_headers($c, 'text/html', 'UTF-8');
-        $c->body("Filenames may contain only " . IbexFarm::FNames::OK_CHARS_DESCRIPTION);
+        $c->res->body("Filenames may contain only " . IbexFarm::FNames::OK_CHARS_DESCRIPTION);
         return 0;
     }
 
