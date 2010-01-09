@@ -22,8 +22,6 @@ use Catalyst qw/ConfigLoader
                 Session::Store::FastMmap
                 Session::State::Cookie
 
-                RequireSSL
-
                 Cache::FastMmap
                 UploadProgress
                 /;
