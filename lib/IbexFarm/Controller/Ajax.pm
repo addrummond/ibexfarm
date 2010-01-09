@@ -418,16 +418,17 @@ sub delete_file :Path("delete_file") {
 # for success) rather than JSON. This is to compensate for the inadequacies of the nasty
 # Javascript handling the uploading.
 #
-# Note that the 'UploadEnforcer' plugin checks file names and file size (it is able to
-# check these things before the file data itself is transmitted).
 sub upload_file :Path("upload_file") {
     my ($self, $c) = (shift, shift);
     $c->detach('unauthorized') unless $c->user_exists;
     $c->detach('bad_request') unless (scalar(@_) == 3 || scalar(@_) == 2) && $c->req->method eq "POST";
 
+    my $finalize = sub { $c->engine->finalize_read($c); };
+
     # Check that the user hasn't exceeded their quota.
     my ($ok, $qerror) = $pre_check_quota->($c);
     if (! $ok) {
+        $finalize->();
         ajax_headers($c, 'text/html', 'UTF-8');
         $c->res->body("You have exceeded your quota. Please contact " .
                       escape_html(IbexFarm->config->{webmaster_name}) .
@@ -436,10 +437,26 @@ sub upload_file :Path("upload_file") {
         return 0;
     }
 
+    # Check file size.
+    unless ($c->req->content_length <= IbexFarm->config->{max_upload_size_bytes}) {
+        $finalize->();
+        ajax_headers($c, 'text/html', 'UTF-8');
+        $c->res->body("The maximum size for uploaded files is " . sprintf("%.2f", IbexFarm->config->{max_upload_size_bytes} / 1024.0 / 1024.0) . "MB.");
+        return 0;
+    }
+
+    $c->prepare_body;
+
     my ($expname, $dir, $fname) = @_;
     my $up = $c->req->upload('userfile') or $c->detach('bad_request');
     # If the filename wasn't given, just use the name of the file that's being uploaded.
     $fname ||= $up->filename;
+
+    if (! IbexFarm::FNames::is_ok_fname($fname)) {
+        ajax_headers($c, 'text/html', 'UTF-8');
+        $c->res->body("Filenames may contain only " . IbexFarm::FNames::OK_CHARS_DESCRIPTION);
+        return 0;
+    }
 
     # Check that the dir is ok.
     $c->detach('bad_request') unless (grep { $_ eq $dir } @DIRS );
@@ -600,16 +617,16 @@ sub delete_experiment :Path("delete_experiment") {
 }
 
 my $ereq = sub {
-    my ($self, $c, $code) = @_;
+    my ($c, $code) = @_;
     ajax_headers($c, 'text/json', 'UTF-8', $code);
     $c->res->body('null');
     return 0;
 };
 
-sub bad_request :Path { $ereq->(@_, 400); }
-sub unauthorized :Path { $ereq->(@_, 401); }
-sub conflict :Path { $ereq->(@_, 409); }
-sub request_entity_too_large :Path { $ereq->(@_, 413); }
-sub default :Path { $ereq->(@_, 404); }
+sub bad_request :Path { $ereq->($_[1], 400); }
+sub unauthorized :Path { $ereq->($_[1], 401); }
+sub conflict :Path { $ereq->($_[1], 409); }
+sub request_entity_too_large :Path { $ereq->($_[1], 413); }
+sub default :Path { $ereq->($_[1], 404); }
 
 1;

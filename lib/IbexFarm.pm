@@ -25,8 +25,6 @@ use Catalyst qw/ConfigLoader
                 RequireSSL
 
                 Cache::FastMmap
-
-                UploadEnforcer
                 UploadProgress
                 /;
 our $VERSION = '0.01';
@@ -41,6 +39,7 @@ our $VERSION = '0.01';
 # local deployment.
 
 __PACKAGE__->config(
+    parse_on_demand => 1,
     name => 'IbexFarm',
     default_view => 'TT',
     'Plugin::Authentication' => {

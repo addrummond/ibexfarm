@@ -28,7 +28,8 @@
 <style type="text/css">
 /* <![CDATA[ */
 [% FILTER $CSS_FILTER(1) %]
-[% INCLUDE main.css.tt %]
+[% BASE_URI = c.uri_for('/') %]
+[% PROCESS main.css.tt %]
 [% END %]
 /* ]]> */
 </style>
@@ -44,10 +45,10 @@
 <div id="login_info">
 
 <a href="[% c.uri_for("/") %]">home</a>
-[% IF ! c.user_exists %] | <a href="[% c.uri_for("/login") %]">login</a>[% END %]
+[% IF ! c.user_exists %] | <a href="[% c.uri_for("/login") %]">login</a>
 |
 <a href="[% c.uri_for("/newaccount") %]">create an account</a>
-|
+[% END %] |
 <a href="http://code.google.com/p/webspr/wiki/Documentation">ibex docs</a>
 [% IF c.user_exists %]
 <p>

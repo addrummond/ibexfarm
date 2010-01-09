@@ -121,6 +121,9 @@ sub newaccount :Absolute :Args(0) {
             $c->stash->{template} = "newaccount.tt";
         }
         else {
+            # Log the user out, if one is logged in.
+            $c->logout if ($c->user_exists);
+
             # Add the new user to the database, create their dir, and then show the login form.
             $c->model('DB')->txn_do(sub {
                 my $r = $c->model('DB::Role')->find({ role => "user" });
