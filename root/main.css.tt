@@ -41,12 +41,6 @@ div#outer2 {
     margin-right: auto;
     margin-bottom: 25px;
     padding-top: 2em;
-    padding-left: 2em;
-    padding-right: 2em;
-    padding-bottom: 25px;
-    background-color: [% inner_background %];
-    color: [% text_color %];
-    font-size: [% stdsize %];
 }
 
 a#ibex {
