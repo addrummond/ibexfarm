@@ -16,5 +16,6 @@ This experiment is up at:
 <div id="files">
 </div>
 <h2>Access</h2>
+<p class="smallprint pwdisclaimer"><i>(The level of security provided by this form of password protection is very basic. Don't rely on it to hide any sensitive information.)
 <div class="message_" id="authinfo">
 </div>

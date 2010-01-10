@@ -381,7 +381,7 @@ $(document).ready(function () {
                     .append(submit = $("<input type='submit' value='Add/change password'>")));
         submit.click(function () {
             
-        }
+        });
 
         // We don't spinnify this, as that leads to to a surfeit of spinners on page load.
         $.getJSON(BASE_URI + 'ajax/get_dirs', function (data) {
