@@ -167,7 +167,7 @@ $.widget("ui.experimentList", {
             t._init();
         }
 
-        var xmlhttp = $.getJSON(this.options.url, function (data) {
+        spinnify(this.element, $.getJSON(this.options.url, function (data) {
             var experiments = data.experiments.sort(function (e1, e2) { return e1[0] < e2[0] ? -1 : (e1[0] == e2[0] ? 0 : 1) });
 
             if (experiments.length == 0) {
@@ -201,12 +201,7 @@ $.widget("ui.experimentList", {
             cexp.click(function () {
                 opts.toggle("normal");
             });    
-        });
-        xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.readyState == 4) {
-            
-            }
-        }
+        }));
     }
 });
 

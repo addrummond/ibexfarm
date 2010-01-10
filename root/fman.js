@@ -20,6 +20,9 @@ $.widget("ui.browseFile", {
     _init: function () {
         this.element.addClass("file").addClass(this.options.writable ? "writable" : "unwritable");
 
+        var spinContainer;
+        this.element.append(spinContainer = $("<div>").css('float', 'left'));
+
         var t = this;
         var download;
         var delete_;
@@ -85,7 +88,7 @@ $.widget("ui.browseFile", {
                         if (newname.match(/^\s*$/) || newname == t.options.filename)
                             return;
 
-                        var xmlhttp = $.post(BASE_URI + 'ajax/rename_file/' + escape(EXPERIMENT) + '/' + escape(t.options.dir) + '/' + escape(t.options.filename), { newname: newname }, function (data) {
+                        spinnify(spinContainer, $.post(BASE_URI + 'ajax/rename_file/' + escape(EXPERIMENT) + '/' + escape(t.options.dir) + '/' + escape(t.options.filename), { newname: newname }, function (data) {
                             if (data.error) {
                                 rename_opts.rename("showError", data.error);
                             }
@@ -94,12 +97,7 @@ $.widget("ui.browseFile", {
                                 if (t.options.renamedCallback)
                                     t.options.renamedCallback(newname)
                             }
-                        }, "json");
-                        xmlhttp.onreadystatechange = function () {
-                            if (xmlhttp.readyState == 4) {
-                                
-                            }
-                        }
+                        }, "json"));
                     }
                 })
         ).append(
@@ -114,7 +112,7 @@ $.widget("ui.browseFile", {
                         });
                     },
                     actionCallback: function () {
-                        var xmlhttp = $.getJSON(
+                        spinnify(spinContainer, $.getJSON(
                             BASE_URI +
                             'ajax/delete_file/' +
                             escape(EXPERIMENT) + '/' +
@@ -124,12 +122,7 @@ $.widget("ui.browseFile", {
                                 if (t.options.deletedCallback)
                                     t.options.deletedCallback();
                             }
-                        );
-                        xmlhttp.onreadystatechange = function () {
-                            if (xmlhttp.readyState == 4) {
-
-                            }
-                        };
+                        ));
                     }
                 }).hide()
         );
@@ -190,7 +183,7 @@ $.widget("ui.browseFile", {
                             clearInterval(intervalId);
                             return;
                         }
-                        var xmlhttp = $.getJSON(
+                        spinnify(spinContainer, $.getJSON(
                             BASE_URI + 'progress?progress_id=' + progressId,
                             function (data) {
                                 if (! (data && ((data.received==0) || data.received) && data.size))
@@ -212,12 +205,7 @@ $.widget("ui.browseFile", {
                                         clearInterval(intervalId);
                                 }
                             }
-                        );
-                        xmlhttp.onreadystatechange = function () {
-                            if (xmlhttp.readyState == 4) {
-                                
-                            }
-                        };
+                        ));
                     }, 500);
 
                     return true; // Don't cancel upload.
@@ -248,8 +236,11 @@ $.widget("ui.browseDir", {
     _init: function () {
         this.element.addClass("browseDir");
 
+        var spinContainer;
+        this.element.append(spinContainer = $("<div>").css('float', 'left'));
+
         var t = this;
-        var xmlhttp = $.getJSON(BASE_URI + 'ajax/browse?dir=' + escape(this.options.dir) + '&experiment=' + escape(EXPERIMENT), function (data) {
+        spinnify(spinContainer, $.getJSON(BASE_URI + 'ajax/browse?dir=' + escape(this.options.dir) + '&experiment=' + escape(EXPERIMENT), function (data) {
             t.element.addClass("dir");
 
             function refresh (highlight) {
@@ -301,7 +292,7 @@ $.widget("ui.browseDir", {
                             clearInterval(intervalId);
                             return;
                         }
-                        var xmlhttp = $.getJSON(
+                        spinnify(spinContainer, $.getJSON(
                             BASE_URI + 'progress?progress_id=' + progressId
                             ,
                             function (data) {
@@ -325,12 +316,7 @@ $.widget("ui.browseDir", {
                                         clearInterval(intervalId);
                                 }
                             }
-                        );
-                        xmlhttp.onreadystatechange = function () {
-                            if (xmlhttp.readyState == 4) {
-                                
-                            }
-                        }
+                        ));
                     }, 500);
                 },
                 onComplete: function (file, response) {
@@ -374,25 +360,16 @@ $.widget("ui.browseDir", {
                     }))));
                 }
             }
-        });
-        xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.readyState == 4) {
-                
-            }
-        }
+        }));
     }
 });
 
 $(document).ready(function () {
-    var xmlhttp = $.getJSON(BASE_URI + 'ajax/get_dirs', function (data) {
+    // We don't spinnify this, as that leads to to a surfeit of spinners on page load.
+    $.getJSON(BASE_URI + 'ajax/get_dirs', function (data) {
         var sdirs = data.dirs.sort();
         for (var i = 0; i < data.dirs.length; ++i) {
             $("#files").append($("<div>").browseDir({ dir: sdirs[i] }));
         }
     });
-    xmlhttp.onreadystatechange = function () {
-        if (xmlhttp.readyState == 4) {
-
-        }
-    }
 });

@@ -42,6 +42,21 @@ add2("hide");
 add2("toggle");
 })();
 
+// Code for doing ajax spinner thingy.
+function spinnify(spincontainer, xmlhttp, errorCallback) {
+    var spinner;
+    spincontainer.append(spinner = $("<div>")
+                         .css('width', 16).css('height', 16)
+                         .css('background-image', "url('" + BASE_URI + 'static/images/ajax-loader.gif' + "')"));
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4) {
+            spinner.remove();
+            if (xmlhttp.status != 200 && errorCallback)
+                errorCallback(xmlhttp);
+        }
+    }
+}
+
 $.widget("ui.flash", {
     _init: function () {
         this.element.css('background-color', 'white');
