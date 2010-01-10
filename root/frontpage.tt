@@ -17,5 +17,5 @@ Currently hosting <b>[% experiment_count %]</b> experiments.
 </p>
 [% END %]
 <p class="smallprint [% IF experiment_count %]nasty[% END %]">
-You can take a look at the (rather nasty) code for this site on <a href="http://github.com/addrummond/ibexfarm">github</a>.
+The code for this site is on <a href="http://github.com/addrummond/ibexfarm">github</a>.
 </p>
