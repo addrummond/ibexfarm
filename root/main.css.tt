@@ -260,3 +260,10 @@ p.nasty {
     margin-top: 0;
     padding-top: 0;
 }
+
+form.delete_account {
+    padding-top: 1em;
+    margin-left: auto;
+    margin-right: auto;
+    display: table;
+}

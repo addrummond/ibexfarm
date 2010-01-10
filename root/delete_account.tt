@@ -16,8 +16,7 @@ policies.
 <p>
 There is no limit on the number of experiments you may have set up at once,
 and I would recommed not deleting experiments at all unless for the aforementioned
-data protection reasons. (You can delete the results files without deleting the
-data files, etc. by going to the &lsquo;/manage/experiment_name&rsquo; page for a given experiment.)
+data protection reasons.
 </p>
 
 <form class="delete_account" method="post" action="[% c.uri_for('/delete_account') %]">
