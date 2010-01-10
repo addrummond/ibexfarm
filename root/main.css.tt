@@ -250,3 +250,13 @@ h2.expheader {
     clear: both;
     padding-top: 1em;
 }
+
+p.pwdisclaimer {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+p.nasty {
+    margin-top: 0;
+    padding-top: 0;
+}
