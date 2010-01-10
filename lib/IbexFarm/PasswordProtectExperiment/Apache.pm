@@ -36,7 +36,7 @@ sub password_protect_experiment {
            $uname,
            $password);
     if ($? != 0) {
-        die "Failure executing " . IbexFarm->config->{password_protect_apache}->{htpasswd};
+        die "Failure ($?) executing " . IbexFarm->config->{password_protect_apache}->{htpasswd};
     }
 
     open my $htaccess, catfile($edir, '.htaccess') or die "Unable to create .htaccess file: $!";
@@ -66,7 +66,7 @@ sub password_unprotect_experiment {
     system(IbexFarm->config->{password_protect_apache}->{htpasswd},
            "-D", $uname);
     if ($? != 0) {
-        die "Failure executing " . IbexFarm->config->{password_protect_apache}->{htpasswd};
+        die "Failure ($?) executing " . IbexFarm->config->{password_protect_apache}->{htpasswd};
     }
 }
 
