@@ -393,7 +393,6 @@ my $manage_UPLOADED = sub {
             if ($toadd eq $line) { $dontadd{$line} = 1; }
         } }
 
-        my $foundit = 0;
         if ((! $opts{del}) || (! grep { $_ eq $line } @{$opts{del}})) {
             print $uplw "$line\n";
         }
