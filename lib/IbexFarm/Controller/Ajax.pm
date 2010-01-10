@@ -66,7 +66,7 @@ my $post_check_quota = sub {
     if (! $ok) {
         die "Oh no!" if (-e IbexFarm->config->{quota_record_dir} && ! -d IbexFarm->config->{quota_record_dir});
         if (! -d IbexFarm->config->{quota_record_dir}) {
-            mkdir IbexFarm->config->{quota_record_dir} or die "Unable to make quota record: $!";
+            mkdir IbexFarm->config->{quota_record_dir} or die "Unable to make quota record dir: $!";
         }
 
         open my $t, ">" . catfile(IbexFarm->config->{quota_record_dir}, 'BAD_' . $c->user->username) or die "Unable to touch 'BAD_' record: $!";
@@ -369,6 +369,44 @@ sub newexperiment :Path("newexperiment") :Args(0) {
     }
 }
 
+# Args: (username, expname, add => [...], del => [...])
+my $manage_UPLOADED = sub {
+    my ($username, $expname, %opts) = @_;
+
+    my $uplfile = catfile(IbexFarm->config->{deployment_dir},
+                          $username,
+                          $expname,
+                          IbexFarm->config->{ibex_archive_root_dir},
+                          'UPLOADED');
+    open my $uplr, $uplfile or die "Unable to open 'UPLOADED' file: $!";
+    local $/;
+    my $contents = <$uplr>;
+    die "Error reading 'UPLOADED' file: $!" unless (defined $contents);
+    close $uplr or die "Error closing 'UPLOADED' file: $!";
+
+    open my $uplw, ">$uplfile" or die "Unable to open 'UPLOADED' file: $!";
+    my %dontadd;
+    for my $line (split /\n/, $contents) {
+        chomp $line;
+        if ($opts{add}) { for my $toadd (@{$opts{add}}) {
+            if ($toadd eq $line) { $dontadd{$line} = 1; }
+        } }
+
+        my $foundit = 0;
+        if ((! $opts{del}) || (! grep { $_ eq $line } @{$opts{del}})) {
+            print $uplw "$line\n";
+        }
+    }
+
+    for my $toadd (@{$opts{add}}) {
+        if (! $dontadd{$toadd}) {
+            print $uplw "$toadd\n";
+        }
+    }
+
+    close $uplw or die "Unable to close 'UPLOADED' file: $!";
+};
+
 sub rename_file :Path("rename_file") {
     my ($self, $c) = (shift, shift);
     $c->detach('unauthorized') unless $c->user_exists;
@@ -393,6 +431,12 @@ sub rename_file :Path("rename_file") {
     }
     else {
         move $file, $newfile or die "Unable to move file: $!";
+
+        # Update the UPLOADED file.
+        $manage_UPLOADED->($c->user->username, $expname,
+                           add => [ catfile($dir, $newname) ],
+                           del => [ catfile($dir, $fname) ]);
+
         $c->detach($c->view("JSON"));
     }
 }
@@ -410,6 +454,9 @@ sub delete_file :Path("delete_file") {
     }
     else {
         unlink $file or die "Error deleting a file ('$file'): $!";
+
+        $manage_UPLOADED->($c->user->username, $expname, del => [ catfile($dir, $fname) ]);
+
         $c->detach($c->view("JSON"));
     }
 }
@@ -506,25 +553,9 @@ sub upload_file :Path("upload_file") {
                 # we know they're allowed to write to it. (First check that the user
                 # hasn't already uploaded this file to make sure that we don't add
                 # duplicate entries).
-                my $uplfile = catfile(IbexFarm->config->{deployment_dir},
-                                      $c->user->username,
-                                      $expname,
-                                      IbexFarm->config->{ibex_archive_root_dir},
-                                      'UPLOADED');
-                open my $uplr, $uplfile or die "Unable to open 'UPLOADED' file for reading in 'upload_file' request: $!";
-                my $foundit = 0;
-                while (my $line = <$uplr>) {
-                    chomp $line;
-                    $foundit = 1 if ($line eq $fff);
-                }
-                close $uplr or die "Unable to close 'UPLOADED' file after reading in 'upload_file' request: $!";
-                if (! $foundit) {
-                    open my $upl, ">>$uplfile" or die "Unable to open 'UPLOADED' file in 'upload_file' request: $!";
-                    print $upl catfile($dir, $fname), "\n";
-                    close $upl or die "Unable to close 'UPLOADED' file in 'upload_file' request: $!";
-                }
-
-                $post_check_quota->($c);
+                $manage_UPLOADED->($c->user->username,
+                                   $expname,
+                                   add => [ catfile($dir, $fname) ]);
 
                 ajax_headers($c, 'text/html', 'UTF-8');
                 $c->res->body(" "); # Have to set it to something because otherwise Catalyst thinks it hasn't been set (!)
