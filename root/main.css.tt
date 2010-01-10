@@ -115,6 +115,7 @@ input {
     padding: 0.5em;
     margin-top: 0.5em;
     margin-bottom: 0.5em;
+    clear: both;
     [% round %]
 }
 .message, .message_ {
@@ -223,3 +224,29 @@ p.smallprint a {
 .browseDir { margin-bottom: 1em; }
 .browseDir a { font-size: [% stdsmall %]; }
 .browseDir .linklike { font-size: [% stdsmall %]; }
+
+#authinfo p {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.cwrap1 {
+    clear: both;
+    width: 100%;
+}
+.cwrap2 {
+    float: left;
+    position: relative;
+    left: 50%;
+}
+.cwrap3 {
+    position: relative;
+    left: -50%;
+}
+
+h2.expheader {
+    clear: both;
+    padding-top: 1em;
+}

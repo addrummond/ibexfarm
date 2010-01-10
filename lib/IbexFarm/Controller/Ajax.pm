@@ -651,7 +651,7 @@ sub get_experiment_auth_status :Path("get_experiment_auth_status") {
     my ($self, $c) = (shift, shift);
     $c->detach('default') unless (IbexFarm->config->{experiment_password_protection});
     $c->detach('unauthorized') unless $c->user_exists;
-    $c->detach('bad_request') unless ($c->req->method eq "POST" && scalar(@_) == 1);
+    $c->detach('bad_request') unless (scalar(@_) == 1);
     my $expname = shift;
 
     # Check that the experiment exists.

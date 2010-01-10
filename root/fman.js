@@ -365,11 +365,30 @@ $.widget("ui.browseDir", {
 });
 
 $(document).ready(function () {
-    // We don't spinnify this, as that leads to to a surfeit of spinners on page load.
-    $.getJSON(BASE_URI + 'ajax/get_dirs', function (data) {
-        var sdirs = data.dirs.sort();
-        for (var i = 0; i < data.dirs.length; ++i) {
-            $("#files").append($("<div>").browseDir({ dir: sdirs[i] }));
+    spinnify($("#authinfo"), $.getJSON(BASE_URI + 'ajax/get_experiment_auth_status/' + escape(EXPERIMENT), function (result) {
+        if (result.username) {
+            $("#authinfo").append($("<p>")
+                                  .append("This experiment is password protected; the username is " + result.username + "(you entered the password earlier"));
         }
-    });
+        else {
+            $("#authinfo").append($("<p>").append("This experiment is not password protected"));
+        }
+        var submit;
+        $("#authinfo")
+            .append($("<div>")
+                    .addClass("pwadder")
+                    .append($("<input type='password' size='10'>"))
+                    .append(submit = $("<input type='submit' value='Add/change password'>")));
+        submit.click(function () {
+            
+        }
+
+        // We don't spinnify this, as that leads to to a surfeit of spinners on page load.
+        $.getJSON(BASE_URI + 'ajax/get_dirs', function (data) {
+            var sdirs = data.dirs.sort();
+            for (var i = 0; i < data.dirs.length; ++i) {
+                $("#files").append($("<div>").browseDir({ dir: sdirs[i] }));
+            }
+        })
+    }));
 });

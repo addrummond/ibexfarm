@@ -6,12 +6,15 @@
 <p>
 Go to the <a href="[% c.uri_for("/myaccount") %]">my account</a> page to view your other experiments or to create/delete experiments.
 </p>
+<div class="cwrap1"><div class="cwrap2"><div class="cwrap3">
 <div class="message_">
 [% eurl = experiment_base_url _ c.user.username _ '/' _ experiment _ '/experiment.html' | url %]
 This experiment is up at:
 <div><a rel="external" href="[% eurl %]">[% HTML.escape(eurl) %]</a></div>
-</div>
-<h2>Experiment &lsquo;[% experiment %]&rsquo;</h2>
+</div></div></div></div>
+<h2 class="expheader">Experiment &lsquo;[% experiment %]&rsquo;</h2>
 <div id="files">
-
+</div>
+<h2>Access</h2>
+<div class="message_" id="authinfo">
 </div>

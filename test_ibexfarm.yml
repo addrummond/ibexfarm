@@ -23,6 +23,7 @@ db_password: abcd
 
 max_upload_size_bytes: 1048576
 
+experiment_password_protection: Apache
 
 #'Plugin::Authentication':
 #    default_realm: users
