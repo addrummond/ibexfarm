@@ -647,6 +647,41 @@ sub delete_experiment :Path("delete_experiment") {
     $c->detach($c->view("JSON")); # This will return the empty hash {} as the result.
 }
 
+sub get_experiment_auth_status :Path("get_experiment_auth_status") {
+    my ($self, $c) = (shift, shift);
+    $c->detach('default') unless (IbexFarm->config->{experiment_password_protection});
+    $c->detach('unauthorized') unless $c->user_exists;
+    $c->detach('bad_request') unless ($c->req->method eq "POST" && scalar(@_) == 1);
+    my $expname = shift;
+
+    # Check that the experiment exists.
+    my $dir = catdir(IbexFarm->config->{deployment_dir}, $c->user->username, $expname);
+    $c->detach('default') unless (-d $dir);
+
+    my $authfile = catfile(IbexFarm->config->{deployment_dir},
+                           $c->user->username,
+                           $expname,
+                           IbexFarm->config->{ibex_archive_root_dir},
+                           'AUTH');
+    if (! -f $authfile) {
+        $c->detach($c->view("JSON"));
+    }
+    else {
+        open my $auth, $authfile or die "Unable to open 'AUTH' file: $!";
+        local $/;
+        my $contents = <$auth>;
+        close $auth or die "Unable to close 'AUTH' file: $!";
+        chomp $contents;
+        if ((! $contents) || $contents =~ /\s*/) {
+            $c->detach($c->view("JSON"));
+        }
+        else {
+            $c->stash->{username} = $contents;
+            $c->detach($c->view("JSON"));
+        }
+    }
+}
+
 sub password_protect_experiment :Path("password_protect_experiment") {
     my ($self, $c) = (shift, shift);
     $c->detach('default') unless (IbexFarm->config->{experiment_password_protection});
@@ -662,11 +697,22 @@ sub password_protect_experiment :Path("password_protect_experiment") {
     my $pwp = IbexFarm::PasswordProtectExperiment::Factory->new(IbexFarm->config->{experiment_password_protection});
 
     my $username;
+    my $authfile = catfile(IbexFarm->config->{deployment_dir},
+                           $c->user->username,
+                           $expname,
+                           IbexFarm->config->{ibex_archive_root_dir},
+                           'AUTH');
     if ($c->req->params->{password}) {
         my $username = $pwp->password_protect_experiment($c->user->username, $expname, $c->req->params->{password});
+        open my $auth, ">$authfile";
+        print $auth $username;
+        close $auth or die "Unable to close 'AUTH' file: $!";
     }
     else {
         $pwp->password_unprotect_experiment($c->user->username, $expname);
+        if (-f $authfile) {
+            unlink $authfile or die "Unable to delete 'AUTH' file: $!";
+        }
     }
 
     $c->stash->{username} = $username if $username;
