@@ -17,6 +17,7 @@ use DateTime;
 use Encode;
 use Encode::Guess;
 use HTML::GenerateUtil qw( escape_html );
+use IbexFarm::PasswordProtectExperiment::Factory;
 
 my $get_default_config = sub {
     my %additions = @_;
@@ -645,6 +646,32 @@ sub delete_experiment :Path("delete_experiment") {
     }
 
     $c->detach($c->view("JSON")); # This will return the empty hash {} as the result.
+}
+
+sub password_protect_experiment :Path("password_protect_experiment") {
+    my ($self, $c) = (shift, shift);
+    $c->detach('default') unless (IbexFarm->config->{experiment_password_protection});
+    $c->detach('unauthorized') unless $c->user_exists;
+    $c->detach('bad_request') unless ($c->req->method eq "POST" && scalar(@_) == 1 && ($c->req->params->{password} || $c->req->params->{remove}));
+    my $expname = shift;
+
+    # Check that the experiment exists.
+    my $dir = catdir(IbexFarm->config->{deployment_dir}, $c->user->username, $expname);
+    $c->detach('default') unless (-d $dir);
+
+    # Get hold of whatever implementation of password protection it is that we're using.
+    my $pwp = IbexFarm::PasswordProtectExperiment::Factory->new(IbexFarm->config->{experiment_password_protection});
+
+    my $username;
+    if ($c->req->params->{password}) {
+        my $username = $pwp->password_protect_experiment($c->user->username, $expname, $c->req->params->{password});
+    }
+    else {
+        $pwp->password_unprotect_experiment($c->user->username, $expname);
+    }
+
+    $c->stash->{username} = $username if $username;
+    $c->detach($c->view("JSON"));
 }
 
 my $ereq = sub {
