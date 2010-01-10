@@ -18,6 +18,7 @@ use Encode;
 use Encode::Guess;
 use HTML::GenerateUtil qw( escape_html );
 use IbexFarm::PasswordProtectExperiment::Factory;
+use IbexFarm::PasswordProtectExperiment::Apache;
 
 my $get_default_config = sub {
     my %additions = @_;

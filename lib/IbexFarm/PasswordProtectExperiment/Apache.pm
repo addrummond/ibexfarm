@@ -1,6 +1,6 @@
 package IbexFarm::PasswordProtectExperiment::Apache;
 
-use warning;
+use warnings;
 use strict;
 
 use base 'IbexFarm::PasswordProtectExperiment::Factory';
@@ -41,13 +41,14 @@ sub password_protect_experiment {
 
     open my $htaccess, catfile($edir, '.htaccess') or die "Unable to create .htaccess file: $!";
     my $ufile = IbexFarm->config->{password_protect_apache}->{passwd_file};
-    print $htacces <<END
+    print $htaccess <<END
 AuthType Basic
 AuthName "Restricted Files"
 AuthBasicProvider file
 AuthUserFile $ufile
 Require user $uname
 END
+;
     close $htaccess or die "Unable to close .htaccess file: $!";
 
     return $uname;

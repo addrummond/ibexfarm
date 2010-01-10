@@ -365,22 +365,38 @@ $.widget("ui.browseDir", {
 });
 
 $(document).ready(function () {
+    function isprotectedp(username) {
+        return $("<p>").addClass("auth_msg")
+                       .append("This experiment is password protected; the username is ")
+                       .append("<i>").text(username);
+    }
+    function isnotprotectedp () {
+        return $("<p>").addClass("auth_msg").text("This experiment is not password protected.");
+    }
+
     spinnify($("#authinfo"), $.getJSON(BASE_URI + 'ajax/get_experiment_auth_status/' + escape(EXPERIMENT), function (result) {
         if (result.username) {
-            $("#authinfo").append($("<p>")
-                                  .append("This experiment is password protected; the username is " + result.username + "(you entered the password earlier"));
+            $("#authinfo").append(isprotectedp(result.username));
         }
         else {
-            $("#authinfo").append($("<p>").append("This experiment is not password protected"));
+            $("#authinfo").append(isnotprotectedp());
         }
+        var pwinp;
         var submit;
         $("#authinfo")
             .append($("<div>")
                     .addClass("pwadder")
-                    .append($("<input type='password' size='10'>"))
+                    .append(pwinp = $("<input type='password' size='10'>"))
                     .append(submit = $("<input type='submit' value='Add/change password'>")));
         submit.click(function () {
-            
+            spinnify($("#authinfo"),
+                     $.post(BASE_URI + 'ajax/password_protect_experiment/' + escape(EXPERIMENT),
+                            { password: pwinp.attr('value') },
+                            function (result) {
+                                // This can't fail.
+                                $("#authinfo").find(".auth_msg").replaceWith(isprotectedp(result.username).flash());
+                            },
+                            "json"));
         });
 
         // We don't spinnify this, as that leads to to a surfeit of spinners on page load.
