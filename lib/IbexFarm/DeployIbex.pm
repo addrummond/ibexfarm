@@ -54,7 +54,7 @@ sub deploy {
     # This file keeps a record of files which the user has uploaded.
     # These are considered to be writable by the user.
     open my $upl, (">" . catfile($dd, $args{ibex_archive_root_dir}, 'UPLOADED')) or die "Unable to open 'UPLOADED' file: $!";
-    close $upl;
+    close $upl or die "Unable to close 'UPLOADED' filed: $!";
 
     # This file just contains the ibex version.
     open my $version, (">" . catfile($dd, $args{ibex_archive_root_dir}, 'VERSION')) or die "Unable to open 'VERSION' file: $!";
