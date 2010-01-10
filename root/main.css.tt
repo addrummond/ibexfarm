@@ -221,6 +221,12 @@ p.smallprint a {
     color: [% lightish %];
 }
 
+.not_present {
+    font-size: [% stdsize %];
+    color: [% lightish %];
+    font-style: italic;
+}
+
 .browseDir { margin-bottom: 1em; }
 .browseDir a { font-size: [% stdsmall %]; }
 .browseDir .linklike { font-size: [% stdsmall %]; }

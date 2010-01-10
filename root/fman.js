@@ -337,7 +337,7 @@ $.widget("ui.browseDir", {
             });
 
             if (data.not_present) {
-                t.element.append($("<tr>").append($("<td>").addClass("not_present").text("[This directory is not present]")));
+                t.element.append($("<tr>").append($("<td>").addClass("not_present").text("This directory is not present")));
             }
             else {
                 for (var i = 0; i < data.entries.length; ++i) {
