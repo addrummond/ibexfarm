@@ -12,3 +12,4 @@ DBD::Pg
 Catalyst::Plugin::Cache::FastMmap
 Catalyst::Plugin::UploadProgress
 HTML::GenerateUtil
+Class::Factory
