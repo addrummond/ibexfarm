@@ -9,7 +9,7 @@
 This site provides free hosting for <a href="http://code.google.com/p/webspr">ibex</a> experiments.
 </p>
 <p>
-Upload data files in your browser, then send your participants a link to the experiment (<a href="[% experiment_base_url _ "example/example/experiment.html" | url %]">example</a>).
+Upload data files in your browser; send your participants a link to the experiment (<a href="[% experiment_base_url _ "example/example/experiment.html" | url %]">example</a>).
 </p>
 [% IF experiment_count %]
 <p class="smallprint">
