@@ -23,6 +23,12 @@ $(document).ready(function () {
 
     // Message divs dissapear after a few seconds.
     setTimeout(function () {
-        $(".message").fadeOut("slow");
+        var ms = $(".message");
+        for (var i = 0; i < ms.length; ++i) {
+            if ($(m[i]).hasClass("dontremove"))
+                $(ms[i]).fadeTo("slow", 0);
+            else
+                $(ms[i]).fadeOut("slow");
+        }
     }, 3000);
 });

@@ -1,16 +1,16 @@
 <h2>Welcome to the Ibex farm</h2>
 <a id="ibex" href="http://commons.wikimedia.org/wiki/File:Capra_ibex_ibex_%E2%80%93_04.jpg"></a>
+[% IF c.user_exists %]
+<p>
+<a href="[% c.uri_for("/myaccount") %]">&raquo; manage my experiments</a>
+</p>
+[% END %]
 <p>
 This site provides free hosting for <a href="http://code.google.com/p/webspr">ibex</a> experiments.
 </p>
 <p>
 Upload data files in your browser, then send your participants a link to the experiment (<a href="[% experiment_base_url _ "example/example/experiment.html" | url %]">example</a>).
 </p>
-[% IF c.user_exists %]
-<p>
-<a href="[% c.uri_for("/myaccount") %]">&raquo; manage my experiments</a>
-</p>
 <p class="smallprint">
 You can take a look at the (rather nasty) code for this site on <a href="http://github.com/addrummond/ibexfarm">github</a>.
 </p>
-[% END %]

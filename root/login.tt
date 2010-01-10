@@ -5,7 +5,7 @@
 <h2>Login</h2>
 
 [% IF login_msg %]
-<p class="message noskipto">
+<p class="message noskipto dontremove">
 [% HTML.escape(login_msg) %]
 </p>
 [% END %]

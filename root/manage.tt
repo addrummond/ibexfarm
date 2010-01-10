@@ -12,7 +12,6 @@ This experiment is up at:
 <div><a rel="external" href="[% eurl %]">[% HTML.escape(eurl) %]</a></div>
 </div>
 <h2>Experiment &lsquo;[% experiment %]&rsquo;</h2>
-<h2>files</h2>
 <div id="files">
 
 </div>
