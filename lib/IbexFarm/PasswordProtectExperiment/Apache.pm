@@ -41,7 +41,7 @@ AuthName "Restricted Files"
 AuthBasicProvider file
 AuthUserFile $ufile
 Require user $uname
-    END
+END
     close $htaccess or die "Unable to close .htaccess file: $!";
 
     return $uname;
