@@ -14,9 +14,8 @@ all data that they have collected from participants, as may be required by the l
 policies.
 </p>
 <p>
-There is no limit on the number of experiments you may have set up at once,
-and I would recommed not deleting experiments at all unless for the aforementioned
-data protection reasons.
+However, the hosting service that I use automatically keeps backups for a week. Thus,
+if you delete an experiment, the data will not be permanently deleted until around a week afterwards.
 </p>
 
 <form class="delete_account" method="post" action="[% c.uri_for('/delete_account') %]">
