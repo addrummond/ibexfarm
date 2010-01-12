@@ -278,3 +278,9 @@ form.delete_account {
 
 #authinfo div { text-align: left; }
 
+p.goto {
+    margin-top: 0;
+    padding-top: 0;
+    font-style: italic;
+}
+
