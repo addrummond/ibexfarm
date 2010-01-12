@@ -46,11 +46,10 @@ add2("toggle");
 // This waits 500ms before adding a spinner (distracting to have them
 // flash for <500ms).
 function spinnify(spincontainer, xmlhttp, errorCallback) {
-    var spinner;
     var haveAppendedSpinner = false;
-    spinner = $("<div>")
-              .css('width', 16).css('height', 16)
-              .css('background-image', "url('" + BASE_URI + 'static/images/ajax-loader.gif' + "')");
+    var spinner = $("<div>")
+                  .css('width', 16).css('height', 16)
+                  .css('background-image', "url('" + BASE_URI + 'static/images/ajax-loader.gif' + "')");
     var timeoutId = setTimeout(function () { spincontainer.append(spinner); }, 500);
     xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState == 4) {
