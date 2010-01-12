@@ -147,7 +147,7 @@ $.widget("ui.rename", {
 
     showError: function (error) {
         this.rename_error.html(error);
-        this.rename_error.show("normal");
+        this.rename_error.show();
     },
     hideError: function (error) {
         this.rename_error.hide("normal");
