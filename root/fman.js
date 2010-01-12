@@ -156,6 +156,7 @@ $.widget("ui.browseFile", {
             var intervalId;
 
             var progressId = generateProgressID();
+            var ulmsglock;
             new AjaxUpload(upload, {
                 hoverClass: 'hoverClass',
                 action: BASE_URI + 'ajax/upload_file/' +
@@ -169,9 +170,11 @@ $.widget("ui.browseFile", {
                 data: { },
                 responseType: false,
                 onSubmit: function (file, extension) {
+                    ulmsglock = false;
+
                     ulmsg.removeClass("error");
                     ulmsg.text("Uploading: 0%");
-                    ulinfo.show("normal");
+                    ulinfo.show();
 
                     // Poll server for progress info on file upload.
                     var first = 0;
@@ -183,7 +186,7 @@ $.widget("ui.browseFile", {
                             clearInterval(intervalId);
                             return;
                         }
-                        spinnify(spinContainer, $.getJSON(
+                        $.getJSON(
                             BASE_URI + 'progress?progress_id=' + progressId,
                             function (data) {
                                 if (! (data && ((data.received==0) || data.received) && data.size))
@@ -199,18 +202,22 @@ $.widget("ui.browseFile", {
                                     if (bytes == lastbytes) ++nojoy;
                                     lastbytes = bytes;
 
-                                    if (size > 0)
-                                        ulmsg.text("Uploading: " + parseInt(bytes*100.0 / size) + "%");
-                                    if (bytes == size)
-                                        clearInterval(intervalId);
+                                    if (! ulmsglock) {
+                                        if (size > 0)
+                                             ulmsg.text("Uploading: " + parseInt(bytes*100.0 / size) + "%");
+                                        if (bytes == size)
+                                            clearInterval(intervalId);
+
+                                    }
                                 }
                             }
-                        ));
+                        );
                     }, 500);
 
                     return true; // Don't cancel upload.
                 },
                 onComplete: function (file, response) {
+                    ulmsglock = true;
                     clearInterval(intervalId);
 
                     if (! response.match(/^\s*$/)) {
@@ -266,6 +273,7 @@ $.widget("ui.browseDir", {
 
             var progressId = generateProgressID();
             var intervalId;
+            var ulmsglock;
             new AjaxUpload(upload, {
                 hoverClass: 'hoverClass',
                 action: BASE_URI + 'ajax/upload_file/' +
@@ -278,9 +286,11 @@ $.widget("ui.browseDir", {
                 data: { },
                 responseType: false,
                 onSubmit: function (file, extension) {
+                    ulmsglock = false;
+
                     upload_msg.removeClass("error");
                     upload_msg.text("Uploading: 0%");
-                    upload_msg.show("normal");
+                    upload_msg.show();
 
                     // Poll server for progress info on file upload.
                     var first = 0;
@@ -292,7 +302,7 @@ $.widget("ui.browseDir", {
                             clearInterval(intervalId);
                             return;
                         }
-                        spinnify(spinContainer, $.getJSON(
+                        $.getJSON(
                             BASE_URI + 'progress?progress_id=' + progressId
                             ,
                             function (data) {
@@ -310,16 +320,19 @@ $.widget("ui.browseDir", {
                                     if (bytes == lastbytes) ++nojoy;
                                     lastbytes = bytes;
 
-                                    if (size > 0)
-                                        upload_msg.text("Uploading: " + parseInt(bytes*100.0 / size) + "%");
-                                    if (bytes == size)
-                                        clearInterval(intervalId);
+                                    if (! ulmsglock) {
+                                        if (size > 0)
+                                            upload_msg.text("Uploading: " + parseInt(bytes*100.0 / size) + "%");
+                                        if (bytes == size)
+                                            clearInterval(intervalId);
+                                    }
                                 }
                             }
-                        ));
+                        );
                     }, 500);
                 },
                 onComplete: function (file, response) {
+                    ulmsglock = true;
                     clearInterval(intervalId);
 
                     if (! response.match(/^\s*$/)) {

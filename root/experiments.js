@@ -28,13 +28,12 @@ $.widget("ui.addExperimentDialog", {
             var xmlhttp = $.post(BASE_URI + 'ajax/newexperiment', { name: input[0].value }, function (data) {
                 if (data.error) {
                     t.element.find("p.error").remove();
-                    t.element.append($("<p>")
+                    t.element.append($("<div>").append($("<p>")
                                      .addClass("error")
                                      .html(data.error)
                                      .append(" (")
                                      .append($("<span>").addClass("ok").text("OK").click(function () { t.element.find("p.error").hide("normal"); }))
-                                     .append(")")
-                                     .hide().show("normal"));
+                                     .append(")")));
                 }
                 else {
                     t.element.hide("normal", function () {
