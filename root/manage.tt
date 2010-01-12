@@ -16,6 +16,11 @@ This experiment is up at:
 <div id="files">
 </div>
 <h2>Access</h2>
-<p class="smallprint pwdisclaimer"><i>(The level of security provided by this form of password protection is very basic. Don't rely on it to hide any sensitive information.)
+<p class="smallprint pwddisclaimer">
+<i>The level of security provided by this form of password protection is very basic. Don't rely on it to hide any sensitive information.</i>
+</p>
+<p class="smallprint pwddisclaimer">
+Modifying the password may lead to odd behavior in some browsers if you do not clear your browser's cache of logged in HTTP sessions.
+</p>
 <div class="message_" id="authinfo">
 </div>

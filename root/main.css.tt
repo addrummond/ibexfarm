@@ -257,9 +257,11 @@ h2.expheader {
     padding-top: 1em;
 }
 
-p.pwdisclaimer {
+p.pwddisclaimer {
     margin-top: 0;
     padding-top: 0;
+    margin-bottom: 1em;
+    padding-bottom: 0;
 }
 
 p.nasty {
@@ -273,3 +275,6 @@ form.delete_account {
     margin-right: auto;
     display: table;
 }
+
+#authinfo div { text-align: left; }
+

@@ -673,7 +673,7 @@ sub get_experiment_auth_status :Path("get_experiment_auth_status") {
         my $contents = <$auth>;
         close $auth or die "Unable to close 'AUTH' file: $!";
         chomp $contents;
-        if ((! $contents) || $contents =~ /\s*/) {
+        if ((! $contents) || $contents =~ /^\s*$/) {
             $c->detach($c->view("JSON"));
         }
         else {
@@ -704,7 +704,7 @@ sub password_protect_experiment :Path("password_protect_experiment") {
                            IbexFarm->config->{ibex_archive_root_dir},
                            'AUTH');
     if ($c->req->params->{password}) {
-        my $username = $pwp->password_protect_experiment($c->user->username, $expname, $c->req->params->{password});
+        $username = $pwp->password_protect_experiment($c->user->username, $expname, $c->req->params->{password});
         open my $auth, ">$authfile";
         print $auth $username;
         close $auth or die "Unable to close 'AUTH' file: $!";

@@ -365,10 +365,12 @@ $.widget("ui.browseDir", {
 });
 
 $(document).ready(function () {
-    function isprotectedp(username) {
+    function isprotectedp(username, newp) {
         return $("<p>").addClass("auth_msg")
-                       .append("This experiment is password protected; the username is ")
-                       .append("<i>").text(username);
+                       .append(newp ? "The password has been set for this experiment; the username is " :
+                                      "This experiment is password protected; the username is ")
+                       .append($("<b>").text(username))
+                       .append(".");
     }
     function isnotprotectedp () {
         return $("<p>").addClass("auth_msg").text("This experiment is not password protected.");
@@ -388,16 +390,19 @@ $(document).ready(function () {
                     .addClass("pwadder")
                     .append(pwinp = $("<input type='password' size='10'>"))
                     .append(submit = $("<input type='submit' value='Add/change password'>")));
-        submit.click(function () {
+        function handle() {
             spinnify($("#authinfo"),
                      $.post(BASE_URI + 'ajax/password_protect_experiment/' + escape(EXPERIMENT),
                             { password: pwinp.attr('value') },
                             function (result) {
                                 // This can't fail.
-                                $("#authinfo").find(".auth_msg").replaceWith(isprotectedp(result.username).flash());
+                                pwinp.attr('value', '');
+                                $("#authinfo").find(".auth_msg").replaceWith(isprotectedp(result.username, true).flash({type: 'message'}));
                             },
                             "json"));
-        });
+        };
+        submit.click(handle);
+        pwinp.keypress(function (e) { if (e.which == 13 /*return*/) { handle(); } });
 
         // We don't spinnify this, as that leads to to a surfeit of spinners on page load.
         $.getJSON(BASE_URI + 'ajax/get_dirs', function (data) {

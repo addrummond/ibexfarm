@@ -6,6 +6,7 @@ use strict;
 use base 'IbexFarm::PasswordProtectExperiment::Factory';
 
 use IbexFarm;
+use File::Spec::Functions qw( catdir catfile );
 
 my $getedir = sub {
     my ($username, $expname) = @_;
@@ -22,7 +23,7 @@ my $getedir = sub {
 };
 
 sub password_protect_experiment {
-    my ($username, $expname, $password) = @_;
+    my ($self, $username, $expname, $password) = @_;
 
     my $edir = $getedir->($username, $expname);
 
@@ -36,10 +37,10 @@ sub password_protect_experiment {
            $uname,
            $password);
     if ($? != 0) {
-        die "Failure ($?) executing " . IbexFarm->config->{password_protect_apache}->{htpasswd};
+        die "Failure ($?) executing " . IbexFarm->config->{password_protect_apache}->{htpasswd} . " for username $uname";
     }
 
-    open my $htaccess, catfile($edir, '.htaccess') or die "Unable to create .htaccess file: $!";
+    open my $htaccess, ">" . catfile($edir, '.htaccess') or die "Unable to create .htaccess file (" . catfile($edir, '.htaccess') . "): $!";
     my $ufile = IbexFarm->config->{password_protect_apache}->{passwd_file};
     print $htaccess <<END
 AuthType Basic

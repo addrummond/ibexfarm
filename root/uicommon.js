@@ -48,11 +48,10 @@ add2("toggle");
 function spinnify(spincontainer, xmlhttp, errorCallback) {
     var spinner;
     var haveAppendedSpinner = false;
-    var timeoutId = setTimeout(function () {
-        spincontainer.append(spinner = $("<div>")
-                             .css('width', 16).css('height', 16)
-                             .css('background-image', "url('" + BASE_URI + 'static/images/ajax-loader.gif' + "')"))
-    }, 500);
+    spinner = $("<div>")
+              .css('width', 16).css('height', 16)
+              .css('background-image', "url('" + BASE_URI + 'static/images/ajax-loader.gif' + "')");
+    var timeoutId = setTimeout(function () { spincontainer.append(spinner); }, 500);
     xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState == 4) {
             clearTimeout(timeoutId);
@@ -65,10 +64,11 @@ function spinnify(spincontainer, xmlhttp, errorCallback) {
 
 $.widget("ui.flash", {
     _init: function () {
-        this.element.css('background-color', 'white');
         this.element.attr('id', 'highlighted');
         var t = this;
-        this.element.effect("highlight", {color: '#BD2031'}, 5000, function () {
+        var color = '#BD2031';
+        if (this.options.type == 'message') { color = 'yellow'; }
+        this.element.effect("highlight", {color: color}, 2500, function () {
             t.element.attr('id', null);
         });
     }
