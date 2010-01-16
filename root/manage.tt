@@ -19,7 +19,7 @@ Go to the <a href="[% c.uri_for("/myaccount") %]">my account</a> page to view yo
 <i>The level of security provided by this form of password protection is very basic. Don't rely on it to hide any sensitive information.</i>
 </p>
 <p class="smallprint pwddisclaimer">
-Modifying the password may lead to odd behavior in some browsers if you do not clear your browser's cache of logged in HTTP sessions.
+Modifying the password may lead to odd behavior in some browsers if you do not clear your browser's cache of logged-in HTTP sessions.
 </p>
 <div class="message_" id="authinfo">
 </div>
