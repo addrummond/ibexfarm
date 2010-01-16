@@ -22,13 +22,14 @@ my $get_experiment_count = sub {
         my $DIR;
         opendir $DIR, catdir(IbexFarm->config->{deployment_dir}) or return $experiment_count_cache;
         while (defined (my $e = readdir($DIR))) {
+            next if $e =~ /^\./;
             if (-d catdir(IbexFarm->config->{deployment_dir}, $e)) {
                 my $DIR2;
                 unless (opendir $DIR2, catdir(IbexFarm->config->{deployment_dir}, $e)) {
                     close $DIR;
                     return $experiment_count_cache;
                 }
-                while (defined readdir($DIR2)) { ++$count; }
+                while (defined (my $d = readdir($DIR2))) { ++$count if ($e !~ /^\./); }
                 closedir $DIR2;
             }
         }
