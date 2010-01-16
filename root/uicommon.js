@@ -103,7 +103,7 @@ $.widget("ui.areYouSure", {
 
             t.options.actionCallback();
         });
-    },
+    }
 });
 
 $.widget("ui.rename", {
