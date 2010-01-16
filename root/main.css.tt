@@ -284,3 +284,12 @@ p.goto {
     font-style: italic;
 }
 
+.ok { font-weight: bold; }
+
+.oklink {
+    cursor: pointer;
+    text-decoration: none;
+}
+.oklink:hover {
+    text-decoration: underline;
+}

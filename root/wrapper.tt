@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+[%# <?xml version="1.0" encoding="UTF-8"?>%]
 [% USE Filter.Minify.CSS %]
 [% USE Filter.Minify.JavaScript %]
 [% CSS_FILTER = c.debug ? "repeat" : "minify_css" %]
 [% JS_FILTER = c.debug ? "repeat" : "minify_js" %]
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>

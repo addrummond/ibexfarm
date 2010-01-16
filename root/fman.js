@@ -16,6 +16,21 @@ generateProgressID = function () {
 }
 })();
 
+// For giving a message the brush off.
+$.widget("ui.ok", {
+    _init: function () {
+        this.element.addClass("ok");
+
+        var sp;
+        this.element
+            .append(" (")
+            .append(sp = $("<span>").addClass("oklink").text("OK"))
+            .append(")");
+ 
+        if (this.options.click) sp.click(this.options.click);
+    }
+});
+
 $.widget("ui.browseFile", {
     _init: function () {
         this.element.addClass("file").addClass(this.options.writable ? "writable" : "unwritable");
@@ -222,16 +237,12 @@ $.widget("ui.browseFile", {
 
                     if (! response.match(/^\s*$/)) {
                         ulmsg.addClass("error");
-                        ulmsg.html(response)
-                            .append(" (")
-                            .append($("<span>").addClass("ok").text("OK").click(function () { ulinfo.hide("normal"); }))
-                            .append(")");
+                        ulmsg.html(response).append($("<span>").ok({click: function () { ulinfo.hide("normal"); }}));
                     }
                     else {
                         ulmsg.empty();
-                        ulmsg.append("Upload complete (")
-                             .append($("<span>").addClass("ok").text("OK").click(function () { ulinfo.hide("normal"); }))
-                             .append(")");
+                        ulmsg.addClass("message");
+                        ulmsg.append($("<span>").text("Upload complete").append($("<span>").ok({click: function () { ulinfo.hide("normal"); }})));
                     }
                 }
             });

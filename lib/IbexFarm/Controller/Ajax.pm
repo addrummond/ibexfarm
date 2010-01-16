@@ -543,7 +543,7 @@ sub upload_file :Path("upload_file") {
                                               $expname,
                                               IbexFarm->config->{ibex_archive_root_dir}));
             my $fff = catfile($dir, $fname);
-            if ((-e $file) && (! grep { $_ eq $fff } @wables)) {
+            if ((-e $file) && (! grep { $check_match->($_, $fff); } @wables)) {
                 ajax_headers($c, 'text/html', 'UTF-8');
                 $c->res->body("You do not have permission to upload to this location.");
             }
