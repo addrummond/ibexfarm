@@ -388,59 +388,67 @@ $.widget("ui.browseDir", {
     }
 });
 
-$(document).ready(function () {
-    function isprotectedp(username, newp) {
-        return $("<p>").addClass("auth_msg")
-                       .append(newp ? "The password has been set for this experiment; the username is " :
-                                      "This experiment is password protected; the username is ")
-                       .append($("<b>").text(username))
-                       .append(".");
-    }
-    function isnotprotectedp () {
-        return $("<p>").addClass("auth_msg").text("This experiment is not password protected.");
-    }
-
-    spinnify($("#authinfo"), $.getJSON(BASE_URI + 'ajax/get_experiment_auth_status/' + escape(EXPERIMENT), function (result) {
-        if (result.username) {
-            $("#authinfo").append(isprotectedp(result.username));
+$.widget("ui.pwmanage", {
+    _init: function () {
+        var t = this;
+ 
+        function isprotectedp(username, newp) {
+            return $("<p>").addClass("auth_msg")
+                           .append(newp ? "The password has been set for this experiment; the username is " :
+                                          "This experiment is password protected; the username is ")
+                           .append($("<b>").text(username))
+                           .append(".");
         }
-        else {
-            $("#authinfo").append(isnotprotectedp());
+        function isnotprotectedp () {
+            return $("<p>").addClass("auth_msg").text("This experiment is not password protected.");
         }
-        var pwinp;
-        var submit;
-        var rem;
-        $("#authinfo")
-            .append($("<div>")
-                    .addClass("pwadder")
-                    .append(pwinp = $("<input type='password' size='10'>"))
-                    .append(submit = $("<input type='submit' value='" + (result.username ? "Change " : "Add ") + "password'>")))
-            .append(!result.username ? null : rem = $("<p>")
-                    .addClass("pwremover")
-                    .append(rem = $("<span>")
-                            .addClass("linklike")
-                            .html("&raquo; Remove password protection")));
-        function handle(pw) {
-            spinnify($("#authinfo"),
-                     $.post(BASE_URI + 'ajax/password_protect_experiment/' + escape(EXPERIMENT),
-                            { password: pw },
-                            function (result) {
-                                // This can't fail.
-                                pwinp.attr('value', '');
-                                $("#authinfo").find(".auth_msg").replaceWith(isprotectedp(result.username, true).flash({type: 'message'}));
-                            },
-                            "json"));
-        };
-        submit.click(function () { handle(pwinp.attr('value')); });
-        pwinp.keypress(function (e) { if (e.which == 13 /*return*/) { handle(pwinp.attr('value')); } });
-        if (rem) rem.keypress(function () { handle(); });
 
-        // We don't spinnify this, as that leads to to a surfeit of spinners on page load.
-        $.getJSON(BASE_URI + 'ajax/get_dirs', function (data) {
-            var sdirs = data.dirs.sort();
-            for (var i = 0; i < data.dirs.length; ++i) {
-                $("#files").append($("<div>").browseDir({ dir: sdirs[i] }));
+        spinnify(t.element, $.getJSON(BASE_URI + 'ajax/get_experiment_auth_status/' + escape(EXPERIMENT), function (result) {
+            if (result.username) {
+                t.element.append(isprotectedp(result.username));
             }
-        })
-    }));
+            else {
+                t.element.append(isnotprotectedp());
+            }
+            var pwinp;
+            var submit;
+            var rem;
+            t.element
+                .append($("<div>")
+                        .addClass("pwadder")
+                        .append(pwinp = $("<input type='password' size='10'>"))
+                        .append(submit = $("<input type='submit' value='" + (result.username ? "Change " : "Add ") + "password'>")))
+                .append(!result.username ? null : rem = $("<p>")
+                        .addClass("pwremover")
+                        .append(rem = $("<span>")
+                                .addClass("linklike")
+                                .html("&raquo; Remove password protection")));
+            function handle(pw) {
+                spinnify(t.element,
+                         $.post(BASE_URI + 'ajax/password_protect_experiment/' + escape(EXPERIMENT),
+                                { password: pw },
+                                function (result) {
+                                    // This can't fail.
+                                    pwinp.attr('value', '');
+                                    t.element.find(".auth_msg").replaceWith(isprotectedp(result.username, true).flash({type: 'message'}));
+                                },
+                                "json"));
+            }
+            submit.click(function () { handle(pwinp.attr('value')); });
+            pwinp.keypress(function (e) { if (e.which == 13 /*return*/) { handle(pwinp.attr('value')); } });
+            if (rem) rem.keypress(function () { handle(); });
+        }));
+    }
+});
+
+$(document).ready(function () {
+    $("#authinfo").pwmanage();
+
+    // We don't spinnify this, as that leads to to a surfeit of spinners on page load.
+    $.getJSON(BASE_URI + 'ajax/get_dirs', function (data) {
+        var sdirs = data.dirs.sort();
+        for (var i = 0; i < data.dirs.length; ++i) {
+            $("#files").append($("<div>").browseDir({ dir: sdirs[i] }));
+        }
+    })
 });
