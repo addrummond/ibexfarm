@@ -409,15 +409,21 @@ $(document).ready(function () {
         }
         var pwinp;
         var submit;
+        var rem;
         $("#authinfo")
             .append($("<div>")
                     .addClass("pwadder")
                     .append(pwinp = $("<input type='password' size='10'>"))
-                    .append(submit = $("<input type='submit' value='Add/change password'>")));
-        function handle() {
+                    .append(submit = $("<input type='submit' value='" + (result.username ? "Change " : "Add ") + "password'>")))
+            .append(!result.username ? null : rem = $("<p>")
+                    .addClass("pwremover")
+                    .append(rem = $("<span>")
+                            .addClass("linklike")
+                            .html("&raquo; Remove password protection")));
+        function handle(pw) {
             spinnify($("#authinfo"),
                      $.post(BASE_URI + 'ajax/password_protect_experiment/' + escape(EXPERIMENT),
-                            { password: pwinp.attr('value') },
+                            { password: pw },
                             function (result) {
                                 // This can't fail.
                                 pwinp.attr('value', '');
@@ -425,8 +431,9 @@ $(document).ready(function () {
                             },
                             "json"));
         };
-        submit.click(handle);
-        pwinp.keypress(function (e) { if (e.which == 13 /*return*/) { handle(); } });
+        submit.click(function () { handle(pwinp.attr('value')); });
+        pwinp.keypress(function (e) { if (e.which == 13 /*return*/) { handle(pwinp.attr('value')); } });
+        if (rem) rem.keypress(function () { handle(); });
 
         // We don't spinnify this, as that leads to to a surfeit of spinners on page load.
         $.getJSON(BASE_URI + 'ajax/get_dirs', function (data) {
