@@ -1,4 +1,5 @@
 var MAX_GETPROG_FAILS = 10;
+var UPLOAD_PROGRESS_INTERVAL = 300;
 
 function show_date (date) {
     return date[0] + '-' + date[1] + '-' + date[2] + ' ' + date[3] + ':' + date[4] + ':' + date[5];
@@ -201,7 +202,7 @@ $.widget("ui.browseFile", {
                             clearInterval(intervalId);
                             return;
                         }
-                        $.getJSON(
+                        cachedGetJSON(
                             BASE_URI + 'progress?progress_id=' + progressId,
                             function (data) {
                                 if (! (data && ((data.received==0) || data.received) && data.size))
@@ -227,7 +228,7 @@ $.widget("ui.browseFile", {
                                 }
                             }
                         );
-                    }, 500);
+                    }, UPLOAD_PROGRESS_INTERVAL);
 
                     return true; // Don't cancel upload.
                 },
@@ -313,7 +314,7 @@ $.widget("ui.browseDir", {
                             clearInterval(intervalId);
                             return;
                         }
-                        $.getJSON(
+                        cachedGetJSON(
                             BASE_URI + 'progress?progress_id=' + progressId
                             ,
                             function (data) {
@@ -340,7 +341,7 @@ $.widget("ui.browseDir", {
                                 }
                             }
                         );
-                    }, 500);
+                    }, UPLOAD_PROGRESS_INTERVAL);
                 },
                 onComplete: function (file, response) {
                     ulmsglock = true;

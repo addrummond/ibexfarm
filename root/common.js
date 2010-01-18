@@ -6,6 +6,18 @@ $.getJSON=function(uri,callback){return $.post(uri,{},callback,"json");};
 
 $.ajaxSetup({cache: false, global: false});
 
+// Turning off caching can cause jQuery to send POST instead of GET.
+// For file progress queries, we must ensure that a GET request is sent.
+function cachedGetJSON(url, callback) {
+    return $.ajax({
+        cache: true,
+        url: url,
+        type: "GET",
+        success: callback,
+        dataType: "json"
+    });
+}
+
 $(document).ready(function () {
     // XHTML standards compliance idiocy.
     $("a[rel=external]").attr('target', '_blank');
