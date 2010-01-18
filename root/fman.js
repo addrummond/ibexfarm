@@ -433,8 +433,11 @@ $.widget("ui.pwmanage", {
                                  pwinp.attr('value', '');
                                  if (pw)
                                      t.element.find(".auth_msg").replaceWith(isprotectedp(result.username, true).flash({type: 'message'}));
-                                 else
-                                     t.element.find(".auth_msg").replaceWith(isnotprotectedp().flash({type: message}));
+                                 else {
+                                     t.element.find(".auth_msg").replaceWith(isnotprotectedp().flash({type: 'message'}));
+                                     $(".pwremover").remove();
+                                     submit.attr('value', 'Add password');
+                                 }
                              },
                              "json");
             }
