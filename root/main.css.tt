@@ -305,3 +305,7 @@ p.goto {
 .fpfooter {
     clear: both;
 }
+
+p.pwremover {
+    padding-top: 1em;
+}

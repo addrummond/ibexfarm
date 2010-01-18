@@ -56,7 +56,7 @@ END
 }
 
 sub password_unprotect_experiment {
-    my ($username, $expname) = @_;
+    my ($self, $username, $expname) = @_;
 
     my $edir = $getedir->($username, $expname);
     my $uname = "$username/$expname";
@@ -66,7 +66,9 @@ sub password_unprotect_experiment {
     }
 
     system(IbexFarm->config->{password_protect_apache}->{htpasswd},
-           "-D", $uname);
+           "-D",
+           IbexFarm->config->{password_protect_apache}->{passwd_file},
+           $uname);
     if ($? != 0) {
         die "Failure ($?) executing " . IbexFarm->config->{password_protect_apache}->{htpasswd};
     }

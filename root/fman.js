@@ -395,7 +395,7 @@ $.widget("ui.pwmanage", {
  
         function isprotectedp(username, newp) {
             return $("<p>").addClass("auth_msg")
-                           .append(newp ? "The password has been set for this experiment; the username is " :
+                           .append(newp ? "A password has been set for this experiment; the username is " :
                                           "This experiment is password protected; the username is ")
                            .append($("<b>").text(username))
                            .append(".");
@@ -419,7 +419,7 @@ $.widget("ui.pwmanage", {
                         .addClass("pwadder")
                         .append(pwinp = $("<input type='password' size='10'>"))
                         .append(submit = $("<input type='submit' value='" + (result.username ? "Change " : "Add ") + "password'>")))
-                .append(!result.username ? null : rem = $("<p>")
+                .append(!result.username ? null : $("<p>")
                         .addClass("pwremover")
                         .append(rem = $("<span>")
                                 .addClass("linklike")
@@ -427,17 +427,20 @@ $.widget("ui.pwmanage", {
             function handle(pw) {
                 spinnifyPOST(t.element,
                              BASE_URI + 'ajax/password_protect_experiment/' + escape(EXPERIMENT),
-                             { password: pw },
+                             pw ? { password: pw } : { remove: '1' },
                              function (result) {
                                  // This can't fail.
                                  pwinp.attr('value', '');
-                                 t.element.find(".auth_msg").replaceWith(isprotectedp(result.username, true).flash({type: 'message'}));
+                                 if (pw)
+                                     t.element.find(".auth_msg").replaceWith(isprotectedp(result.username, true).flash({type: 'message'}));
+                                 else
+                                     t.element.find(".auth_msg").replaceWith(isnotprotectedp().flash({type: message}));
                              },
                              "json");
             }
             submit.click(function () { handle(pwinp.attr('value')); });
             pwinp.keypress(function (e) { if (e.which == 13 /*return*/) { handle(pwinp.attr('value')); } });
-            if (rem) rem.keypress(function () { handle(); });
+            if (rem) rem.click(function () { handle(); });
         });
     }
 });
