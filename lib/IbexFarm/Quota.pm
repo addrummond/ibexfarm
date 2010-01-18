@@ -18,6 +18,7 @@ sub check_quota {
     my %dirs_file_counts;
     eval {
         find(sub {
+            return if $File::Find::name eq "." || $File::Find::name eq "..";
             if (-f $File::Find::name) {
 #                print STDERR $File::Find::name, "\n";
                 if (defined $dirs_file_counts{$File::Find::dir}) {
