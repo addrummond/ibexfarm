@@ -100,7 +100,7 @@ $.widget("ui.flash", {
         else {
             var old = this.element.css('background-color');
             this.element.css('background-color', color);
-            setTimeout(function () { t.element.css('background-color', old); }, 2500);
+            setTimeout(function () { t.element.attr('id', null); t.element.css('background-color', old); }, 2500);
         }
     }
 });
