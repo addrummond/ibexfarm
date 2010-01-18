@@ -18,14 +18,14 @@ $.widget("ui.addExperimentDialog", {
                                             .append(action = $("<input type='button' value='Create'>"))))));
 
         // Make sure the text box gets focus when it's shown.
-        $(this.element).bind("after_toggle_or_show", null, function () { input[0].focus(); });
+        $(this.element).bind("after_toggle_or_show", null, function () { input.get(0).focus(); });
 
         var t = this;
         function create () {
-            if (input[0].value.match(/^\s*$/))
+            if (input.attr('value').match(/^\s*$/))
                 return;
 
-            spinnifyPOST(t.element, BASE_URI + 'ajax/newexperiment', { name: input[0].value }, function (data) {
+            spinnifyPOST(t.element, BASE_URI + 'ajax/newexperiment', { name: input.attr('value') }, function (data) {
                 if (data.error) {
                     t.element.find("p.error").remove();
                     t.element.append($("<div>").append($("<p>")
@@ -39,7 +39,7 @@ $.widget("ui.addExperimentDialog", {
                     t.element.hide("normal", function () {
                         t.element.remove();
                         if (t.options.createdCallback)
-                            t.options.createdCallback(input[0].value);
+                            t.options.createdCallback(input.attr('value'));
                     });
                 }
             }, "json");

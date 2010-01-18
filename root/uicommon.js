@@ -161,8 +161,8 @@ $.widget("ui.rename", {
         this.rename_error = rename_error;
 
         // Highlight the input field text when it's shown.
-        rename_inp[0].select();
-        $(this.element).bind("after_toggle_or_show", null, function () { rename_inp[0].select(); });
+        rename_inp.get(0).select();
+        $(this.element).bind("after_toggle_or_show", null, function () { rename_inp.get(0).select(); });
         // Hide the error message when the whole thing is hidden.
         $(this.element).bind("before_hide", null, function () { rename_error.hide(); });
     },
