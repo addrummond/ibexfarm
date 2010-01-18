@@ -79,7 +79,7 @@ $.widget("ui.showExperiment", {
                             if (newname.match(/^\s*$/) || newname == t.options.experiment[0])
                                 return;
 
-                            var xmlhttp = $.post(BASE_URI + 'ajax/rename_experiment/' + escape(t.options.experiment[0]), { newname: newname }, function (data) { 
+                            spinnifyPOST(rename_opts, BASE_URI + 'ajax/rename_experiment/' + escape(t.options.experiment[0]), { newname: newname }, function (data) { 
                                 if (data.error) {
                                     rename_opts.rename("showError", data.error);
                                 }
@@ -89,11 +89,6 @@ $.widget("ui.showExperiment", {
                                         t.options.renamedCallback(newname);
                                 }
                             }, "json");
-                            xmlhttp.onreadystatechange = function () {
-                                if (xmlhttp.readyState == 4) {
-
-                                }
-                            }            
                         },
                         cancelCallback: function () {
                             rename_opts.hide("normal", function () {
@@ -109,7 +104,7 @@ $.widget("ui.showExperiment", {
                     ays.hide("normal", function () { lock = false; });
                 },
                 actionCallback: function () {
-                    var xmlhttp = $.post(BASE_URI + 'ajax/delete_experiment/' + escape(t.options.experiment[0]), { }, function (data) {
+                    spinnifyPOST(ays, BASE_URI + 'ajax/delete_experiment/' + escape(t.options.experiment[0]), { }, function (data) {
                         // Note that deleting an experiment cannot fail (barring some internal error in the server).
                         t.element.hide("slow", function () {
                             t.element.remove();
@@ -117,11 +112,6 @@ $.widget("ui.showExperiment", {
                                 t.options.removedCallback(t.options.experiment[0]);
                         });
                     }, "json");
-                    xmlhttp.onreadystatechange = function () {
-                        if (xmlhttp.readyState == 4) {
-
-                        }
-                    }
                 }
             }).hide());
 
