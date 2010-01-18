@@ -419,11 +419,16 @@ $.widget("ui.pwmanage", {
                         .addClass("pwadder")
                         .append(pwinp = $("<input type='password' size='10'>"))
                         .append(submit = $("<input type='submit' value='" + (result.username ? "Change " : "Add ") + "password'>")))
+            function addPwRemover() {
+                t.element
                 .append(!result.username ? null : $("<p>")
                         .addClass("pwremover")
                         .append(rem = $("<span>")
                                 .addClass("linklike")
                                 .html("&raquo; Remove password protection")));
+            }
+            addPwRemover();
+
             function handle(pw) {
                 spinnifyPOST(t.element,
                              BASE_URI + 'ajax/password_protect_experiment/' + escape(EXPERIMENT),
@@ -431,8 +436,12 @@ $.widget("ui.pwmanage", {
                              function (result) {
                                  // This can't fail.
                                  pwinp.attr('value', '');
-                                 if (pw)
+                                 if (pw) {
                                      t.element.find(".auth_msg").replaceWith(isprotectedp(result.username, true).flash({type: 'message'}));
+                                     submit.attr('value', 'Change password');
+                                     addPwRemover();
+                                     rem.click(function () { handle(); });
+                                 }
                                  else {
                                      t.element.find(".auth_msg").replaceWith(isnotprotectedp().flash({type: 'message'}));
                                      $(".pwremover").remove();
