@@ -1,6 +1,7 @@
 // IE caches all ajax GET requests, so when using IE always use POST.
 /*@cc_on
-$.getJSON=function(uri,callback){return $.post(uri,{},callback,"json");}
+$.getJSON=function(uri,callback){return $.post(uri,{},callback,"json");};
+(function(){var oldajax=$.ajax; $.ajax=function(opts){opts.type="POST";return oldajax(opts);};})();
 @*/
 
 $(document).ready(function () {
