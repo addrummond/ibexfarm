@@ -2,7 +2,7 @@
 [% META title = ' - Create an account' %]
 [% META js_scripts = 'newaccount.js' %]
 
-<h2>Create an ibex farm account</h2>
+<h2>Create an Ibex Farm account</h2>
 
 [% IF error %]
 <p class="error">
