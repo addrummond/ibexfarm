@@ -558,6 +558,9 @@ sub upload_file :Path("upload_file") {
                                    $expname,
                                    add => [ catfile($dir, $fname) ]);
 
+                # If the user is now in violation of their quota, keep a record of this.
+                $post_check_quota->($c);
+
                 ajax_headers($c, 'text/html', 'UTF-8');
                 $c->res->body(" "); # Have to set it to something because otherwise Catalyst thinks it hasn't been set (!)
                 return 0;

@@ -130,6 +130,10 @@ input {
     color: [% inner_background %];
     background-color: [% heading_color %];
 }
+.error a {
+    color: [% inner_background %];
+    font-weight: bold;
+}
 
 /* For 'this experiment is up at */
 div.message_ div { margin-top: 0.5em; text-align: center; }
