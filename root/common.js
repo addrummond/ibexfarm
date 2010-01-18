@@ -4,6 +4,8 @@ $.getJSON=function(uri,callback){return $.post(uri,{},callback,"json");};
 (function(){var oldajax=$.ajax;$.ajax=function(opts){opts.type="POST";return oldajax(opts);};})();
 @*/
 
+$.ajaxSetup({cache: false});
+
 $(document).ready(function () {
     // XHTML standards compliance idiocy.
     $("a[rel=external]").attr('target', '_blank');
