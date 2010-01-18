@@ -25,7 +25,7 @@ $.widget("ui.addExperimentDialog", {
             if (input[0].value.match(/^\s*$/))
                 return;
 
-            var xmlhttp = $.post(BASE_URI + 'ajax/newexperiment', { name: input[0].value }, function (data) {
+            spinnifyPOST(t.element, BASE_URI + 'ajax/newexperiment', { name: input[0].value }, function (data) {
                 if (data.error) {
                     t.element.find("p.error").remove();
                     t.element.append($("<div>").append($("<p>")

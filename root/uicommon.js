@@ -68,7 +68,6 @@ function spinnifyAjax(spincontainer, ajaxArgs) {
 function spinnifyPOST(spincontainer, url, args, callback, type) {
     return spinnifyAjax(spincontainer, {
         url: url,
-        contentType: "text/html; charset=UTF-8",
         data: args,
         type: "POST",
         success: callback,
@@ -78,7 +77,6 @@ function spinnifyPOST(spincontainer, url, args, callback, type) {
 function spinnifyGET(spincontainer, url, callback, type) {
     return spinnifyAjax(spincontainer, {
         url: url,
-        contentType: "text/html; charset=UTF-8",
         type: "GET",
         success: callback,
         dataType: type || "json"
