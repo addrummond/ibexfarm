@@ -184,7 +184,7 @@ $.widget("ui.experimentList", {
                                      .hide()));
             cexp.click(function () {
                 opts.toggle("normal");
-            });    
+            });
         });
     }
 });

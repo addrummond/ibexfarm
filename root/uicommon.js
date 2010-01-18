@@ -83,17 +83,28 @@ function spinnifyGET(spincontainer, url, callback, type) {
     });
 }
 
+(function (isChrome) {
 $.widget("ui.flash", {
     _init: function () {
         this.element.attr('id', 'highlighted');
         var t = this;
         var color = '#BD2031';
         if (this.options.type == 'message') { color = 'yellow'; }
-        this.element.effect("highlight", {color: color}, 2500, function () {
-            t.element.attr('id', null);
-        });
+        // WEIRD!
+        // 'highlight' effect appears not to work in Chrome (beta, OS X) (jQuery bug?)
+        if (! isChrome) {
+            this.element.effect("highlight", {color: color}, 2500, function () {
+                t.element.attr('id', null);
+            });
+        }
+        else {
+            var old = this.element.css('background-color');
+            this.element.css('background-color', color);
+            setTimeout(function () { t.element.css('background-color', old); }, 2500);
+        }
     }
 });
+})(navigator.userAgent && navigator.userAgent.search(/Chrome/) != -1);
 
 $.widget("ui.areYouSure", {
     _init: function () {
