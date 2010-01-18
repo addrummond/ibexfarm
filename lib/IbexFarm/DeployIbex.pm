@@ -33,7 +33,6 @@ my @WRITABLE = (
 sub deploy {
     my %args = @_;
     use YAML;
-    print STDERR "\n\n", YAML::Dump(\%args), "\n\n";
 
     IbexFarm::FNames::is_ok_fname($args{name}) or die "Bad name!";
 
