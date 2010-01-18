@@ -361,7 +361,7 @@ $.widget("ui.browseDir", {
             });
 
             if (data.not_present) {
-                t.element.append($("<tr>").append($("<td>").addClass("not_present").text("This directory is not present")));
+                table.append($("<tr>").append($("<td>").addClass("not_present").text("This directory is not present")));
             }
             else {
                 for (var i = 0; i < data.entries.length; ++i) {
@@ -372,7 +372,7 @@ $.widget("ui.browseDir", {
                     var modified = data.entries[i][3];
                     var writable = data.entries[i][4];
 
-                    t.element.append($("<tr>").append($("<td>").append($("<div>").browseFile({
+                    table.append($("<tr>").append($("<td>").append($("<div>").browseFile({
                         filename: filename,
                         highlight: filename == t.options.highlight,
                         size: size,
