@@ -50,7 +50,7 @@
 |
 <a href="[% c.uri_for("/newaccount") %]">create an account</a>
 [% END %] |
-<a href="http://code.google.com/p/webspr/wiki/Documentation">ibex docs</a>
+<a rel="external" href="http://code.google.com/p/webspr/wiki/Documentation03">ibex docs</a>
 [% IF c.user_exists %]
 <p>
 You are logged in as <a href="[% c.uri_for("/myaccount") %]">[% c.user.username %]</a> (<a href="[% c.uri_for("/logout") %]">logout</a>).
