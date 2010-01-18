@@ -421,13 +421,13 @@ $.widget("ui.pwmanage", {
                         .append(submit = $("<input type='submit' value='" + (result.username ? "Change " : "Add ") + "password'>")))
             function addPwRemover() {
                 t.element
-                .append(!result.username ? null : $("<p>")
+                .append($("<p>")
                         .addClass("pwremover")
                         .append(rem = $("<span>")
                                 .addClass("linklike")
                                 .html("&raquo; Remove password protection")));
             }
-            addPwRemover();
+            if (result.username) addPwRemover();
 
             function handle(pw) {
                 spinnifyPOST(t.element,
