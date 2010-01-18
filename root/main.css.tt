@@ -213,7 +213,6 @@ form.login td.submit input {
 }
 
 p.smallprint {
-    margin-top: 3em;
     font-size: [% stdsmall %];
     color: [% lightish %];
 }
@@ -292,4 +291,13 @@ p.goto {
 }
 .oklink:hover {
     text-decoration: underline;
+}
+
+.viewexamplebox {
+    margin-top: 0;
+    margin-bottom: 2em;
+}
+
+.fpfooter {
+    clear: both;
 }
