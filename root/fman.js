@@ -103,7 +103,7 @@ $.widget("ui.browseFile", {
                         if (newname.match(/^\s*$/) || newname == t.options.filename)
                             return;
 
-                        spinnify(spinContainer, $.post(BASE_URI + 'ajax/rename_file/' + escape(EXPERIMENT) + '/' + escape(t.options.dir) + '/' + escape(t.options.filename), { newname: newname }, function (data) {
+                        spinnifyPOST(spinContainer, BASE_URI + 'ajax/rename_file/' + escape(EXPERIMENT) + '/' + escape(t.options.dir) + '/' + escape(t.options.filename), { newname: newname }, function (data) {
                             if (data.error) {
                                 rename_opts.rename("showError", data.error);
                             }
@@ -112,7 +112,7 @@ $.widget("ui.browseFile", {
                                 if (t.options.renamedCallback)
                                     t.options.renamedCallback(newname)
                             }
-                        }, "json"));
+                        }, "json");
                     }
                 })
         ).append(
@@ -127,7 +127,7 @@ $.widget("ui.browseFile", {
                         });
                     },
                     actionCallback: function () {
-                        spinnify(spinContainer, $.getJSON(
+                        spinnifyGET(spinContainer,
                             BASE_URI +
                             'ajax/delete_file/' +
                             escape(EXPERIMENT) + '/' +
@@ -137,7 +137,7 @@ $.widget("ui.browseFile", {
                                 if (t.options.deletedCallback)
                                     t.options.deletedCallback();
                             }
-                        ));
+                        );
                     }
                 }).hide()
         );
@@ -258,7 +258,7 @@ $.widget("ui.browseDir", {
         this.element.append(spinContainer = $("<div>").css('float', 'left'));
 
         var t = this;
-        spinnify(spinContainer, $.getJSON(BASE_URI + 'ajax/browse?dir=' + escape(this.options.dir) + '&experiment=' + escape(EXPERIMENT), function (data) {
+        spinnifyGET(spinContainer, BASE_URI + 'ajax/browse?dir=' + escape(this.options.dir) + '&experiment=' + escape(EXPERIMENT), function (data) {
             t.element.addClass("dir");
 
             function refresh (highlight) {
@@ -384,7 +384,7 @@ $.widget("ui.browseDir", {
                     }))));
                 }
             }
-        }));
+        });
     }
 });
 
@@ -403,7 +403,7 @@ $.widget("ui.pwmanage", {
             return $("<p>").addClass("auth_msg").text("This experiment is not password protected.");
         }
 
-        spinnify(t.element, $.getJSON(BASE_URI + 'ajax/get_experiment_auth_status/' + escape(EXPERIMENT), function (result) {
+        spinnifyGET(t.element, BASE_URI + 'ajax/get_experiment_auth_status/' + escape(EXPERIMENT), function (result) {
             if (result.username) {
                 t.element.append(isprotectedp(result.username));
             }
@@ -424,20 +424,20 @@ $.widget("ui.pwmanage", {
                                 .addClass("linklike")
                                 .html("&raquo; Remove password protection")));
             function handle(pw) {
-                spinnify(t.element,
-                         $.post(BASE_URI + 'ajax/password_protect_experiment/' + escape(EXPERIMENT),
-                                { password: pw },
-                                function (result) {
-                                    // This can't fail.
-                                    pwinp.attr('value', '');
-                                    t.element.find(".auth_msg").replaceWith(isprotectedp(result.username, true).flash({type: 'message'}));
-                                },
-                                "json"));
+                spinnifyPOST(t.element,
+                             BASE_URI + 'ajax/password_protect_experiment/' + escape(EXPERIMENT),
+                             { password: pw },
+                             function (result) {
+                                 // This can't fail.
+                                 pwinp.attr('value', '');
+                                 t.element.find(".auth_msg").replaceWith(isprotectedp(result.username, true).flash({type: 'message'}));
+                             },
+                             "json");
             }
             submit.click(function () { handle(pwinp.attr('value')); });
             pwinp.keypress(function (e) { if (e.which == 13 /*return*/) { handle(pwinp.attr('value')); } });
             if (rem) rem.keypress(function () { handle(); });
-        }));
+        });
     }
 });
 

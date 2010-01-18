@@ -45,20 +45,44 @@ add2("toggle");
 // Code for doing ajax spinner thingy.
 // This waits 500ms before adding a spinner (distracting to have them
 // flash for <500ms).
-function spinnify(spincontainer, xmlhttp, errorCallback) {
-    var haveAppendedSpinner = false;
+function spinnifyAjax(spincontainer, ajaxArgs) {
+    var origError = ajaxArgs.error;
+    var origSuccess = ajaxArgs.success;
+
     var spinner = $("<div>")
                   .css('width', 16).css('height', 16)
                   .css('background-image', "url('" + BASE_URI + 'static/images/ajax-loader.gif' + "')");
     var timeoutId = setTimeout(function () { spincontainer.append(spinner); }, 500);
-    xmlhttp.onreadystatechange = function () {
-        if (xmlhttp.readyState == 4) {
-            clearTimeout(timeoutId);
-            spinner.remove();
-            if (xmlhttp.status != 200 && errorCallback)
-                errorCallback(xmlhttp);
-        }
-    }
+    ajaxArgs.error = function () {
+        clearTimeout(timeoutId);
+        spinner.remove();
+        if (origError) return origError();
+    };
+    ajaxArgs.success = function (data) {
+        clearTimeout(timeoutId);
+        spinner.remove();
+        if(origSuccess) { return origSuccess(data); }
+    };
+    return $.ajax(ajaxArgs);
+}
+function spinnifyPOST(spincontainer, url, args, callback, type) {
+    return spinnifyAjax(spincontainer, {
+        url: url,
+        contentType: "text/html; charset=UTF-8",
+        data: args,
+        type: "POST",
+        success: callback,
+        dataType: type
+    });
+}
+function spinnifyGET(spincontainer, url, callback, type) {
+    return spinnifyAjax(spincontainer, {
+        url: url,
+        contentType: "text/html; charset=UTF-8",
+        type: "GET",
+        success: callback,
+        dataType: type || "json"
+    });
 }
 
 $.widget("ui.flash", {
