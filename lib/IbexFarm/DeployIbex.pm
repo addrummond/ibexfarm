@@ -32,6 +32,8 @@ my @WRITABLE = (
 # Args: deployment_dir, ibex_archive, ibex_archive_root_dir, name, hashbang, external_config_url, pass_params, www_dir, www_dir_perms.
 sub deploy {
     my %args = @_;
+    use YAML;
+    print STDERR "\n\n", YAML::Dump(\%args), "\n\n";
 
     IbexFarm::FNames::is_ok_fname($args{name}) or die "Bad name!";
 
@@ -71,9 +73,11 @@ sub deploy {
             truncate $sdotpyfh, 0 or die "Unable to truncate server.py: $!";
             seek $sdotpyfh, 0, 0 or die "Unable to seek server.py: $!"; # Probably redundant.
             if ($args{hashbang}) { print $sdotpyfh "#!$args{hashbang}\n"; }
-            print $sdotpyfh "EXTERNAL_CONFIG_URL = ", $to_py_escaped_string->($args{external_config_url}), "\n";
-            print $sdotpyfh "EXTERNAL_CONFIG_PASS_PARAMS = " . ($args{pass_params} ? "True" : "False") . "\n";
-            print $sdotpyfh "EXTERNAL_CONFIG_METHOD = 'GET'\n\n";
+            if ($args{external_config_url}) {
+                print $sdotpyfh "EXTERNAL_CONFIG_URL = ", $to_py_escaped_string->($args{external_config_url}), "\n";
+                print $sdotpyfh "EXTERNAL_CONFIG_PASS_PARAMS = " . ($args{pass_params} ? "True" : "False") . "\n";
+                print $sdotpyfh "EXTERNAL_CONFIG_METHOD = 'GET'\n\n";
+            }
             print $sdotpyfh $contents;
             close $sdotpyfh or die "Unable to close server.py: $!";
 
