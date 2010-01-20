@@ -179,9 +179,20 @@ li { margin-left: [% stdindent_2 %]; padding-left: 0; }
     font-size: [% stdsmall %];
 }
 
+.writable {
+    color: [% text_color %];
+}
+.writable:visited {
+    color: [% text_color %];
+}
 .unwritable {
     color: [% lightish %];
 }
+.unwritable:visited {
+    color: [% lightish %];
+}
+.writable a { font-weight: normal; }
+.unwritable a { font-weight: normal; }
 .dir .upload {
     font-weight: normal;
     text-decoration: none;
@@ -230,6 +241,7 @@ p.smallprint a {
     font-style: italic;
 }
 
+/*.browseDir th { color: [% heading_color %]; }*/
 .browseDir { margin-bottom: 1em; }
 .browseDir a { font-size: [% stdsmall %]; }
 .browseDir .linklike { font-size: [% stdsmall %]; }

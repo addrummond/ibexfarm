@@ -48,7 +48,7 @@ $.widget("ui.browseFile", {
         var rename_opts;
         var ulinfo;
         var ulmsg;
-        var fname;
+        //var fname;
         var ncols = 0; // Keep track of number of cols in first <tr> so that we can set
                        // a colspan property later (gross eh?)
         var lock = false;
@@ -56,22 +56,17 @@ $.widget("ui.browseFile", {
             $("<table>")
                 .append($("<tr>")
                         .append(++ncols && (fname = ($("<td>")
-                                .text(this.options.filename))))
-                        .append(++ncols && $("<td>")
-                                .append(download = $("<div>")
-                                        .addClass("download_file")
-                                        .append("(")
-                                        .append($("<a>")
-                                                .attr('href', BASE_URI +
-                                                              'ajax/download/' + escape(EXPERIMENT) + '/' +
-                                                              escape(this.options.dir) + '/' +
-                                                              escape(this.options.filename))
-                                                .text("download"))
-                                        .append(this.options.writable ? "" : ")")))
+                                .append(download = $("<a>")
+                                                           .addClass(this.options.writable ? "writable" : "unwritable")
+                                                           .attr('href', BASE_URI +
+                                                                         'ajax/download/' + escape(EXPERIMENT) + '/' +
+                                                                         escape(this.options.dir) + '/' +
+                                                                         escape(this.options.filename))
+                                                           .text(this.options.filename)))))
                         .append(delete_ = ((! this.options.writable) ? null : ++ncols && $("<td>")
                                 .append($("<div>")
+                                        .append("&nbsp;(")
                                         .addClass("delete_file")
-                                        .append(" | ")
                                         .append($("<span>").addClass("linklike").text("delete")))))
                         .append(rename = ((! this.options.writable) ? null : ++ncols && $("<td>")
                                 .append($("<div>")
@@ -144,7 +139,8 @@ $.widget("ui.browseFile", {
         );
 
         if (this.options.highlight) {
-            fname.flash();
+            //fname.flash();
+            download.flash();
             window.location = "#highlighted";
         }
 
