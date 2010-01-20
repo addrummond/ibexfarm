@@ -23,5 +23,5 @@ Currently hosting <b>[% experiment_count %]</b> experiment[% IF experiment_count
 </p>
 [% END %]
 <p class="smallprint fpfooter [% IF experiment_count %]nasty[% END %]">
-The code for this site is BSD-licensed and available on <a href="http://github.com/addrummond/ibexfarm">github</a>.
+The code for this site is BSD-licensed and available on <a rel="external" href="http://github.com/addrummond/ibexfarm">github</a>.
 </p>
