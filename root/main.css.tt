@@ -135,6 +135,10 @@ input {
     font-weight: bold;
 }
 
+.experiment_list li {
+    padding-bottom: 0.5em;
+}
+
 /* For 'this experiment is up at */
 div.message_ div { margin-top: 0.5em; text-align: center; }
 
