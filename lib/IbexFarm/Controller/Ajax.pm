@@ -288,7 +288,8 @@ sub download :Path("download") {
     my $encoding = ref($decoder) ? $decoder->name : "UTF-8";
 
     ajax_headers($c, $DIRS_TO_TYPES{$dir}, $encoding);
-    $c->res->body($contents);
+    $c->res->body($contents || " ");
+    return 0;
 }
 
 sub experiments :Path("experiments") :Args(0) {
