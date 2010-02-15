@@ -48,7 +48,8 @@ my $get_default_config = sub {
 my $pre_check_quota = sub {
     my $c = shift;
 
-    return ! -f catfile(IbexFarm->config->{quota_record_dir}, "BAD_" . $c->user->username);
+    #return ! -f catfile(IbexFarm->config->{quota_record_dir}, "BAD_" . $c->user->username);
+    return 1;
 };
 
 my $post_check_quota = sub {
