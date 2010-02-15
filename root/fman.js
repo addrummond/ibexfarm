@@ -267,6 +267,7 @@ $.widget("ui.browseDir", {
             var table;
             var upload;
             var upload_msg;
+            var refresh_link;
             t.element.append(table = $("<table>")
                              .append($("<tr>")
                                      .append($("<th>")
@@ -274,10 +275,18 @@ $.widget("ui.browseDir", {
                                              .append(upload = $("<span>")
                                                      .addClass("linklike")
                                                      .text("upload a file to this directory"))
+                                             .append(" | ")
+                                             .append(refresh_link = $("<span>")
+                                                     .addClass("linklike")
+                                                     .text("refresh"))
                                              .append(")")))
                              .append($("<tr>")
                                      .append($("<td>")
                                              .append(upload_msg = $("<div>").hide()))));
+
+            refresh_link.click(function () {
+                refresh();
+            });
 
             var progressId = generateProgressID();
             var intervalId;
