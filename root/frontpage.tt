@@ -22,6 +22,10 @@ Upload data files in your browser, then send your participants a link to the exp
 Currently hosting <b>[% experiment_count %]</b> experiment[% IF experiment_count != 1 %]s[% END %].
 </p>
 [% END %]
+<p class="smallprint fpfooter">
+Contact <a href="mailto:[% webmaster_email %]">alexdd@umd.edu</a> if you have any issues.
+</p>
 <p class="smallprint fpfooter [% IF experiment_count %]nasty[% END %]">
 The code for this site is BSD-licensed and available on <a rel="external" href="http://github.com/addrummond/ibexfarm">github</a>.
 </p>
+
