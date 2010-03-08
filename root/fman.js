@@ -48,7 +48,7 @@ $.widget("ui.browseFile", {
         var rename_opts;
         var ulinfo;
         var ulmsg;
-        var fname;
+        //var fname;
         var ncols = 0; // Keep track of number of cols in first <tr> so that we can set
                        // a colspan property later (gross eh?)
         var lock = false;
@@ -56,22 +56,17 @@ $.widget("ui.browseFile", {
             $("<table>")
                 .append($("<tr>")
                         .append(++ncols && (fname = ($("<td>")
-                                .text(this.options.filename))))
-                        .append(++ncols && $("<td>")
-                                .append(download = $("<div>")
-                                        .addClass("download_file")
-                                        .append("(")
-                                        .append($("<a>")
-                                                .attr('href', BASE_URI +
-                                                              'ajax/download/' + escape(EXPERIMENT) + '/' +
-                                                              escape(this.options.dir) + '/' +
-                                                              escape(this.options.filename))
-                                                .text("download"))
-                                        .append(this.options.writable ? "" : ")")))
+                                .append(download = $("<a>")
+                                                           .addClass(this.options.writable ? "writable" : "unwritable")
+                                                           .attr('href', BASE_URI +
+                                                                         'ajax/download/' + escape(EXPERIMENT) + '/' +
+                                                                         escape(this.options.dir) + '/' +
+                                                                         escape(this.options.filename))
+                                                           .text(this.options.filename)))))
                         .append(delete_ = ((! this.options.writable) ? null : ++ncols && $("<td>")
                                 .append($("<div>")
+                                        .append("&nbsp;(")
                                         .addClass("delete_file")
-                                        .append(" | ")
                                         .append($("<span>").addClass("linklike").text("delete")))))
                         .append(rename = ((! this.options.writable) ? null : ++ncols && $("<td>")
                                 .append($("<div>")
@@ -144,7 +139,8 @@ $.widget("ui.browseFile", {
         );
 
         if (this.options.highlight) {
-            fname.flash();
+            //fname.flash();
+            download.flash();
             window.location = "#highlighted";
         }
 
@@ -271,6 +267,7 @@ $.widget("ui.browseDir", {
             var table;
             var upload;
             var upload_msg;
+            var refresh_link;
             t.element.append(table = $("<table>")
                              .append($("<tr>")
                                      .append($("<th>")
@@ -278,10 +275,18 @@ $.widget("ui.browseDir", {
                                              .append(upload = $("<span>")
                                                      .addClass("linklike")
                                                      .text("upload a file to this directory"))
+                                             .append(" | ")
+                                             .append(refresh_link = $("<span>")
+                                                     .addClass("linklike")
+                                                     .text("refresh"))
                                              .append(")")))
                              .append($("<tr>")
                                      .append($("<td>")
                                              .append(upload_msg = $("<div>").hide()))));
+
+            refresh_link.click(function () {
+                refresh();
+            });
 
             var progressId = generateProgressID();
             var intervalId;
@@ -395,7 +400,7 @@ $.widget("ui.pwmanage", {
  
         function isprotectedp(username, newp) {
             return $("<p>").addClass("auth_msg")
-                           .append(newp ? "The password has been set for this experiment; the username is " :
+                           .append(newp ? "A password has been set for this experiment; the username is " :
                                           "This experiment is password protected; the username is ")
                            .append($("<b>").text(username))
                            .append(".");
@@ -419,25 +424,40 @@ $.widget("ui.pwmanage", {
                         .addClass("pwadder")
                         .append(pwinp = $("<input type='password' size='10'>"))
                         .append(submit = $("<input type='submit' value='" + (result.username ? "Change " : "Add ") + "password'>")))
-                .append(!result.username ? null : rem = $("<p>")
+            function addPwRemover() {
+                t.element
+                .append($("<p>")
                         .addClass("pwremover")
                         .append(rem = $("<span>")
                                 .addClass("linklike")
                                 .html("&raquo; Remove password protection")));
+            }
+            if (result.username) addPwRemover();
+
             function handle(pw) {
                 spinnifyPOST(t.element,
                              BASE_URI + 'ajax/password_protect_experiment/' + escape(EXPERIMENT),
-                             { password: pw },
+                             pw ? { password: pw } : { remove: '1' },
                              function (result) {
                                  // This can't fail.
                                  pwinp.attr('value', '');
-                                 t.element.find(".auth_msg").replaceWith(isprotectedp(result.username, true).flash({type: 'message'}));
+                                 if (pw) {
+                                     t.element.find(".auth_msg").replaceWith(isprotectedp(result.username, true).flash({type: 'message'}));
+                                     submit.attr('value', 'Change password');
+                                     addPwRemover();
+                                     rem.click(function () { handle(); });
+                                 }
+                                 else {
+                                     t.element.find(".auth_msg").replaceWith(isnotprotectedp().flash({type: 'message'}));
+                                     $(".pwremover").remove();
+                                     submit.attr('value', 'Add password');
+                                 }
                              },
                              "json");
             }
             submit.click(function () { handle(pwinp.attr('value')); });
             pwinp.keypress(function (e) { if (e.which == 13 /*return*/) { handle(pwinp.attr('value')); } });
-            if (rem) rem.keypress(function () { handle(); });
+            if (rem) rem.click(function () { handle(); });
         });
     }
 });
