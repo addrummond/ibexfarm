@@ -48,10 +48,13 @@ my $get_default_config = sub {
 my $pre_check_quota = sub {
     my $c = shift;
 
+    return 1 unless (IbexFarm->config->{enforce_quotas});
     return ! -f catfile(IbexFarm->config->{quota_record_dir}, "BAD_" . $c->user->username);
 };
 
 my $post_check_quota = sub {
+    return 1 unless (IbexFarm->config->{enforce_quotas});
+
     my $c = shift;
 
     my $qdir = catdir(IbexFarm->config->{deployment_dir},

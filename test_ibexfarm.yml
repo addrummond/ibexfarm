@@ -10,6 +10,7 @@ ibex_version: "3.0"
 deployment_dir: "/tmp"
 deployment_www_dir: "/tmp/www/"
 
+enforce_quotas: 0
 quota_max_files_in_dir: 500
 quota_max_file_size: 1048576
 quota_max_total_size: 1048576
