@@ -35,6 +35,7 @@ my $get_default_config = sub {
         CSS_INCLUDES_DIR => "css_includes",
         DATA_INCLUDES_DIR => "data_includes",
         OTHER_INCLUDES_DIR => "other_includes",
+        CHUNK_INCLUDES_DIR => "chunk_includes",
         STATIC_FILES_DIR => "www",
         CACHE_DIR => "cache",
         JS_INCLUDES_LIST => ["block"],
