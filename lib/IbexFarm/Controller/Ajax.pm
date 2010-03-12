@@ -137,20 +137,10 @@ sub config_ : Path("config") :Args(0) { # 'config' seems to be reserved by Catal
     $c->detach($c->view("JSON"));
 }
 
-my @DIRS = qw( js_includes css_includes data_includes server_state results );
-my %DIRS_TO_TYPES = (
-    js_includes => 'text/javascript',
-    css_includes => 'text/css',
-    data_includes => 'text/javascript',
-    server_state => 'text/plain',
-    results => 'text/plain'
-);
-my %OPTIONAL_DIRS = ( server_state => 1, results => 1 );
-
 sub get_dirs :Path("get_dirs") :Args(0) {
     my ($self, $c) = @_;
 
-    $c->stash->{dirs} = \@DIRS;
+    $c->stash->{dirs} = IbexFarm->config->{dirs};
     $c->detach($c->view("JSON"));
 }
 
@@ -196,7 +186,7 @@ sub browse :Path("browse") :Args(0) {
 
     $c->detach('unauthorized') unless ($c->user_exists);
     $c->detach('bad_request') unless ($ps->{dir} &&
-                                      (grep { $_ eq $ps->{dir} } @DIRS) &&
+                                      (grep { $_ eq $ps->{dir} } @{IbexFarm->config->{dirs}}) &&
                                       $ps->{experiment} &&
                                       IbexFarm::FNames::is_ok_fname($ps->{experiment}));
 
@@ -207,7 +197,7 @@ sub browse :Path("browse") :Args(0) {
     my $dir = catdir($base, $ps->{dir});
 
     if (! -d $dir) {
-        if ($OPTIONAL_DIRS{$ps->{dir}}) {
+        if (IbexFarm->config->{optional_dirs}{$ps->{dir}}) {
             $c->stash->{not_present} = \1;
             $c->detach($c->view("JSON"));
             return;
@@ -267,7 +257,7 @@ sub download :Path("download") {
     $c->detach('bad_request') unless scalar(@_) == 3;
     my ($expname, $dir, $fname) = @_;
 
-    $c->detach('bad_request') unless ((grep { $_ eq $dir } @DIRS) &&
+    $c->detach('bad_request') unless ((grep { $_ eq $dir } @{IbexFarm->config->{dirs}}) &&
                                       IbexFarm::FNames::is_ok_fname($expname));
 
     # Neither 'dir' nor 'file' params should contain separators (this
@@ -290,7 +280,7 @@ sub download :Path("download") {
     my $decoder = Encode::Guess->guess($contents);
     my $encoding = ref($decoder) ? $decoder->name : "UTF-8";
 
-    ajax_headers($c, $DIRS_TO_TYPES{$dir}, $encoding);
+    ajax_headers($c, IbexFarm->config->{dirs_to_types}{$dir}, $encoding);
     $c->res->body($contents || " ");
     return 0;
 }
@@ -511,7 +501,7 @@ sub upload_file :Path("upload_file") {
     }
 
     # Check that the dir is ok.
-    $c->detach('bad_request') unless (grep { $_ eq $dir } @DIRS );
+    $c->detach('bad_request') unless (grep { $_ eq $dir } @{IbexFarm->config->{dirs}} );
     # It may be that the dir doesn't exist yet ('results', 'server_state'), in
     # which case we create it.
     my $absdir = catdir(IbexFarm->config->{deployment_dir},

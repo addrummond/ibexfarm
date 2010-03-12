@@ -4,11 +4,24 @@ name: IbexFarm
 webmaster_name: "Alex"
 webmaster_email: "a.d.drummond@gmail.com"
 
-ibex_archive: "/tmp/ibex-beta.tar.gz"
-ibex_archive_root_dir: "ibex-beta"
+ibex_archive: "/tmp/ibex-deploy.tar.gz"
+ibex_archive_root_dir: "ibex-deploy"
 ibex_version: "3.0"
 deployment_dir: "/tmp"
 deployment_www_dir: "/tmp/www/"
+
+dirs: [ "js_includes", "css_includes", "data_includes", "chunk_includes", "server_state", "results" ]
+dirs_to_types:
+  js_includes: 'text/javascript'
+  css_includes: 'text/css'
+  data_includes: 'text/javascript'
+  chunk_includes: 'text/html'
+  server_state: 'text/plain'
+  results: 'text/plain'
+optional_dirs:
+  server_state: 1
+  results: 1
+writable: [ "data_includes/*", "results/*", "server_state/*", "chunk_includes/*" ]
 
 enforce_quotas: 0
 quota_max_files_in_dir: 500

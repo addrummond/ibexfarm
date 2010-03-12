@@ -23,11 +23,10 @@ my $to_py_escaped_string = sub {
     return $r;
 };
 
-my @WRITABLE = (
-    catfile('data_includes', '*'),
-    catfile('results', '*'),
-    catfile('server_state', '*')
-);
+my @WRITABLE;
+for my $p (@{IbexFarm->config->{writable}}) {
+    push @WRITABLE, catfile(split /\//, $p);
+}
 
 # Args: deployment_dir, ibex_archive, ibex_archive_root_dir, name, hashbang, external_config_url, pass_params, www_dir, www_dir_perms.
 sub deploy {
