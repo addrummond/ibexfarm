@@ -604,6 +604,20 @@ sub rename_experiment :Path("rename_experiment") {
             die "Inconsistency!" unless -d $ewwwdir && ! -e $newewwwdir;
         }
 
+        # Update the working dir config paramater.
+        open my $cnf, catfile($edir, IbexFarm->config->{ibex_archive_root_dir}, 'CONFIG')
+            or die "Unable to open 'CONFIG' for reading: $!";
+        local $/;
+        my $contents = <$cnf>;
+        die "Oh dear" unless (defined $contents);
+        my $json = JSON::decode_json($contents);
+        die "Bad JSON in 'CONFIG' file." unless (ref($json) eq "HASH" && $json->{IBEX_WORKING_DIR});
+        $json->{IBEX_WORKING_DIR} = catdir($newedir, IbexFarm->config->{ibex_archive_root_dir});
+        close $cnf or die "Unable to close 'CONFIG' after reading: $!";
+        open my $ocnf, '>' . catfile($edir, IbexFarm->config->{ibex_archive_root_dir}, 'CONFIG');
+        print $ocnf JSON::encode_json($json);
+        close $ocnf or die "Unable to close 'CONFIG' after writing: $!";
+
         # Finally, move the dir(s).
         move($edir, $newedir) or die "Error moving: $!";
         if ($ewwwdir) {
