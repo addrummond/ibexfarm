@@ -19,6 +19,7 @@ use Encode::Guess;
 use HTML::GenerateUtil qw( escape_html );
 use IbexFarm::PasswordProtectExperiment::Factory;
 use IbexFarm::PasswordProtectExperiment::Apache;
+use JSON::XS;
 
 my $get_default_config = sub {
     my %additions = @_;
@@ -130,7 +131,7 @@ sub config_ : Path("config") :Args(0) { # 'config' seems to be reserved by Catal
     local $/;
     my $contents = <$cnf>;
     die "Oh dear" unless (defined $contents);
-    my $json = JSON::decode_json($contents);
+    my $json = JSON::XS::decode_json($contents);
     die "Bad JSON in 'CONFIG' file." unless (ref($json) eq "HASH");
     for my $k (keys %$json) { $c->stash->{$k} = $json->{$k}; }
     close $cnf or die "Unable to close 'CONFIG' after reading: $!";
@@ -354,7 +355,7 @@ sub newexperiment :Path("newexperiment") :Args(0) {
             # Write a record of the configuration (file containing JSON dict).
             my $ibexdir = catfile($dir, $ps->{name}, IbexFarm->config->{ibex_archive_root_dir});
             open my $cnf, ">" . catfile($ibexdir, "CONFIG") or die "Unable to open 'CONFIG' file: $!";
-            print $cnf JSON::encode_json(
+            print $cnf JSON::XS::encode_json(
                 $get_default_config->(
                     IBEX_WORKING_DIR => $ibexdir
                 )
@@ -610,12 +611,12 @@ sub rename_experiment :Path("rename_experiment") {
         local $/;
         my $contents = <$cnf>;
         die "Oh dear" unless (defined $contents);
-        my $json = JSON::decode_json($contents);
+        my $json = JSON::XS::decode_json($contents);
         die "Bad JSON in 'CONFIG' file." unless (ref($json) eq "HASH" && $json->{IBEX_WORKING_DIR});
         $json->{IBEX_WORKING_DIR} = catdir($newedir, IbexFarm->config->{ibex_archive_root_dir});
         close $cnf or die "Unable to close 'CONFIG' after reading: $!";
         open my $ocnf, '>' . catfile($edir, IbexFarm->config->{ibex_archive_root_dir}, 'CONFIG');
-        print $ocnf JSON::encode_json($json);
+        print $ocnf JSON::XS::encode_json($json);
         close $ocnf or die "Unable to close 'CONFIG' after writing: $!";
 
         # Finally, move the dir(s).

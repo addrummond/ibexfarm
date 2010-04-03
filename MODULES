@@ -13,3 +13,4 @@ Catalyst::Plugin::Cache::FastMmap
 Catalyst::Plugin::UploadProgress
 HTML::GenerateUtil
 Class::Factory
+JSON::XS
