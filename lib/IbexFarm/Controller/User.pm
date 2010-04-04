@@ -6,6 +6,7 @@ use parent 'Catalyst::Controller';
 use File::Spec::Functions qw( catfile catdir );
 use IbexFarm::FNames;
 use IbexFarm::CheckEmail;
+use IbexFarm::AuthStore;
 use File::Path qw( rmtree );
 use YAML;
 
@@ -40,10 +41,7 @@ sub delete_account :Absolute :Args(0) {
         $c->stash->{template} = "delete_account.tt";
     }
     elsif ($c->req->method eq "POST") {
-        $c->model('DB::IbexUser')->search({ username => $c->user->username })->delete;
-        $c->model('DB')->txn_commit;
-
-        # Now delete the user's dir, and ww dir if any.
+        # Delete the user's dir, and www dir if any.
         # Note that the www dir will not exist (whatever the value of 'deployment_www_dir')
         # if the user has never created an experiment).
         my @dirs = catdir(IbexFarm->config->{deployment_dir}, $c->user->username);
@@ -78,12 +76,28 @@ sub update_email :Absolute :Args(0) {
             $c->stash->{template} = 'user.tt';
         }
         else {
-            my $u = $c->model('DB::IbexUser')->find({ id => $c->user->id }) or die "Oh no";
-            $u->update({ 'email_address' =>  $c->req->params->{email} }) or die "Oh no 2";
-            $c->model('DB')->txn_commit;
-            $c->stash->{email_address} = $c->req->params->{email};
-            $c->stash->{message} = "Your email has been updated.";
-            $c->stash->{template} = 'user.tt';
+            my $ufile = catfile(IbexFarm->config->{deployment_www_dir}, $c->user->username, 'USER');
+            open my $f, $ufile or die "Unable to open 'USER' file for reading: $!";
+            local $/;
+            my $contents = <$f>;
+            close $f or die "Unable to close 'USER' file after reading: $!";
+            my $json = JSON::XS::decode_json($contents);
+            die "Bad JSON in 'USER' file" unless (ref($json) eq 'HASH');
+
+            # Note: in principle, we could read version 1 of the USER file, then someone else
+            # could write version 2, and we'd end up writing version 1.1 instead of version 2.1.
+            # Not worth guarding against this since if multiple updates are occuring to user
+            # details at the same time, unexpected results are going to occur whatever order we
+            # process the updates.
+
+            $json->{email_address} = $c->req->params->{email};
+            open my $of, ">>$ufile" or die "Unable to open 'USER' file for writing: $!";
+            flock $of, 2 or die "Unable to lock 'USER' file for writing: $!";
+            truncate $of, 0 or die "Unable to truncate 'USER' file: $!";
+            seek $of, 0, 0 or die "Really?: $!";
+            print $of JSON::XS::encode_json($json);
+            flock $of, 8; # Unlock.
+            close $of or die "Unable to close 'USER' file after writing: $!";
         }
     }
 }
@@ -126,21 +140,28 @@ sub newaccount :Absolute :Args(0) {
 
             # Add the new user to the database, create their dir, and then show the login form.
             $c->model('DB')->txn_do(sub {
-                my $r = $c->model('DB::Role')->find({ role => "user" });
-
-                $c->model('DB::IbexUser')->create({
+                my $user = {
                     username => $username,
                     password => $password,
                     email_address => $email || undef,
                     active => 1,
-                    experiments => [],
-                    user_roles => [ { role_id => $r } ] # Note that this will error out if $r is undef (which is what we want).
-                });
-
-                $c->model('DB')->txn_commit(); # This should be redundant, but doesn't seem to be.
+                    user_roles => [ 'user' ]
+                };
 
                 # Create the user's dir.
-                mkdir catdir(IbexFarm->config->{deployment_dir}, $username) or die "Unable to create dir for user: $!";
+                my $udir = catdir(IbexFarm->config->{deployment_dir}, $username);
+                eval {
+                    mkdir $udir or die "Unable to create dir for user: $!";
+
+                    # Write the user info to the 'USER' file.
+                    open my $f, '>' . catfile($udir, 'USER') or die "Unable to open 'USER' file: $!";
+                    print $f JSON::XS::encode_json($user);
+                    close $f;
+                };
+                if ($@) {
+                    if (-d $udir) { rmdir $udir or die "Unable to remove user directory following error."; }
+                    die $@;
+                }
             });
 
             $c->stash->{login_msg} = "Your account was created; you may now log in.";
@@ -158,8 +179,15 @@ sub myaccount :Absolute :Args(0) {
 
     return $c->response->redirect($c->uri_for('/login')) unless ($c->user_exists);
 
-    my $u = $c->model('DB::IbexUser')->find({ id => $c->user->id }) or die "Oh no 3";
-    $c->stash->{email_address} = $u->email_address;
+    my $ufile = catdir(IbexFarm->config->{deployment_dir}, $c->user->username, 'USER');
+    open my $f, $ufile or die "Unable to open 'USER' file for reading.";
+    local $/;
+    my $contents = <$f>;
+    close $f or die "Unable to close 'USER' file after reading.";
+    my $u = JSON::XS::decode_json($contents);
+    die "Bad JSON for user" unless (ref($u) eq 'HASH');
+
+    $c->stash->{email_address} = $u->{email_address};
     $c->stash->{template} = 'user.tt';
 }
 

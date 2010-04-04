@@ -17,6 +17,7 @@ use parent qw/Catalyst/;
 use Catalyst qw/ConfigLoader
 
                 Authentication
+                Authentication::Credential::Password
 
                 Session
                 Session::Store::FastMmap
@@ -25,6 +26,7 @@ use Catalyst qw/ConfigLoader
                 Cache::FastMmap
                 UploadProgress
                 /;
+use IbexFarm::AuthStore;
 our $VERSION = '0.01';
 
 # Configure the application.
@@ -41,11 +43,21 @@ __PACKAGE__->config(
     name => 'IbexFarm',
     default_view => 'TT',
     'Plugin::Authentication' => {
-        default => {
-            class => 'SimpleDB',
-            user_model => 'DB::IbexUser',
-            password_type => 'self_check',
-        }
+        default_realm => 'users',
+        realms => {
+            users => {
+                credential => {
+                    class => 'Password',
+                    password_field => 'password',
+                    password_type => 'clear'
+                },
+                store => {
+                    class => '+IbexFarm::AuthStore',
+                    user_model => 'Catalyst::Authentication::User::Hash',
+                    password_type => 'clear',
+                }
+           }
+       }
     }
 );
 

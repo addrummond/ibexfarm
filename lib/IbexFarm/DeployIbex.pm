@@ -11,6 +11,7 @@ use Fcntl qw( :flock );
 use Archive::Tar;
 use Cwd;
 use File::Copy;
+use File::Path;
 
 # Will only work reliably with ASCII strings.
 my $to_py_escaped_string = sub {
@@ -38,6 +39,10 @@ sub deploy {
     my $dd = catdir($args{deployment_dir}, $args{name});
     if (! -d $dd)
         { mkdir $dd or die "Could not create deployment dir '$dd': $!"; }
+
+    # If something subsequently goes wrong, we want to delete the deployment dir we just created.
+    eval {
+
     my $oldcwd = getcwd();
     chdir $dd or die "Could not change PWD to deployment dir: $!.";
     my $tar = Archive::Tar->new($args{ibex_archive}) or die "Could not open archive.";
@@ -99,6 +104,12 @@ sub deploy {
     $tar->clear;
 
     chdir $oldcwd or die "Could not return to old PWD: $!";
+
+    }; # End of eval {
+    if ($@) {
+        File::Path::remove_tree $dd or die "Unable to remove deployment dir following error.";
+        die $@;
+    }
 }
 
 our @EXPORT = qw( deploy );

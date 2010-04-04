@@ -1,4 +1,4 @@
-package IbexFarm::Auth;
+package IbexFarm::AuthStore;
 
 # Code based on Catalyst::Authentication::Store::Minimal;
 
@@ -10,7 +10,7 @@ use File::Spec::Functions qw( splitdir catdir catfile splitpath no_upwards );
 use JSON::XS;
 
 sub new {
-    my $class = @_;
+    my $class = shift;
     bless { }, $class;
 }
 
@@ -23,7 +23,7 @@ sub from_session {
 }
 
 sub find_user {
-    my ($userinfo, $realm, $c) = @_;
+    my ($self, $userinfo, $c) = @_;
 
     my $id = $userinfo->{id};
     $id ||= $userinfo->{username};
@@ -45,3 +45,5 @@ sub find_user {
 
     return Catalyst::Authentication::User::Hash->new(%$json);
 }
+
+1;
