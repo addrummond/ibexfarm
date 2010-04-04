@@ -49,7 +49,10 @@ __PACKAGE__->config(
                 credential => {
                     class => 'Password',
                     password_field => 'password',
-                    password_type => 'clear'
+                    password_type => 'salted_hash',
+                    # TODO: Keep parms in sync with args to Crypt::SaltedHash in User.pm (TODO: maybe add config vars for these?)
+                    password_hash_type => 'SHA-1',
+                    password_salt_len => 32
                 },
                 store => {
                     class => '+IbexFarm::AuthStore',

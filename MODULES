@@ -14,3 +14,4 @@ Catalyst::Plugin::UploadProgress
 HTML::GenerateUtil
 Class::Factory
 JSON::XS
+Crypt::SaltedHash

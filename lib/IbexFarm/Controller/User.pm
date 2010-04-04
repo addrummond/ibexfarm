@@ -8,7 +8,7 @@ use IbexFarm::FNames;
 use IbexFarm::CheckEmail;
 use IbexFarm::AuthStore;
 use File::Path qw( rmtree );
-use YAML;
+use Crypt::SaltedHash;
 
 sub login :Absolute :Args(0) {
     my ($self, $c) = @_;
@@ -76,7 +76,7 @@ sub update_email :Absolute :Args(0) {
             $c->stash->{template} = 'user.tt';
         }
         else {
-            my $ufile = catfile(IbexFarm->config->{deployment_www_dir}, $c->user->username, 'USER');
+            my $ufile = catfile(IbexFarm->config->{deployment_dir}, $c->user->username, 'USER');
             open my $f, $ufile or die "Unable to open 'USER' file for reading: $!";
             local $/;
             my $contents = <$f>;
@@ -98,6 +98,10 @@ sub update_email :Absolute :Args(0) {
             print $of JSON::XS::encode_json($json);
             flock $of, 8; # Unlock.
             close $of or die "Unable to close 'USER' file after writing: $!";
+
+            $c->stash->{email_address} = $c->req->params->{email};
+            $c->stash->{message} = "Your email has been updated.";
+            $c->stash->{template} = "user.tt";
         }
     }
 }
@@ -119,6 +123,8 @@ sub newaccount :Absolute :Args(0) {
         $c->stash->{template} = "newaccount.tt";
     }
     elsif ($email && (! IbexFarm::CheckEmail::is_ok_email($email))) {
+        $c->stash->{username} = $username;
+        $c->stash->{email} = $email;
         $c->stash->{error} = "The email address you entered is not valid. (Note that you don't have to give an email if you don't want to.)";
         $c->stash->{template} = "newaccount.tt";
     }
@@ -131,6 +137,8 @@ sub newaccount :Absolute :Args(0) {
 
         # Check that a user with that username doesn't already exist.
         if ($c->model('DB::IbexUser')->find({ username => $username })) {
+            $c->stash->{username} = $username;
+            $c->stash->{email} = $email;
             $c->stash->{error} = "An account with that username already exists.";
             $c->stash->{template} = "newaccount.tt";
         }
@@ -140,9 +148,13 @@ sub newaccount :Absolute :Args(0) {
 
             # Add the new user to the database, create their dir, and then show the login form.
             $c->model('DB')->txn_do(sub {
+                # Keep parms in sync with config settings in IbexFarm.pm (TODO: maybe add config vars for these?)
+                my $csh = Crypt::SaltedHash->new(algorithm => 'SHA-1', salt_len => 32);
+                $csh->add($password);
+
                 my $user = {
                     username => $username,
-                    password => $password,
+                    password => $csh->generate(),
                     email_address => $email || undef,
                     active => 1,
                     user_roles => [ 'user' ]

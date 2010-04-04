@@ -12,13 +12,13 @@
 <form class="create_account" method="post" action="[% c.uri_for('/newaccount') %]">
 <table>
 <tr>
-<th>Username:</th><td colspan="2"><input type="text" name="username" size="20" /></td>
+<th>Username:</th><td colspan="2"><input type="text" name="username" size="20" value="[% HTML.escape(username) %]" /></td>
 </tr>
 <tr>
 <th>Password:</th><td colspan="2"><input type="password" name="password" size="20" /></td>
 </tr>
 <tr>
-<th>Email:</th><td><input type="text" name="email" size="20" /><td class="field_comment">(optional)</span></td>
+<th>Email:</th><td><input type="text" name="email" size="20" value="[% HTML.escape(email) %]" /><td class="field_comment">(optional)</span></td>
 </tr>
 <tr>
 <td class="submit" colspan="2"><input type="submit" name="submit" value="Create account" /></td><td></td>
