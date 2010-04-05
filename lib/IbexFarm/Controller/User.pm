@@ -146,35 +146,32 @@ sub newaccount :Absolute :Args(0) {
             # Log the user out, if one is logged in.
             $c->logout if ($c->user_exists);
 
-            # Add the new user to the database, create their dir, and then show the login form.
-            $c->model('DB')->txn_do(sub {
-                # Keep parms in sync with config settings in IbexFarm.pm (TODO: maybe add config vars for these?)
-                my $csh = Crypt::SaltedHash->new(algorithm => 'SHA-1', salt_len => 32);
-                $csh->add($password);
+            # Keep parms in sync with config settings in IbexFarm.pm (TODO: maybe add config vars for these?)
+            my $csh = Crypt::SaltedHash->new(algorithm => 'SHA-1', salt_len => 32);
+            $csh->add($password);
 
-                my $user = {
-                    username => $username,
-                    password => $csh->generate(),
-                    email_address => $email || undef,
-                    active => 1,
-                    user_roles => [ 'user' ]
-                };
+            my $user = {
+                username => $username,
+                password => $csh->generate(),
+                email_address => $email || undef,
+                active => 1,
+                user_roles => [ 'user' ]
+            };
 
-                # Create the user's dir.
-                my $udir = catdir(IbexFarm->config->{deployment_dir}, $username);
-                eval {
-                    mkdir $udir or die "Unable to create dir for user: $!";
+            # Create the user's dir.
+            my $udir = catdir(IbexFarm->config->{deployment_dir}, $username);
+            eval {
+                mkdir $udir or die "Unable to create dir for user: $!";
 
-                    # Write the user info to the 'USER' file.
-                    open my $f, '>' . catfile($udir, 'USER') or die "Unable to open 'USER' file: $!";
-                    print $f JSON::XS::encode_json($user);
-                    close $f;
-                };
-                if ($@) {
-                    if (-d $udir) { rmdir $udir or die "Unable to remove user directory following error."; }
-                    die $@;
-                }
-            });
+                # Write the user info to the 'USER' file.
+                open my $f, '>' . catfile($udir, 'USER') or die "Unable to open 'USER' file: $!";
+                print $f JSON::XS::encode_json($user);
+                close $f;
+            };
+            if ($@) {
+                if (-d $udir) { rmdir $udir or die "Unable to remove user directory following error."; }
+                die $@;
+            }
 
             $c->stash->{login_msg} = "Your account was created; you may now log in.";
             $c->stash->{username} = $c->request->params->{username};
