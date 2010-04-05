@@ -7,7 +7,7 @@ use File::Spec::Functions qw( catfile catdir );
 use IbexFarm::FNames;
 use IbexFarm::CheckEmail;
 use File::Path qw( rmtree );
-use Crypt::SaltedHash;
+use Digest;
 
 sub login :Absolute :Args(0) {
     my ($self, $c) = @_;
@@ -20,6 +20,7 @@ sub login :Absolute :Args(0) {
             $c->response->redirect($c->uri_for('/myaccount'));
         }
         else {
+            $c->stash->{username} = $username;
             $c->stash->{error} = "The details you entered were not recognized.";
             $c->stash->{template} = "login.tt";
         }
@@ -105,6 +106,13 @@ sub update_email :Absolute :Args(0) {
     }
 }
 
+# See code in DBIx::Class::EncodedColumn::Digest.
+my $get_salt = sub {
+    my $length = shift;
+    my @salt_pool = ('A' .. 'Z', 'a' .. 'z', 0 .. 9, '+','/','=');
+    return join('', map { $salt_pool[int(rand(65))] } 1 .. $length);
+};
+
 sub newaccount :Absolute :Args(0) {
     my ($self, $c) = @_;
 
@@ -146,13 +154,16 @@ sub newaccount :Absolute :Args(0) {
             # Log the user out, if one is logged in.
             $c->logout if ($c->user_exists);
 
-            # Keep parms in sync with config settings in IbexFarm.pm (TODO: maybe add config vars for these?)
-            my $csh = Crypt::SaltedHash->new(algorithm => 'SHA-512', salt_len => 32);
-            $csh->add($password);
+#            my $csh = Crypt::SaltedHash->new(algorithm => 'SHA-512', salt_len => 32);
+#            $csh->add($password);
+            my $digest = Digest->new(IbexFarm->config->{user_password_hash_algo});
+            my $salt = $get_salt->(IbexFarm->config->{user_password_salt_length});
+            $digest->add($password . $salt);
 
             my $user = {
                 username => $username,
-                password => $csh->generate(),
+#                password => $csh->generate(),
+                password => $digest->b64digest . $salt,
                 email_address => $email || undef,
                 active => 1,
                 user_roles => [ 'user' ]

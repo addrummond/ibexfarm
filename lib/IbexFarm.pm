@@ -49,10 +49,12 @@ __PACKAGE__->config(
                 credential => {
                     class => 'Password',
                     password_field => 'password',
-                    password_type => 'salted_hash',
-                    # TODO: Keep parms in sync with args to Crypt::SaltedHash in User.pm (TODO: maybe add config vars for these?)
-                    password_hash_type => 'SHA-512',
-                    password_salt_len => 32
+                    # Weird mismatches between behavior of DBIx::Class::EncodedColumn and Crypt::SaltedHash
+                    # force us to do this manually.
+                    password_type => 'self_check',
+#                    password_type => 'salted_hash',
+#                    password_hash_type => 'SHA-512',
+#                    password_salt_len => 32
                 },
                 store => {
                     class => '+IbexFarm::AuthStore',
@@ -62,7 +64,11 @@ __PACKAGE__->config(
            }
        }
     },
-    USER_FILE_NAME => 'USER'
+    USER_FILE_NAME => 'USER',
+
+    user_password_hash_algo => 'SHA-512',
+    user_password_salt_length => 32,
+    user_password_hash_total_length => 118
 );
 
 # Start the application
