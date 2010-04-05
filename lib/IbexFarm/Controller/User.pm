@@ -135,7 +135,8 @@ sub newaccount :Absolute :Args(0) {
         $c->detach('Root', 'bad_request') unless ($c->req->method eq "POST");
 
         # Check that a user with that username doesn't already exist.
-        if ($c->model('DB::IbexUser')->find({ username => $username })) {
+        my $udir = catdir(IbexFarm->config->{deployment_dir}, $username);
+        if (-e $udir) {
             $c->stash->{username} = $username;
             $c->stash->{email} = $email;
             $c->stash->{error} = "An account with that username already exists.";
@@ -146,7 +147,7 @@ sub newaccount :Absolute :Args(0) {
             $c->logout if ($c->user_exists);
 
             # Keep parms in sync with config settings in IbexFarm.pm (TODO: maybe add config vars for these?)
-            my $csh = Crypt::SaltedHash->new(algorithm => 'SHA-1', salt_len => 32);
+            my $csh = Crypt::SaltedHash->new(algorithm => 'SHA-512', salt_len => 32);
             $csh->add($password);
 
             my $user = {
@@ -158,7 +159,6 @@ sub newaccount :Absolute :Args(0) {
             };
 
             # Create the user's dir.
-            my $udir = catdir(IbexFarm->config->{deployment_dir}, $username);
             eval {
                 mkdir $udir or die "Unable to create dir for user: $!";
 

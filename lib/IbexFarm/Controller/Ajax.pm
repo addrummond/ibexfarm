@@ -593,7 +593,11 @@ sub rename_experiment :Path("rename_experiment") {
     $c->detach('default') unless (-d $edir);
     die "OMG!" if (-e $newedir && ! -d $newedir);
 
-    if (-d $newedir) {
+    if ($expname eq IbexFarm->config->{USER_FILE_NAME}) {
+        $c->stash->{error} = "Experiments may not be called '" . IbexFarm->config->{USER_FILE_NAME} . "'.";
+        $c->detach($c->view("JSON"));
+    }
+    elsif (-d $newedir) {
         $c->stash->{error} = "An experiment of that name already exists.";
         $c->detach($c->view("JSON"));
     }

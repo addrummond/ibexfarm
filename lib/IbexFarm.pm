@@ -51,7 +51,7 @@ __PACKAGE__->config(
                     password_field => 'password',
                     password_type => 'salted_hash',
                     # TODO: Keep parms in sync with args to Crypt::SaltedHash in User.pm (TODO: maybe add config vars for these?)
-                    password_hash_type => 'SHA-1',
+                    password_hash_type => 'SHA-512',
                     password_salt_len => 32
                 },
                 store => {
