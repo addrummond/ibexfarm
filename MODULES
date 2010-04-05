@@ -4,11 +4,8 @@
 Catalyst::Plugin::RequireSSL
 Catalyst::Plugin::Session::Store::FastMmap
 Catalyst::View::JSON
-DBIx::Class::TimeStamp
-DBIx::Class::EncodedColumn
 Template::Plugin::Filter::Minify::CSS
 Template::Plugin::Filter::Minify::JavaScript
-DBD::Pg
 Catalyst::Plugin::Cache::FastMmap
 Catalyst::Plugin::UploadProgress
 HTML::GenerateUtil
