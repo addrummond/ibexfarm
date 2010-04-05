@@ -130,11 +130,11 @@ sub config_ : Path("config") :Args(0) { # 'config' seems to be reserved by Catal
         or die "Unable to open 'CONFIG' for reading: $!";
     local $/;
     my $contents = <$cnf>;
+    close $cnf or die "Unable to close 'CONFIG' after reading: $!";
     die "Oh dear" unless (defined $contents);
     my $json = JSON::XS::decode_json($contents);
     die "Bad JSON in 'CONFIG' file." unless (ref($json) eq "HASH");
     for my $k (keys %$json) { $c->stash->{$k} = $json->{$k}; }
-    close $cnf or die "Unable to close 'CONFIG' after reading: $!";
 
     $c->detach($c->view("JSON"));
 }
@@ -302,8 +302,8 @@ sub experiments :Path("experiments") :Args(0) {
         my $versionfile = catfile($dir, $e, IbexFarm->config->{ibex_archive_root_dir}, "VERSION");
         open my $vf, $versionfile or die "Unable to open 'VERSION' file for reading: $!";
         my $version = <$vf>;
-        die "Unable to read from 'VERSION' file: $!" unless (defined $version);
         close $vf or die "Unable to close 'VERSION' file: $!";
+        die "Unable to read from 'VERSION' file: $!" unless (defined $version);
 
         push @exps, [$e, $version];
     }
@@ -384,8 +384,8 @@ my $manage_UPLOADED = sub {
     open my $uplr, $uplfile or die "Unable to open 'UPLOADED' file: $!";
     local $/;
     my $contents = <$uplr>;
-    die "Error reading 'UPLOADED' file: $!" unless (defined $contents);
     close $uplr or die "Error closing 'UPLOADED' file: $!";
+    die "Error reading 'UPLOADED' file: $!" unless (defined $contents);
 
     open my $uplw, ">$uplfile" or die "Unable to open 'UPLOADED' file: $!";
     my %dontadd;
@@ -619,11 +619,11 @@ sub rename_experiment :Path("rename_experiment") {
             or die "Unable to open 'CONFIG' for reading: $!";
         local $/;
         my $contents = <$cnf>;
+        close $cnf or die "Unable to close 'CONFIG' after reading: $!";
         die "Oh dear" unless (defined $contents);
         my $json = JSON::XS::decode_json($contents);
         die "Bad JSON in 'CONFIG' file." unless (ref($json) eq "HASH" && $json->{IBEX_WORKING_DIR});
         $json->{IBEX_WORKING_DIR} = catdir($newedir, IbexFarm->config->{ibex_archive_root_dir});
-        close $cnf or die "Unable to close 'CONFIG' after reading: $!";
         open my $ocnf, '>' . catfile($edir, IbexFarm->config->{ibex_archive_root_dir}, 'CONFIG');
         print $ocnf JSON::XS::encode_json($json);
         close $ocnf or die "Unable to close 'CONFIG' after writing: $!";
