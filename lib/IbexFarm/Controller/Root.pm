@@ -29,7 +29,7 @@ my $get_experiment_count = sub {
                     close $DIR;
                     return $experiment_count_cache;
                 }
-                while (defined (my $d = readdir($DIR2))) { ++$count if ($d !~ /^\./); }
+                while (defined (my $d = readdir($DIR2))) { ++$count if ($d !~ /^\./ && $d ne IbexFarm->config->{USER_FILE_NAME}); }
                 closedir $DIR2;
             }
         }
