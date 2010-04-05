@@ -6,7 +6,6 @@ use parent 'Catalyst::Controller';
 use File::Spec::Functions qw( catfile catdir );
 use IbexFarm::FNames;
 use IbexFarm::CheckEmail;
-use IbexFarm::AuthStore;
 use File::Path qw( rmtree );
 use Crypt::SaltedHash;
 
