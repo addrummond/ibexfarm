@@ -296,7 +296,7 @@ sub experiments :Path("experiments") :Args(0) {
     opendir my $DIR, $dir or die "Unable to open dir '$dir' for user: $!";
     my @exps;
     while (defined (my $e = readdir($DIR))) {
-        next if $e =~ /^[:.]/ || $e eq 'USER';
+        next if $e =~ /^[:.]/ || $e eq IbexFarm->config->{USER_FILE_NAME};
 
         # Find the ibex version.
         my $versionfile = catfile($dir, $e, IbexFarm->config->{ibex_archive_root_dir}, "VERSION");
@@ -321,8 +321,8 @@ sub newexperiment :Path("newexperiment") :Args(0) {
     my $ps = $c->req->params;
 
     # The 'USER' file is reserved, so they can't call experiments by that name.
-    if ($ps->{name} eq 'USER') {
-        $c->stash->{error} = "Experiments may not be called 'USER'.";
+    if ($ps->{name} eq IbexFarm->config->{USER_FILE_NAME}) {
+        $c->stash->{error} = "Experiments may not be called '" . IbexFarm->config->{USER_FILE_NAME} . "'.";
         $c->detach($c->view("JSON"));
     }
     # Does an experiment of that name already exist?

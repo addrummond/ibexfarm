@@ -75,13 +75,13 @@ sub update_email :Absolute :Args(0) {
             $c->stash->{template} = 'user.tt';
         }
         else {
-            my $ufile = catfile(IbexFarm->config->{deployment_dir}, $c->user->username, 'USER');
-            open my $f, $ufile or die "Unable to open 'USER' file for reading: $!";
+            my $ufile = catfile(IbexFarm->config->{deployment_dir}, $c->user->username, IbexFarm->config->{USER_FILE_NAME});
+            open my $f, $ufile or die "Unable to open '", IbexFarm->config->{USER_FILE_NAME}, "' file for reading: $!";
             local $/;
             my $contents = <$f>;
-            close $f or die "Unable to close 'USER' file after reading: $!";
+            close $f or die "Unable to close '", IbexFarm->config->{USER_FILE_NAME}, "' file after reading: $!";
             my $json = JSON::XS::decode_json($contents);
-            die "Bad JSON in 'USER' file" unless (ref($json) eq 'HASH');
+            die "Bad JSON in '", IbexFarm->config->{USER_FILE_NAME}, "' file" unless (ref($json) eq 'HASH');
 
             # Note: in principle, we could read version 1 of the USER file, then someone else
             # could write version 2, and we'd end up writing version 1.1 instead of version 2.1.
@@ -90,13 +90,13 @@ sub update_email :Absolute :Args(0) {
             # process the updates.
 
             $json->{email_address} = $c->req->params->{email};
-            open my $of, ">>$ufile" or die "Unable to open 'USER' file for writing: $!";
-            flock $of, 2 or die "Unable to lock 'USER' file for writing: $!";
-            truncate $of, 0 or die "Unable to truncate 'USER' file: $!";
+            open my $of, ">>$ufile" or die "Unable to open '", IbexFarm->config->{USER_FILE_NAME}, "' file for writing: $!";
+            flock $of, 2 or die "Unable to lock '", IbexFarm->config->{USER_FILE_NAME}, "' file for writing: $!";
+            truncate $of, 0 or die "Unable to truncate '", IbexFarm->config->{USER_FILE_NAME}, "' file: $!";
             seek $of, 0, 0 or die "Really?: $!";
             print $of JSON::XS::encode_json($json);
             flock $of, 8; # Unlock.
-            close $of or die "Unable to close 'USER' file after writing: $!";
+            close $of or die "Unable to close '", IbexFarm->config->{USER_FILE_NAME}, "' file after writing: $!";
 
             $c->stash->{email_address} = $c->req->params->{email};
             $c->stash->{message} = "Your email has been updated.";
@@ -163,7 +163,7 @@ sub newaccount :Absolute :Args(0) {
                 mkdir $udir or die "Unable to create dir for user: $!";
 
                 # Write the user info to the 'USER' file.
-                open my $f, '>' . catfile($udir, 'USER') or die "Unable to open 'USER' file: $!";
+                open my $f, '>' . catfile($udir, IbexFarm->config->{USER_FILE_NAME}) or die "Unable to open '", IbexFarm->config->{USER_FILE_NAME}, "' file: $!";
                 print $f JSON::XS::encode_json($user);
                 close $f;
             };
@@ -187,11 +187,11 @@ sub myaccount :Absolute :Args(0) {
 
     return $c->response->redirect($c->uri_for('/login')) unless ($c->user_exists);
 
-    my $ufile = catdir(IbexFarm->config->{deployment_dir}, $c->user->username, 'USER');
-    open my $f, $ufile or die "Unable to open 'USER' file for reading.";
+    my $ufile = catdir(IbexFarm->config->{deployment_dir}, $c->user->username, IbexFarm->config->{USER_FILE_NAME});
+    open my $f, $ufile or die "Unable to open '", IbexFarm->config->{USER_FILE_NAME}, "' file for reading.";
     local $/;
     my $contents = <$f>;
-    close $f or die "Unable to close 'USER' file after reading.";
+    close $f or die "Unable to close '", IbexFarm->config->{USER_FILE_NAME}, "' file after reading.";
     my $u = JSON::XS::decode_json($contents);
     die "Bad JSON for user" unless (ref($u) eq 'HASH');
 

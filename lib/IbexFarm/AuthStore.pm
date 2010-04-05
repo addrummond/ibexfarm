@@ -31,14 +31,14 @@ sub find_user {
     my $udir = catdir(IbexFarm->config->{deployment_dir}, $id);
     return unless (-d $udir);
 
-    my $ufile = catfile($udir, 'USER');
-    die "User dir without 'USER' file: $udir" unless (-f $ufile);
-    open my $f, $ufile or die "Unable to open 'USER' file: $!";
+    my $ufile = catfile($udir, IbexFarm->config->{USER_FILE_NAME});
+    die "User dir without '", IbexFarm->config->{USER_FILE_NAME}, "' file: $udir" unless (-f $ufile);
+    open my $f, $ufile or die "Unable to open '", IbexFarm->config->{USER_FILE_NAME}, "' file: $!";
     local $/;
     my $contents = <$f>;
     my $json = JSON::XS::decode_json($contents);
-    die "Bad JSON in 'USER' file" unless (ref($json) eq 'HASH');
-    close $f or die "Unable to close 'USER' file: $!";
+    die "Bad JSON in '", IbexFarm->config->{USER_FILE_NAME}, "' file" unless (ref($json) eq 'HASH');
+    close $f or die "Unable to close '", IbexFarm->config->{USER_FILE_NAME}, "' file: $!";
 
     $json->{id} ||= $json->{username};
     $json->{username} ||= $json->{id};

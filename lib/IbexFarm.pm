@@ -61,7 +61,8 @@ __PACKAGE__->config(
                 }
            }
        }
-    }
+    },
+    USER_FILE_NAME => 'USER'
 );
 
 # Start the application
