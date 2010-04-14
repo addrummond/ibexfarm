@@ -370,6 +370,7 @@ $.widget("ui.browseDir", {
                 table.append($("<tr>").append($("<td>").addClass("not_present").text("This directory is not present")));
             }
             else {
+                data.entries = data.entries.sort();
                 for (var i = 0; i < data.entries.length; ++i) {
                     if (data.entries[i][0]) continue; // Ignore dirs.
 
