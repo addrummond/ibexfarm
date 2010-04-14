@@ -370,7 +370,7 @@ $.widget("ui.browseDir", {
                 table.append($("<tr>").append($("<td>").addClass("not_present").text("This directory is not present")));
             }
             else {
-                data.entries = data.entries.sort();
+                data.entries = data.entries.sort(caseInsensitiveSortingFunction);
                 for (var i = 0; i < data.entries.length; ++i) {
                     if (data.entries[i][0]) continue; // Ignore dirs.
 
@@ -468,7 +468,7 @@ $(document).ready(function () {
 
     // We don't spinnify this, as that leads to to a surfeit of spinners on page load.
     $.getJSON(BASE_URI + 'ajax/get_dirs', function (data) {
-        var sdirs = data.dirs.sort();
+        var sdirs = data.dirs.sort(caseInsensitiveSortingFunction);
         for (var i = 0; i < data.dirs.length; ++i) {
             $("#files").append($("<div>").browseDir({ dir: sdirs[i] }));
         }
