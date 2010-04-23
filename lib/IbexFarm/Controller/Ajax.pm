@@ -12,7 +12,9 @@ use IbexFarm::AjaxHeaders qw( ajax_headers );
 use File::Spec::Functions qw( splitdir catdir catfile splitpath no_upwards );
 use File::stat;
 use File::Path qw( make_path rmtree );
-use File::Copy qw( move );
+use File::Copy qw( move copy );
+#use File::Copy::Recursive qw( dircopy );
+use File::Temp;
 use DateTime;
 use Encode;
 use Encode::Guess;
@@ -739,6 +741,76 @@ sub password_protect_experiment :Path("password_protect_experiment") {
     }
 
     $c->stash->{username} = $username if $username;
+    $c->detach($c->view("JSON"));
+}
+
+sub from_git_repo :Path("from_git_repo") {
+    my ($self, $c) = (shift, shift);
+    $c->detach('default') unless (IbexFarm->config->{git_path});
+    $c->detach('unauthorized') unless ($c->user_exists);
+    $c->detach('bad_request') unless ($c->req->method eq 'POST' && scalar(@_) == 0 && $c->req->params->{url} && $c->req->params->{expname});
+    my $git_url = $c->req->params->{url};
+
+    # Get a temporary dir for checking out the git repo.
+    my $tmpdir = File::Temp::tempdir();
+    $tmpdir or die "Unable to create temporary dir for checking out git repo: $!";
+
+    # Checkout the repo. Setting a timeout here to prevent checking out of enormous
+    # repos (should probably set a size limit too, but haven't figured out a good
+    # way of doing this yet). See:
+    #     http://www.linuxquestions.org/questions/programming-9/perl-can-i-make-the-system-function-timeout-386890/
+    # for example code (although the code there doesn't bother to kill the child process).
+    my $pid;
+    eval {
+        local $SIG{ALRM} = sub { die "alarm\n"; };
+        if (($pid = fork()) == 0) {
+            my @as = (IbexFarm->config->{git_path}, 'clone', $git_url, $tmpdir);
+            push @as, '-b', $c->req->params->{branch} if ($c->req->params->{branch});
+            exec(@as);
+        }
+        # calls to exec never return, so we only get here if we're in the parent process.
+        alarm IbexFarm->config->{git_checkout_timeout_seconds};
+        waitpid($pid, 0) == -1 and die "WTF?!";
+        alarm 0;
+    };
+    # Again, must be in the parent process at this point.
+    if ($@) {
+        # Kill the git process.
+        kill 9, $pid;
+
+        rmtree([$tmpdir], 0, 0);
+
+        die $@ unless ($@ eq "alarm\n");
+        # It timed out.
+        $c->stash->{error} = "timeout";
+        $c->detach($c->view("JSON"));
+    }
+    if ($?) { # git process exited with an error.
+        rmtree([$tmpdir], 0, 0) || die "Unable to remove temporary git repo checkout dir (1): $!";
+        $c->detach('bad_request');
+    }
+
+    my $edir = catdir(IbexFarm->config->{deployment_dir},
+                      $c->user->username,
+                      $c->req->params->{expname});
+
+    my @dirs_modified;
+    for my $dir (@{IbexFarm->config->{sync_dirs}}) {
+        next unless (-d catdir($tmpdir, $dir));
+
+        opendir my $DIR, catdir($tmpdir, $dir);
+        while (defined (my $entry = readdir($DIR))) {
+            next if $entry =~ /^\./;
+
+            copy(catfile($tmpdir, $dir, $entry), catfile($edir, IbexFarm->config->{ibex_archive_root_dir}, $dir, $entry)) or die "Copying error: $!";
+            push @dirs_modified, $dir;
+        }
+    }
+
+    # Remove the temporary dir.
+    rmtree([$tmpdir], 0, 0) or die "Unable to clean up temp dir in from_git_repo: $!";
+
+    $c->stash->{dirs_modified} = \@dirs_modified;
     $c->detach($c->view("JSON"));
 }
 

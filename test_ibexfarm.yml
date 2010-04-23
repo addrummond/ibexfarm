@@ -11,6 +11,7 @@ deployment_dir: "/tmp"
 deployment_www_dir: "/tmp/www/"
 
 dirs: [ "js_includes", "css_includes", "data_includes", "chunk_includes", "server_state", "results" ]
+sync_dirs: [ "js_includes", "css_includes", "data_includes", "chunk_includes", "server_state" ]
 dirs_to_types:
   js_includes: 'text/javascript'
   css_includes: 'text/css'
@@ -38,6 +39,9 @@ db_password: abcd
 max_upload_size_bytes: 1048576
 
 experiment_password_protection: Apache
+
+git_path: "/opt/local/bin/git"
+git_checkout_timeout_seconds: 45
 
 #'Plugin::Authentication':
 #    default_realm: users

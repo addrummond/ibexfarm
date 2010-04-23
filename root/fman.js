@@ -462,6 +462,19 @@ $.widget("ui.pwmanage", {
     }
 });
 
+function sync_git() {
+    spinnifyPOST($("#git"),
+                 BASE_URI + 'ajax/from_git_repo',
+                 { url: $("#git_url").attr('value'),
+                   branch: $("#git_branch").attr('value'),
+                   expname: EXPERIMENT },
+                 function (result) {
+                     if (result.error) { alert("error!"); }
+                     else alert("success!");
+                 },
+                 "json");
+}
+
 $(document).ready(function () {
     $("#authinfo").pwmanage();
 
@@ -472,4 +485,6 @@ $(document).ready(function () {
             $("#files").append($("<div>").browseDir({ dir: sdirs[i] }));
         }
     })
+
+    $("#gitsync").click(sync_git);
 });
