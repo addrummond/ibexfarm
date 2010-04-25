@@ -3,6 +3,8 @@ package IbexFarm::Quota;
 use warnings;
 use strict;
 
+use parent 'Exporter';
+
 use File::Find;
 
 # Returns bool saying whether or not the quota is met
@@ -48,5 +50,7 @@ sub check_quota {
     }
     return (1, "");
 }
+
+our @EXPORT_OK = qw( check_quota );
 
 1;

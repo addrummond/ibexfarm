@@ -462,7 +462,12 @@ $.widget("ui.pwmanage", {
     }
 });
 
-function sync_git() {
+function sync_git(e) {
+    e.preventDefault();
+
+    if ($("#git_url").attr('value').match(/^\s*$/))
+        return;
+
     spinnifyPOST($("#git"),
                  BASE_URI + 'ajax/from_git_repo',
                  { url: $("#git_url").attr('value'),
@@ -473,6 +478,13 @@ function sync_git() {
                      else alert("success!");
                  },
                  "json");
+}
+
+function show_hide_git() {
+    $("#git > div").toggle("normal", function () {
+        if ($("#git > div").is(':visible'))
+            $("#git_url").focus();
+    });
 }
 
 $(document).ready(function () {
@@ -487,4 +499,5 @@ $(document).ready(function () {
     })
 
     $("#gitsync").click(sync_git);
+    $("#git > span").click(show_hide_git);
 });

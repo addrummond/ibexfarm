@@ -22,6 +22,7 @@ use HTML::GenerateUtil qw( escape_html );
 use IbexFarm::PasswordProtectExperiment::Factory;
 use IbexFarm::PasswordProtectExperiment::Apache;
 use JSON::XS;
+use IbexFarm::Util;
 
 my $get_default_config = sub {
     my %additions = @_;
@@ -750,6 +751,18 @@ sub from_git_repo :Path("from_git_repo") {
     $c->detach('unauthorized') unless ($c->user_exists);
     $c->detach('bad_request') unless ($c->req->method eq 'POST' && scalar(@_) == 0 && $c->req->params->{url} && $c->req->params->{expname});
     my $git_url = $c->req->params->{url};
+
+    # Update the user's profile to keep track of the git repo/branch they just used.
+    my $ufile = catfile(IbexFarm->config->{deployment_dir}, $c->user->username, IbexFarm->config->{USER_FILE_NAME});
+    IbexFarm::Util::update_json_file(
+        $ufile,
+        sub {
+            my $json = shift;
+            $json->{git_repo_url} = $git_url,
+            $json->{git_repo_branch} = $c->req->params->{branch};
+            return $json;
+        }
+    );
 
     # Get a temporary dir for checking out the git repo.
     my $tmpdir = File::Temp::tempdir();

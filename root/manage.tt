@@ -12,11 +12,24 @@
 <p class="smallprint goto">
 Go to the <a href="[% c.uri_for("/myaccount") %]">my account</a> page to view your other experiments or to create/delete experiments.
 </p>
-<p class="git">
-From git repo:
-<input type="text" size="50" name="git_url" id="git_url"></input><span id="gitsync">sync</span>
-<input type="text" size="20" name="git_branch" id="git_branch"></input>
-</p>
+<div id="git">
+<span>Update from git repo&raquo;</span>
+<div>
+<div class="box">
+<table>
+<tr>
+<td><input type="text" size="30" name="git_url" id="git_url" value="[% HTML.escape(git_repo_url) %]"></input><td><label for="git_url">repo url</label></td>
+</tr>
+<tr>
+<td><input type="text" size="30" name="git_branch" id="git_branch" value="[% HTML.escape(git_repo_branch) %]"></input></td><td><label for="git_branch">branch</label></td>
+</tr>
+<tr>
+<td colspan="2"><input type="submit" value="Sync" id="gitsync"></input></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
 <div id="files">
 </div>
 <h2>Access</h2>

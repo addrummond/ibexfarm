@@ -8,6 +8,7 @@ use IbexFarm::FNames;
 use IbexFarm::CheckEmail;
 use File::Path qw( rmtree );
 use Digest;
+use IbexFarm::Util;
 
 sub login :Absolute :Args(0) {
     my ($self, $c) = @_;
@@ -76,28 +77,14 @@ sub update_email :Absolute :Args(0) {
             $c->stash->{template} = 'user.tt';
         }
         else {
-            my $ufile = catfile(IbexFarm->config->{deployment_dir}, $c->user->username, IbexFarm->config->{USER_FILE_NAME});
-            open my $f, $ufile or die "Unable to open '", IbexFarm->config->{USER_FILE_NAME}, "' file for reading: $!";
-            local $/;
-            my $contents = <$f>;
-            close $f or die "Unable to close '", IbexFarm->config->{USER_FILE_NAME}, "' file after reading: $!";
-            my $json = JSON::XS::decode_json($contents);
-            die "Bad JSON in '", IbexFarm->config->{USER_FILE_NAME}, "' file" unless (ref($json) eq 'HASH');
-
-            # Note: in principle, we could read version 1 of the USER file, then someone else
-            # could write version 2, and we'd end up writing version 1.1 instead of version 2.1.
-            # Not worth guarding against this since if multiple updates are occuring to user
-            # details at the same time, unexpected results are going to occur whatever order we
-            # process the updates.
-
-            $json->{email_address} = $c->req->params->{email};
-            open my $of, ">>$ufile" or die "Unable to open '", IbexFarm->config->{USER_FILE_NAME}, "' file for writing: $!";
-            flock $of, 2 or die "Unable to lock '", IbexFarm->config->{USER_FILE_NAME}, "' file for writing: $!";
-            truncate $of, 0 or die "Unable to truncate '", IbexFarm->config->{USER_FILE_NAME}, "' file: $!";
-            seek $of, 0, 0 or die "Really?: $!";
-            print $of JSON::XS::encode_json($json);
-            flock $of, 8; # Unlock.
-            close $of or die "Unable to close '", IbexFarm->config->{USER_FILE_NAME}, "' file after writing: $!";
+            IbexFarm::Util::update_json_file(
+                catfile(IbexFarm->config->{deployment_dir}, $c->user->username, IbexFarm->config->{USER_FILE_NAME}),
+                sub {
+                    my $j = shift;
+                    $j->{email_address} = $c->req->params->{email};
+                    return $j;
+                }
+            );
 
             $c->stash->{email_address} = $c->req->params->{email};
             $c->stash->{message} = "Your email has been updated.";

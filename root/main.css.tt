@@ -325,3 +325,19 @@ p.goto {
 p.pwremover {
     padding-top: 1em;
 }
+
+div#files {
+    padding-top: 1em;
+}
+
+div#git > div {
+    display: none;
+}
+div#git > span {
+    cursor: pointer;
+    font-size: [% stdsmall %];
+    font-weight: bold;
+}
+div#git td {
+    font-size: [% stdsmall %];
+}
