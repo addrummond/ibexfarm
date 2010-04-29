@@ -51,6 +51,15 @@ sub index :Path :Args(0) {
     $c->stash->{template} = "frontpage.tt";
 }
 
+sub githelp :Path("githelp") :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->stash->{timeout} = IbexFarm->config->{git_checkout_timeout_seconds};
+    $c->stash->{back_uri} = $c->flash->{back_uri};
+    $c->stash->{experiment_name} = $c->flash->{experiment_name};
+    $c->stash->{template} = "githelp.tt";
+}
+
 sub bad_request :Path {
     my ($self, $c) = @_;
     $c->response->body('Bad request');

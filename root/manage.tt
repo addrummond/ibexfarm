@@ -13,25 +13,28 @@
 Go to the <a href="[% c.uri_for("/myaccount") %]">my account</a> page to view your other experiments or to create/delete experiments.
 </p>
 <div id="git">
-<span>Update from git repo&raquo;</span>
+<span>Update from git repo&raquo;</span><span class="new"> (new)</span>
 <div>
 <div class="box">
 <table>
 <tr>
-<td><input type="text" size="30" name="git_url" id="git_url" value="[% HTML.escape(git_repo_url) %]"></input><td><label for="git_url">repo url</label></td>
+<td colspan="2"><input type="text" size="50" name="git_url" id="git_url" value="[% HTML.escape(git_repo_url) %]"></input><td><label for="git_url">repo url</label></td>
 </tr>
 <tr>
-<td><input type="text" size="30" name="git_branch" id="git_branch" value="[% HTML.escape(git_repo_branch) %]"></input></td><td><label for="git_branch">branch</label></td>
+<td colspan="2"><input type="text" size="50" name="git_branch" id="git_branch" value="[% HTML.escape(git_repo_branch || "master") %]"></input></td><td><label for="git_branch">branch</label></td>
 </tr>
 <tr>
-<td colspan="2"><input type="submit" value="Sync" id="gitsync"></input></td>
+<td><input type="submit" value="Sync" id="gitsync"></input> <a href="[% c.uri_for('/githelp') %]">(help)</a></td><td id="gitspin"></td><td></td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div id="files">
+
+<hr class="fsep" />
 </div>
+
 <h2>Access</h2>
 <p class="smallprint pwddisclaimer">
 <i>The level of security provided by this form of password protection is very basic. Don't rely on it to hide any sensitive information.</i>

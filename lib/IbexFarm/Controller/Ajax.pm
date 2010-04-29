@@ -23,6 +23,7 @@ use IbexFarm::PasswordProtectExperiment::Factory;
 use IbexFarm::PasswordProtectExperiment::Apache;
 use JSON::XS;
 use IbexFarm::Util;
+use Digest::MD5;
 
 my $get_default_config = sub {
     my %additions = @_;
@@ -777,8 +778,9 @@ sub from_git_repo :Path("from_git_repo") {
     eval {
         local $SIG{ALRM} = sub { die "alarm\n"; };
         if (($pid = fork()) == 0) {
-            my @as = (IbexFarm->config->{git_path}, 'clone', $git_url, $tmpdir);
+            my @as = (IbexFarm->config->{git_path}, 'clone');
             push @as, '-b', $c->req->params->{branch} if ($c->req->params->{branch});
+            push @as, $git_url, $tmpdir;
             exec(@as);
         }
         # calls to exec never return, so we only get here if we're in the parent process.
@@ -808,6 +810,7 @@ sub from_git_repo :Path("from_git_repo") {
                       $c->req->params->{expname});
 
     my @dirs_modified;
+    my @files_modified;
     for my $dir (@{IbexFarm->config->{sync_dirs}}) {
         next unless (-d catdir($tmpdir, $dir));
 
@@ -815,8 +818,35 @@ sub from_git_repo :Path("from_git_repo") {
         while (defined (my $entry = readdir($DIR))) {
             next if $entry =~ /^\./;
 
+            my $moddir = sub {
+                push @dirs_modified, $dir unless (grep { $_ eq $dir } @dirs_modified);
+            };
+
+            my $oldf = catfile($edir, IbexFarm->config->{ibex_archive_root_dir}, $dir, $entry);
+            my $newf = catfile($tmpdir, $dir, $entry);
+            eval {
+                # Don't compute MD5 hashes for large files.
+                if ((! -e $oldf) || -s $oldf > 65536 || -s $newf > 65536) {
+                    push @files_modified, catfile($dir, $entry);
+                    $moddir->();
+                }
+                else {
+                    open my $of, $oldf;
+                    open my $nf, $newf;
+                    local $/;
+                    my ($oldc, $newc) = (<$of>, <$nf>);
+                    close $of; close $nf;
+                    if (Digest::MD5::md5_hex($oldc) ne Digest::MD5::md5_hex($newc)) {
+                        push @files_modified, catfile($dir, $entry);
+                        $moddir->();
+                    }
+                }
+            };
+            if ($@) {
+                die "Error futzing around with MD5s: $!";
+            }
+
             copy(catfile($tmpdir, $dir, $entry), catfile($edir, IbexFarm->config->{ibex_archive_root_dir}, $dir, $entry)) or die "Copying error: $!";
-            push @dirs_modified, $dir;
         }
     }
 
@@ -824,6 +854,7 @@ sub from_git_repo :Path("from_git_repo") {
     rmtree([$tmpdir], 0, 0) or die "Unable to clean up temp dir in from_git_repo: $!";
 
     $c->stash->{dirs_modified} = \@dirs_modified;
+    $c->stash->{files_modified} = \@files_modified;
     $c->detach($c->view("JSON"));
 }
 

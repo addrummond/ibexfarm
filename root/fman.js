@@ -248,8 +248,18 @@ $.widget("ui.browseFile", {
 });
 
 $.widget("ui.browseDir", {
+    refresh: function (highlight) {
+        this.element.empty();
+        if (highlight)
+            this.options.highlight = highlight;
+        else this.options.highlight = [];
+        this._init();
+    },
+
     _init: function () {
         this.element.addClass("browseDir");
+
+        if (! this.options.highlight) this.options.highlight = [];
 
         var spinContainer;
         this.element.append(spinContainer = $("<div>").css('float', 'left'));
@@ -257,12 +267,6 @@ $.widget("ui.browseDir", {
         var t = this;
         spinnifyGET(spinContainer, BASE_URI + 'ajax/browse?dir=' + escape(this.options.dir) + '&experiment=' + escape(EXPERIMENT), function (data) {
             t.element.addClass("dir");
-
-            function refresh (highlight) {
-                t.element.empty();
-                t.options.highlight = highlight;
-                t._init();
-            }
 
             var table;
             var upload;
@@ -285,7 +289,7 @@ $.widget("ui.browseDir", {
                                              .append(upload_msg = $("<div>").hide()))));
 
             refresh_link.click(function () {
-                refresh();
+                t.refresh();
             });
 
             var progressId = generateProgressID();
@@ -361,7 +365,7 @@ $.widget("ui.browseDir", {
                     }
                     else {
                         upload_msg.empty();
-                        refresh(file);
+                        t.refresh([file]);
                     }
                 }
             });
@@ -378,15 +382,23 @@ $.widget("ui.browseDir", {
                     var modified = data.entries[i][3];
                     var writable = data.entries[i][4];
 
+                    function rcallback() { t.refresh(); }
+                    var shouldHighlight = false;
+                    for (var j = 0; j < t.options.highlight.length; ++j) {
+                        if (t.options.highlight[j] == filename) {
+                            shouldHighlight = true;
+                            break;
+                        }
+                    }
                     table.append($("<tr>").append($("<td>").append($("<div>").browseFile({
                         filename: filename,
-                        highlight: filename == t.options.highlight,
+                        highlight: shouldHighlight,
                         size: size,
                         dir: t.options.dir,
                         modified: modified,
                         writable: writable,
-                        deletedCallback: refresh,
-                        renamedCallback: refresh
+                        deletedCallback: rcallback,
+                        renamedCallback: rcallback
                     }))));
                 }
             }
@@ -462,20 +474,33 @@ $.widget("ui.pwmanage", {
     }
 });
 
+var dirsWidgetHash = { };
+
 function sync_git(e) {
     e.preventDefault();
 
     if ($("#git_url").attr('value').match(/^\s*$/))
         return;
 
-    spinnifyPOST($("#git"),
+    spinnifyPOST($("#gitspin"),
                  BASE_URI + 'ajax/from_git_repo',
                  { url: $("#git_url").attr('value'),
                    branch: $("#git_branch").attr('value'),
                    expname: EXPERIMENT },
                  function (result) {
                      if (result.error) { alert("error!"); }
-                     else alert("success!");
+                     else {
+                         // Refresh all the dirs that were modified, highlighting modified files.
+                         for (var i = 0; i < result.dirs_modified.length; ++i) {
+                             // Find relevant files.
+                             var modified = [];
+                             for (var j = 0; j < result.files_modified.length; ++j) {
+                                 var s = result.files_modified[j].indexOf(result.dirs_modified[i] + '/');
+                                 if (s == 0) modified.push(result.files_modified[j].substr(result.dirs_modified[i].length + 1));
+                             }
+                             dirsWidgetHash[result.dirs_modified[i]].browseDir("refresh", modified);
+                         }
+                     }
                  },
                  "json");
 }
@@ -494,7 +519,9 @@ $(document).ready(function () {
     $.getJSON(BASE_URI + 'ajax/get_dirs', function (data) {
         var sdirs = data.dirs.sort();
         for (var i = 0; i < data.dirs.length; ++i) {
-            $("#files").append($("<div>").browseDir({ dir: sdirs[i] }));
+            var w;
+            $("#files").append(w = $("<div>").browseDir({ dir: sdirs[i] }));
+            dirsWidgetHash[sdirs[i]] = w;
         }
     })
 
