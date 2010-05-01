@@ -783,7 +783,7 @@ sub from_git_repo :Path("from_git_repo") {
         local $SIG{ALRM} = sub { die "alarm\n"; };
         if (($pid = fork()) == 0) {
             my @as = (IbexFarm->config->{git_path}, 'clone');
-            push @as, '-b', $c->req->params->{branch} if ($c->req->params->{branch});
+            push @as, '--depth', '1', '-b', $c->req->params->{branch} if ($c->req->params->{branch});
             push @as, $git_url, $tmpdir;
             open STDERR, ">$tempefile" or die "Unable to redirect STDERR for executing git: $!";
             exec(@as);
