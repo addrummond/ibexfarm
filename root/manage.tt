@@ -25,14 +25,15 @@ Go to the <a href="[% c.uri_for("/myaccount") %]">my account</a> page to view yo
 <td><input type="text" size="50" name="git_branch" id="git_branch" value="[% HTML.escape(git_repo_branch || "master") %]"></input></td><td><label for="git_branch">branch/revision</label></td>
 </tr>
 <tr>
-<td>
+<td colspan="2">
 <table>
 <tr>
-<td><input type="submit" value="Sync" id="gitsync"></input></td><td id="gitspin"></td><td></td>
+<td class="sync"><input type="submit" value="Sync" id="gitsync"></input></td><td id="gitspin"></td><td></td>
 </tr>
 </table>
 </tr>
 </table>
+<div id="gitstatus"></div>
 </div>
 </div>
 </div>

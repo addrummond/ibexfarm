@@ -41,7 +41,7 @@ max_upload_size_bytes: 1048576
 experiment_password_protection: Apache
 
 git_path: "/opt/local/bin/git"
-git_checkout_timeout_seconds: 45
+git_checkout_timeout_seconds: 25
 
 #'Plugin::Authentication':
 #    default_realm: users

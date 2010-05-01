@@ -769,6 +769,10 @@ sub from_git_repo :Path("from_git_repo") {
     my $tmpdir = File::Temp::tempdir();
     $tmpdir or die "Unable to create temporary dir for checking out git repo: $!";
 
+    # Get a temporary file for storing any error messages from git.
+    my ($tempefilefh, $tempefile) = File::Temp::tempfile();
+    $tempefilefh or die "Unable to create temporary error file for checking out git repo: $!";
+
     # Checkout the repo. Setting a timeout here to prevent checking out of enormous
     # repos (should probably set a size limit too, but haven't figured out a good
     # way of doing this yet). See:
@@ -781,6 +785,7 @@ sub from_git_repo :Path("from_git_repo") {
             my @as = (IbexFarm->config->{git_path}, 'clone');
             push @as, '-b', $c->req->params->{branch} if ($c->req->params->{branch});
             push @as, $git_url, $tmpdir;
+            open STDERR, ">$tempefile" or die "Unable to redirect STDERR for executing git: $!";
             exec(@as);
         }
         # calls to exec never return, so we only get here if we're in the parent process.
@@ -793,7 +798,8 @@ sub from_git_repo :Path("from_git_repo") {
         # Kill the git process.
         kill 9, $pid;
 
-        rmtree([$tmpdir], 0, 0);
+        if (-e $tmpdir) { rmtree([$tmpdir], 0, 0) or die "Unable to remove temporary git repo checkout dir (15): $!"; }
+        close $tempefilefh or die "Unable to delete temporary git error message file.";
 
         die $@ unless ($@ eq "alarm\n");
         # It timed out.
@@ -801,9 +807,14 @@ sub from_git_repo :Path("from_git_repo") {
         $c->detach($c->view("JSON"));
     }
     if ($?) { # git process exited with an error.
-        rmtree([$tmpdir], 0, 0) || die "Unable to remove temporary git repo checkout dir (1): $!";
-        $c->detach('bad_request');
+        if (-e $tmpdir) { rmtree([$tmpdir], 0, 0) || die "Unable to remove temporary git repo checkout dir (1): $!"; }
+        local $/;
+        seek $tempefilefh, 0, 0 or die "Error seeking: $!";
+        $c->stash->{error} = substr(<$tempefilefh>, 0, 1000); # Don't send huge error messages.
+        close $tempefilefh or die "Unable to close temporary git error message file.";
+        $c->detach($c->view("JSON"));
     }
+    close $tempefilefh or die "Unable to delete temporary git error message file.";
 
     my $edir = catdir(IbexFarm->config->{deployment_dir},
                       $c->user->username,
@@ -825,7 +836,7 @@ sub from_git_repo :Path("from_git_repo") {
             my $oldf = catfile($edir, IbexFarm->config->{ibex_archive_root_dir}, $dir, $entry);
             my $newf = catfile($tmpdir, $dir, $entry);
             eval {
-                # Don't compute MD5 hashes for large files.
+                # Don't compute MD5 hashes for non-existent or large files.
                 if ((! -e $oldf) || -s $oldf > 65536 || -s $newf > 65536) {
                     push @files_modified, catfile($dir, $entry);
                     $moddir->();

@@ -483,14 +483,37 @@ function sync_git(e) {
     if ($("#git_url").attr('value').match(/^\s*$/))
         return;
 
+    $("#gitstatus").empty();
+
     spinnifyPOST($("#gitspin"),
                  BASE_URI + 'ajax/from_git_repo',
                  { url: $("#git_url").attr('value'),
                    branch: $("#git_branch").attr('value'),
                    expname: EXPERIMENT },
                  function (result) {
-                     if (result.error) { alert("error!"); }
+                     if (result.error) {
+                         var esp = $("<span>").addClass("giterror");
+                         var lines = result.error.split("\n");
+                         for (var i = 0; i < lines.length; ++i) {
+                             var sp;
+                             esp.append(sp = $("<span>").text(lines[i]));
+                             if (i + 1 != lines.length) sp.append("<br/>");
+                         }
+                         $("#gitstatus").empty().append(
+                             $("<span>").addClass("giterror")
+                                        .append(esp)
+                                        .hide().fadeIn("slow"));
+                     }
                      else {
+                         // Update the status message.
+                         $("#gitstatus").empty().append(
+                             $("<span>").text("Success: " + result.files_modified.length +
+                                              " file" + (result.files_modified.length == 1 ? "" : "s") + " modified.")
+                                        .hide().fadeIn("slow"));
+                         setTimeout(function () {
+                             $("#gitstatus > span").fadeOut("slow", function () { $("#gitstatus").empty(); })
+                         }, 7000);
+
                          // Refresh all the dirs that were modified, highlighting modified files.
                          for (var i = 0; i < result.dirs_modified.length; ++i) {
                              // Find relevant files.

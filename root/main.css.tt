@@ -365,6 +365,10 @@ td#gitspin {
     font-size: [% stdvsmall %];
 }
 
+#git td.sync {
+    vertical-align: top;
+}
+
 hr.fsep {
     border-bottom: 1px solid [% light %];
     border-top: 0;
@@ -376,4 +380,15 @@ hr.fsep {
 
 ul.githelp li {
     padding-bottom: 1em;
+}
+
+#gitstatus {
+    font-size: [% stdsmall %];
+    font-weight: bold;
+    color: [% text_color %];
+    margin-right: 1em;
+}
+
+#gitstatus .giterror {
+    color: [% heading_color %];
 }
