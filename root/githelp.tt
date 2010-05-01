@@ -8,15 +8,12 @@
 <h2>Syncing from a git repo</h2>
 <p>
 This is pretty straightforward, but there are a few things
-to bear in mind:
+to know:
 </p>
-<ul>
-<li>There is no git repository hosted on the ibex farm server. The method used is braindead:
+<ul class="githelp">
+<li>There is no git repository hosted on the ibex farm server. The method used is rather braindead:
 the repository is checked out, and the files are then copied over to your experiment. Files that
 already exist will be overwritten; files which are uploaded to your experiment but which are not in the repository will remain unaltered.
-In other words, the git repository is just treated as a remote file system &mdash; there's no
-fancy version control stuff going on. (This is probably not the Right Thing, but it's at least
-simple, and I think better than a half-assed implementation of something more complicated.)
 </li>
 <li>
 No files are ever copied to the &lsquo;results&rsquo; dir, in order to ensure that
@@ -26,6 +23,12 @@ results are never overwritten by accident.
 The repository checkout will time out after [% timeout %] seconds. If this happens,
 you can just try again. That is, unless you are trying to check out an enormous
 repo, in which case you'll have to slim it down a bit.
+</li>
+<li>
+Your git repo should have the directories &lsquo;data_includes&rsquo;,
+&lsquo;js_includes&rsquo;, etc. in its root directory. Only files immediately
+contained in these directories will be copied over &mdash; subdirectories
+are ignored.
 </li>
 </ul>
 

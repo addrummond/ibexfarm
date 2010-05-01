@@ -43,44 +43,46 @@ add2("toggle");
 })();
 
 // Code for doing ajax spinner thingy.
-// This waits 500ms before adding a spinner (distracting to have them
+// By default, this waits 500ms before adding a spinner (distracting to have them
 // flash for <500ms).
-function spinnifyAjax(spincontainer, ajaxArgs) {
+function spinnifyAjax(spincontainer, ajaxArgs, dontWait) {
     var origError = ajaxArgs.error;
     var origSuccess = ajaxArgs.success;
 
     var spinner = $("<div>")
                   .css('width', 16).css('height', 16)
                   .css('background-image', "url('" + BASE_URI + 'static/images/ajax-loader.gif' + "')");
-    var timeoutId = setTimeout(function () { spincontainer.append(spinner); }, 500);
+    var timeoutId;
+    if (! dontWait) timeoutId = setTimeout(function () { spincontainer.append(spinner); }, 500);
+    else spincontainer.append(spinner);
     ajaxArgs.error = function () {
-        clearTimeout(timeoutId);
+        if (timeoutId) clearTimeout(timeoutId);
         spinner.remove();
         if (origError) return origError();
     };
     ajaxArgs.success = function (data) {
-        clearTimeout(timeoutId);
+        if (timeoutId) clearTimeout(timeoutId);
         spinner.remove();
         if(origSuccess) { return origSuccess(data); }
     };
     return $.ajax(ajaxArgs);
 }
-function spinnifyPOST(spincontainer, url, args, callback, type) {
+function spinnifyPOST(spincontainer, url, args, callback, type, dontWait) {
     return spinnifyAjax(spincontainer, {
         url: url,
         data: args,
         type: "POST",
         success: callback,
         dataType: type
-    });
+    }, dontWait);
 }
-function spinnifyGET(spincontainer, url, callback, type) {
+function spinnifyGET(spincontainer, url, callback, type, dontWait) {
     return spinnifyAjax(spincontainer, {
         url: url,
         type: "GET",
         success: callback,
         dataType: type || "json"
-    });
+    }, dontWait);
 }
 
 (function (isChrome) {

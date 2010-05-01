@@ -502,13 +502,18 @@ function sync_git(e) {
                          }
                      }
                  },
-                 "json");
+                 "json", true);
 }
 
 function show_hide_git() {
     $("#git > div").toggle("normal", function () {
-        if ($("#git > div").is(':visible'))
+        if ($("#git > div").is(':visible')) {
             $("#git_url").focus();
+            createCookie("gitslideopen" + $("#username")[0].innerHTML, "1", 10);
+        }
+        else {
+            eraseCookie("gitslideopen" + $("#username")[0].innerHTML);
+        }
     });
 }
 
@@ -527,4 +532,7 @@ $(document).ready(function () {
 
     $("#gitsync").click(sync_git);
     $("#git > span").click(show_hide_git);
+
+    if (readCookie("gitslideopen" + $("#username")[0].innerHTML))
+        $("#git > div").show();
 });

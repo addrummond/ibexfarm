@@ -797,7 +797,7 @@ sub from_git_repo :Path("from_git_repo") {
 
         die $@ unless ($@ eq "alarm\n");
         # It timed out.
-        $c->stash->{error} = "timeout";
+        $c->stash->{error} = "Timeout while trying to check out repository (try again soon)";
         $c->detach($c->view("JSON"));
     }
     if ($?) { # git process exited with an error.

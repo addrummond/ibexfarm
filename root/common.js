@@ -4,6 +4,34 @@ $.getJSON=function(uri,callback){return $.post(uri,{},callback,"json");};
 (function(){var oldajax=$.ajax;$.ajax=function(opts){opts.type="POST";return oldajax(opts);};})();
 @*/
 
+// Taken from http://www.quirksmode.org/js/cookies.html
+function createCookie(name,value,days) {
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime()+(days*24*60*60*1000));
+        var expires = "; expires="+date.toGMTString();
+    }
+    else var expires = "";
+    document.cookie = name+"="+value+expires+"; path=/";
+}
+
+// As above.
+function readCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
+
+// As above.
+function eraseCookie(name) {
+    createCookie(name,"",-1);
+}
+
 $.ajaxSetup({cache: false, global: false});
 
 // Turning off caching can cause jQuery to send POST instead of GET.

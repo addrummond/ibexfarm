@@ -358,7 +358,11 @@ td#gitspin {
 
 #git .new {
     font-size: [% stdvsmall %];
+    font-weight: bold;
     color: [% heading_color %];
+}
+#git .help {
+    font-size: [% stdvsmall %];
 }
 
 hr.fsep {
@@ -368,4 +372,8 @@ hr.fsep {
     margin-bottom: 1em;
     margin-left: 0;
     margin-right: auto;
+}
+
+ul.githelp li {
+    padding-bottom: 1em;
 }

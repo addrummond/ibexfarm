@@ -53,7 +53,7 @@
 <a rel="external" href="http://code.google.com/p/webspr/wiki/Documentation03">ibex docs</a>
 [% IF c.user_exists %]
 <p>
-You are logged in as <a href="[% c.uri_for("/myaccount") %]">[% c.user.username %]</a> (<a href="[% c.uri_for("/logout") %]">logout</a>).
+You are logged in as <a id="username" href="[% c.uri_for("/myaccount") %]">[% c.user.username %]</a> (<a href="[% c.uri_for("/logout") %]">logout</a>).
 </p>
 [% END %]
 </div>

@@ -13,18 +13,24 @@
 Go to the <a href="[% c.uri_for("/myaccount") %]">my account</a> page to view your other experiments or to create/delete experiments.
 </p>
 <div id="git">
-<span>Update from git repo&raquo;</span><span class="new"> (new)</span>
+<span>Update from git repo&raquo;</span><span class="new"> new</span>
+<span class="help"><a rel="external" href="[% c.uri_for('/githelp') %]">(help)</a></span>
 <div>
 <div class="box">
 <table>
 <tr>
-<td colspan="2"><input type="text" size="50" name="git_url" id="git_url" value="[% HTML.escape(git_repo_url) %]"></input><td><label for="git_url">repo url</label></td>
+<td><input type="text" size="50" name="git_url" id="git_url" value="[% HTML.escape(git_repo_url) %]"></input><td><label for="git_url">repo url</label></td>
 </tr>
 <tr>
-<td colspan="2"><input type="text" size="50" name="git_branch" id="git_branch" value="[% HTML.escape(git_repo_branch || "master") %]"></input></td><td><label for="git_branch">branch</label></td>
+<td><input type="text" size="50" name="git_branch" id="git_branch" value="[% HTML.escape(git_repo_branch || "master") %]"></input></td><td><label for="git_branch">branch/revision</label></td>
 </tr>
 <tr>
-<td><input type="submit" value="Sync" id="gitsync"></input> <a href="[% c.uri_for('/githelp') %]">(help)</a></td><td id="gitspin"></td><td></td>
+<td>
+<table>
+<tr>
+<td><input type="submit" value="Sync" id="gitsync"></input></td><td id="gitspin"></td><td></td>
+</tr>
+</table>
 </tr>
 </table>
 </div>
