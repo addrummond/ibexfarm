@@ -1,3 +1,13 @@
+function caseInsensitiveSortingFunction (x,y) { 
+  var a = String(x).toUpperCase(); 
+  var b = String(y).toUpperCase(); 
+  if (a > b) 
+     return 1 
+  if (a < b) 
+     return -1 
+  return 0; 
+}
+
 // Add "before_show", "after_show", "before_hide", "after_hide",
 // "before_toggle", "after_toggle", "before_toggle_or_show" and "after_toggle_or_show"
 // events to jQuery. What a mess!
