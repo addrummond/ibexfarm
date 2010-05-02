@@ -555,6 +555,7 @@ $(document).ready(function () {
     })
 
     $("#gitsync").click(sync_git);
+    $("#git input[type=text]").keypress(function (e) { if (e.which == 13 /*return*/) sync_git(e); });
     $("#git > span").click(show_hide_git);
 
     if (readCookie("gitslideopen" + $("#username")[0].innerHTML))

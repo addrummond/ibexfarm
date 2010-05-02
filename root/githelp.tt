@@ -30,6 +30,9 @@ Your git repo should have the directories &lsquo;data_includes&rsquo;,
 contained in these directories will be copied over &mdash; subdirectories
 are ignored.
 </li>
+<li>
+Currently, it is only possible to sync from publicly readable git repos.
+</li>
 </ul>
 
 <p><i>You can get free hosting for git repositories at <a href="http://github.com">github</a>.</i></p>
