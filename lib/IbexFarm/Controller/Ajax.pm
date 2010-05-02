@@ -24,7 +24,6 @@ use IbexFarm::PasswordProtectExperiment::Apache;
 use JSON::XS;
 use IbexFarm::Util;
 use Digest::MD5;
-use Archive::Zip;
 
 my $get_default_config = sub {
     my %additions = @_;
@@ -868,37 +867,6 @@ sub from_git_repo :Path("from_git_repo") {
     $c->stash->{dirs_modified} = \@dirs_modified;
     $c->stash->{files_modified} = \@files_modified;
     $c->detach($c->view("JSON"));
-}
-
-# TODO: Using Absolute here is a bit nasty, should probably put this in another controller at some point.
-sub zip_archive :Absolute :Path("zip_archive") {
-    my ($self, $c) = (shift, shift);
-    my $experiment_name = shift or $c->detach('default');
-    $experiment_name =~ /^([^.]+)\.zip$/;
-    ($experiment_name = $1) or $c->detach('default');
-    $c->detach('unauthorized') unless ($c->user_exists);
-
-    my $edir = catdir(IbexFarm->config->{deployment_dir}, $c->user->username, $experiment_name, IbexFarm->config->{ibex_archive_root_dir});
-    my $zip = Archive::Zip->new();
-    for my $dir (@{IbexFarm->config->{dirs}}) {
-        if (-d (my $dd = catdir($edir, $dir))) {
-            my $zdir = $zip->addDirectory($dir);
-            opendir my $DIR, $dd or die "Unable to open dir: $!";
-            while (defined (my $entry = readdir($DIR))) {
-                next if $entry =~ /^\./;
-                $zip->addFile(catfile($dd, $entry), "$dir/$entry"); # Archive::Zip always uses '/'.
-            }
-        }
-    }
-
-    # Neat Perl trick: you can apparently open a reference to a string to get a file handle.
-    my $sbuf = "";
-    open my $sbuffh, "+<", \$sbuf;
-    $zip->writeToFileHandle($sbuffh) == Archive::Zip::AZ_OK or die "Error compressing zip file: $!";
-
-    ajax_headers($c, 'application/zip', '', 200);
-    $c->res->body($sbuf);
-    return 0;
 }
 
 my $ereq = sub {

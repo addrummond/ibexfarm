@@ -3,7 +3,9 @@ package IbexFarm::Controller::Root;
 use strict;
 use warnings;
 use parent 'Catalyst::Controller';
-use File::Spec::Functions qw( catdir );
+use File::Spec::Functions qw( catdir catfile );
+use Archive::Zip;
+use IbexFarm::AjaxHeaders qw( ajax_headers );
 
 #
 # Sets the actions in this controller to be registered with no prefix
@@ -60,14 +62,50 @@ sub githelp :Path("githelp") :Args(0) {
     $c->stash->{template} = "githelp.tt";
 }
 
+sub zip_archive :Path("zip_archive") {
+    my ($self, $c) = (shift, shift);
+    my $experiment_name = shift or $c->detach('default');
+    $experiment_name =~ /^([^.]+)\.zip$/;
+    ($experiment_name = $1) or $c->detach('default');
+    $c->detach('unauthorized') unless ($c->user_exists);
+
+    my $edir = catdir(IbexFarm->config->{deployment_dir}, $c->user->username, $experiment_name, IbexFarm->config->{ibex_archive_root_dir});
+    my $zip = Archive::Zip->new();
+    for my $dir (@{IbexFarm->config->{dirs}}) {
+        if (-d (my $dd = catdir($edir, $dir))) {
+            my $zdir = $zip->addDirectory($dir);
+            opendir my $DIR, $dd or die "Unable to open dir: $!";
+            while (defined (my $entry = readdir($DIR))) {
+                next if $entry =~ /^\./;
+                $zip->addFile(catfile($dd, $entry), "$dir/$entry"); # Archive::Zip always uses '/'.
+            }
+        }
+    }
+
+    # Neat Perl trick: you can apparently open a reference to a string to get a file handle.
+    my $sbuf = "";
+    open my $sbuffh, "+<", \$sbuf;
+    $zip->writeToFileHandle($sbuffh) == Archive::Zip::AZ_OK or die "Error compressing zip file: $!";
+
+    ajax_headers($c, 'application/zip', '', 200);
+    $c->res->body($sbuf);
+    return 0;
+}
+
 sub bad_request :Path {
     my ($self, $c) = @_;
     $c->response->body('Bad request');
     $c->response->status(404);
 }
 
+sub unauthorized :Path {
+    my ($self, $c) = @_;
+    $c->response->body('You do not have permission to access this page.');
+    $c->response->status(401);
+}
+
 sub default :Path {
-    my ( $self, $c ) = @_;
+    my ($self, $c) = @_;
     $c->response->body('Page not found');
     $c->response->status(404);
 }
