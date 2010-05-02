@@ -38,16 +38,23 @@ Go to the <a href="[% c.uri_for("/myaccount") %]">my account</a> page to view yo
 </div>
 </div>
 <div id="files">
-
 <hr class="fsep" />
 </div>
 
 <h2>Access</h2>
 <p class="smallprint pwddisclaimer">
-<i>The level of security provided by this form of password protection is very basic. Don't rely on it to hide any sensitive information.</i>
+The level of security provided by this form of password protection is very basic. Don't rely on it to hide any sensitive information.
 </p>
 <p class="smallprint pwddisclaimer">
 Modifying the password may lead to odd behavior in some browsers if you do not clear your browser's cache of logged-in HTTP sessions.
 </p>
 <div class="message_" id="authinfo">
 </div>
+
+<h2>Archive</h2>
+<p>You can download a
+<a href="[% c.uri_for(experiment_base_url _ '/zip_archive/' _ experiment _ '.zip') | url %]">zip archive</a>
+of the files above.</p>
+<p class="smallprint">
+In some browsers, you may need to right click and select &ldquo;save link as&rdquo; to download the file.
+</p>

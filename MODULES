@@ -12,3 +12,4 @@ HTML::GenerateUtil
 Class::Factory
 JSON::XS
 Digest
+Archive::Zip

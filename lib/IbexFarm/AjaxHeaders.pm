@@ -12,7 +12,7 @@ sub ajax_headers {
 
     $c->response->code($code);
     $c->response->content_type($content_type);
-    $c->response->content_encoding($encoding);
+    if ($encoding) { $c->response->content_encoding($encoding); }
     $c->response->headers->header(Pragma => 'no-cache');
     $c->response->headers->header(Expires => 'Thu, 01 Jan 1970 00:00:00 GMT');
     $c->response->headers->header('Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
