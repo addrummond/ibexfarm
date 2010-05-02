@@ -53,8 +53,8 @@ Modifying the password may lead to odd behavior in some browsers if you do not c
 
 <h2>Archive</h2>
 <p>You can download a
-<a href="[% c.uri_for(experiment_base_url _ '/zip_archive/' _ experiment _ '.zip') | url %]">zip archive</a>
+<a href="[% c.uri_for('/zip_archive/' _ experiment _ '.zip') | url %]">zip archive</a>
 of the files above.</p>
 <p class="smallprint">
-In some browsers, you may need to right click and select &ldquo;save link as&rdquo; to download the file.
+In some browsers, you may need to right click and select &ldquo;save link as&rdquo; to download the file. The link will only work when you are logged in.
 </p>
