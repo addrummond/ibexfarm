@@ -58,6 +58,7 @@ $.widget("ui.browseFile", {
                         .append(++ncols && (fname = ($("<td>")
                                 .append(download = $("<a>")
                                                            .addClass(this.options.writable ? "writable" : "unwritable")
+                                                           .attr('target', '_blank')
                                                            .attr('href', BASE_URI +
                                                                          'ajax/download/' + escape(EXPERIMENT) + '/' +
                                                                          escape(this.options.dir) + '/' +
