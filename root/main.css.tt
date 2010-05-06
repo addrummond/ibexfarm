@@ -281,7 +281,6 @@ p.smallprint a {
 
 h2.expheader {
     clear: both;
-    padding-top: 1em;
 }
 
 p.pwddisclaimer {
@@ -307,7 +306,10 @@ form.delete_account {
 
 p.goto {
     margin-top: 0;
-    padding-top: 0;
+    padding-top: 1em;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    clear: both;
     font-style: italic;
 }
 
