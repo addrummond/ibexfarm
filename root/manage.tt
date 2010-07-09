@@ -8,10 +8,10 @@
 [% eurl = experiment_base_url _ c.user.username _ '/' _ experiment _ '/experiment.html' | url %]
 <a rel="external" href="[% eurl %]">[% HTML.escape(eurl) %]</a>
 </div></div></div></div>
-<h2 class="expheader">Experiment &lsquo;[% experiment %]&rsquo;</h2>
 <p class="smallprint goto">
 Go to the <a href="[% c.uri_for("/myaccount") %]">my account</a> page to view your other experiments or to create/delete experiments.
 </p>
+<h2 class="expheader">Experiment &lsquo;[% experiment %]&rsquo;</h2>
 <div id="git">
 <span>Update from git repo&raquo;</span><span class="new"> new</span>
 <span class="help"><a rel="external" href="[% c.uri_for('/githelp') %]">(help)</a></span>
