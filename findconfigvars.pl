@@ -11,7 +11,7 @@ find(sub {
             open(my $f, $_);
 	    my $line = 1;
             for my $l (<$f>) {
-                if ($l =~ /IbexFarm->config->{([^}]+)}/) { push @confs, { varname => "$1", filename => $_, line => $line } ; }
+                if ($l =~ /IbexFarm->config->{([^}]+)}/) { push @confs, { varname => "$1", filename => $File::Find::name, line => $line } ; }
 		++$line;
             }
         }
