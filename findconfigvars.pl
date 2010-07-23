@@ -9,13 +9,15 @@ my @confs;
 find(sub {
         if (-f $_ && $_ !~ /~$/ && $_ ne 'findconfigvars.pl') {
             open(my $f, $_);
+	    my $line = 1;
             for my $l (<$f>) {
-                if ($l =~ /IbexFarm->config->{([^}]+)}/) { push @confs, "$1"; }
+                if ($l =~ /IbexFarm->config->{([^}]+)}/) { push @confs, { varname => "$1", filename => $_, line => $line } ; }
+		++$line;
             }
         }
      }, './');
 
-@confs = sort @confs;
-my $prev = '';
-@confs = grep { $_ ne $prev && (($prev) = $_) } @confs;
-for (@confs) { print "$_\n"; }
+@confs = sort { $a->{varname} cmp $b->{varname} } @confs;
+my $prev = { varname => '' };
+@confs = grep { $_->{varname} ne $prev->{varname} && (($prev) = $_) } @confs;
+for (@confs) { print $_->{varname}, " in ", $_->{filename}, ":", $_->{line}, "\n"; }
