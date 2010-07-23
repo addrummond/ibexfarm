@@ -753,7 +753,7 @@ sub from_git_repo :Path("from_git_repo") {
     $c->detach('bad_request') unless ($c->req->method eq 'POST' && scalar(@_) == 0 && $c->req->params->{url} && $c->req->params->{expname});
     my $git_url = $c->req->params->{url};
 
-    # The commented out code below is the old code, which (quite bizarely stupidly) didn't
+    # The commented out code below is the old code, which (quite bizarrely stupidly) didn't
     # maintain a separate history for each experiemnt.
 #    # Update the user's profile to keep track of the git repo/branch they just used.
 #    my $ufile = catfile(IbexFarm->config->{deployment_dir}, $c->user->username, IbexFarm->config->{USER_FILE_NAME});
@@ -773,7 +773,7 @@ sub from_git_repo :Path("from_git_repo") {
 	sub {
 	    my $json = shift;
 	    $json->{git_repos} = { } unless $json->{git_repos};
-	    $json->{git_repos}->{$c->req->params->{expname}} = {
+	    $json->{git_repos}{$c->req->params->{expname}} = {
 		url => $git_url,
 		branch => $c->req->params->{branch}
 	    }
