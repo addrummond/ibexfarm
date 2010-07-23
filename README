@@ -1,1 +1,6 @@
 Run script/ibexfarm_server.pl to test the application.
+
+You should set the environment variable STATIC=1 so that the test
+server will serve static files.
+
+To run in debug mode, set the environment variable DEBUG=1.
