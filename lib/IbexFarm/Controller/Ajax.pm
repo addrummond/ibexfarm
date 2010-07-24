@@ -776,7 +776,8 @@ sub from_git_repo :Path("from_git_repo") {
 	    $json->{git_repos}{$c->req->params->{expname}} = {
 		url => $git_url,
 		branch => $c->req->params->{branch}
-	    }
+	    };
+	    $json;
 	}
     );
 

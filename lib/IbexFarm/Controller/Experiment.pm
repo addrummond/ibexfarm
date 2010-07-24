@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use parent 'Catalyst::Controller';
 use File::Spec::Functions qw( catfile catdir );
-use File::Stat;
 
 sub manage :Absolute {
     my ($self, $c, $experiment) = (shift, shift, shift);
@@ -38,10 +37,14 @@ sub manage :Absolute {
     # with no default). Therefore, for any experiment created after the date that this
     # modification was made to the code, we ignore 'git_repo_url' entirely.
     # We use ctime (which though not strictly creation time, is close enough). Not sure
-    # how this will behave on non-UNIX platforms.
+    # how this will behave on non-UNIX platforms which (a) cause Perl to report a ctime
+    # but (b) may (?) have a significantly different semantics for it.
     my $expdir = catdir(IbexFarm->config->{deployment_dir}, $c->user->username, $experiment);
-    my $st = stat($expdir);
-    if ($json->{git_repo_url} && ((! $st->ctime) || $st->ctime > 1280000116)) { # 1280000116 = 07/24/2010 3:35pm EST
+    # Was getting weird errors using File::Stat, for some reason. Should sort these out at some
+    # point so that this isn't required.
+    my @stats = stat($expdir) or die "Unable to stat experiment directory '$expdir'";
+    my $ctime = $stats[10];
+    if ($json->{git_repo_url} && ((! $ctime) || $ctime < 1280000116)) { # 1280000116 = 07/24/2010 3:35pm EST
 	$json->{git_repo_branch} or die "git_repo_url but no git_repo_branch";
 	$c->stash->{git_repo_url} = $json->{git_repo_url};
 	$c->stash->{git_repo_branch} = $json->{git_repo_branch};
