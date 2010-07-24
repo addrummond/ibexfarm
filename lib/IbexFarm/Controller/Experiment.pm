@@ -40,7 +40,7 @@ sub manage :Absolute {
     # We use ctime (which though not strictly creation time, is close enough). Not sure
     # how this will behave on non-UNIX platforms.
     my $expdir = catdir(IbexFarm->config->{deployment_dir}, $c->user->username, $experiment);
-    $st = stat($expdir);
+    my $st = stat($expdir);
     if ($json->{git_repo_url} && ((! $st->ctime) || $st->ctime > 1280000116)) { # 1280000116 = 07/24/2010 3:35pm EST
 	$json->{git_repo_branch} or die "git_repo_url but no git_repo_branch";
 	$c->stash->{git_repo_url} = $json->{git_repo_url};
