@@ -3,7 +3,8 @@ package IbexFarm::Controller::Experiment;
 use strict;
 use warnings;
 use parent 'Catalyst::Controller';
-use File::Spec::Functions qw( catfile );
+use File::Spec::Functions qw( catfile catdir );
+use File::Stat;
 
 sub manage :Absolute {
     my ($self, $c, $experiment) = (shift, shift, shift);
@@ -32,7 +33,15 @@ sub manage :Absolute {
     # since the code for handling the new way comes after this code, the new way will override
     # the old way. (I.e. once a user has a default git URL for all his experiments, the old
     # 'git_repo_url' and 'git_branch_url' options will be ignored.)
-    if ($json->{git_repo_url}) {
+    # However, if the user creates a new experiment, we don't want an old default git URL
+    # specified by 'git_repo_url' to become the default for that experiment (it should start
+    # with no default). Therefore, for any experiment created after the date that this
+    # modification was made to the code, we ignore 'git_repo_url' entirely.
+    # We use ctime (which though not strictly creation time, is close enough). Not sure
+    # how this will behave on non-UNIX platforms.
+    my $expdir = catdir(IbexFarm->config->{deployment_dir}, $c->user->username, $experiment);
+    $st = stat($expdir);
+    if ($json->{git_repo_url} && ((! $st->ctime) || $st->ctime > 1280000116)) { # 1280000116 = 07/24/2010 3:35pm EST
 	$json->{git_repo_branch} or die "git_repo_url but no git_repo_branch";
 	$c->stash->{git_repo_url} = $json->{git_repo_url};
 	$c->stash->{git_repo_branch} = $json->{git_repo_branch};
