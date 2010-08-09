@@ -51,7 +51,7 @@ sub manage :Absolute {
     }
     # The new way.
     if ($json->{git_repos} && $json->{git_repos}{$experiment}) {
-	($json->{git_repos}{$experiment}{$url} && $json->{git_repos}{$experiment}{branch}) or
+	($json->{git_repos}{$experiment}{url} && $json->{git_repos}{$experiment}{branch}) or
             die "'url' and 'branch' keys should both be present";
 	$c->stash->{git_repo_url} = $json->{git_repos}{$experiment}{url};
 	$c->stash->{git_repo_branch} = $json->{git_repos}{$experiment}{branch};
