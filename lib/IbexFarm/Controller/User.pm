@@ -100,6 +100,53 @@ my $get_salt = sub {
     return join('', map { $salt_pool[int(rand(65))] } 1 .. $length);
 };
 
+my $make_pw_hash = sub {
+    my $password = shift;
+    my $digest = Digest->new(IbexFarm->config->{user_password_hash_algo});
+    my $salt = $get_salt->(IbexFarm->config->{user_password_salt_length});
+    $digest->add($password . $salt);
+    return $digest->b64digest . $salt;
+};
+
+sub update_password :Absolute :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->detach('Root', 'bad_request') unless (defined $c->req->params->{password1} && defined $c->req->params->{password2});
+
+    if (! $c->user_exists) {
+        $c->stash->{error} = "You must be logged in to change your password.";
+        $c->stash->{template} = "login.tt";
+        return;
+    }
+
+    my $password1 = $c->request->params->{password1};
+    my $password2 = $c->request->params->{password2};
+
+    if (! $password1 || ! $password2) {
+        $c->stash->{error} = "You must fill in both fields.";
+        $c->stash->{template} = "user.tt";
+        return;
+    }
+    if ($password1 ne $password2) {
+        $c->stash->{error} = "The passwords do not match.";
+        $c->stash->{template} = "user.tt";
+        return;
+    }
+
+    my $pwhash = $make_pw_hash->($password1);
+    IbexFarm::Util::update_json_file(
+        catfile(IbexFarm->config->{deployment_dir}, $c->user->username, IbexFarm->config->{USER_FILE_NAME}),
+        sub {
+            my $j = shift;
+            $j->{password} = $pwhash;
+            return $j;
+        }
+    );
+
+    $c->stash->{message} = "Your password has been updated.";
+    $c->stash->{template} = "user.tt";
+}
+
 sub newaccount :Absolute :Args(0) {
     my ($self, $c) = @_;
 
@@ -141,16 +188,11 @@ sub newaccount :Absolute :Args(0) {
             # Log the user out, if one is logged in.
             $c->logout if ($c->user_exists);
 
-#            my $csh = Crypt::SaltedHash->new(algorithm => 'SHA-512', salt_len => 32);
-#            $csh->add($password);
-            my $digest = Digest->new(IbexFarm->config->{user_password_hash_algo});
-            my $salt = $get_salt->(IbexFarm->config->{user_password_salt_length});
-            $digest->add($password . $salt);
+            my $pwhash = $make_pw_hash->($password);
 
             my $user = {
                 username => $username,
-#                password => $csh->generate(),
-                password => $digest->b64digest . $salt,
+                password => $pwhash,
                 email_address => $email || undef,
                 active => 1,
                 user_roles => [ 'user' ]

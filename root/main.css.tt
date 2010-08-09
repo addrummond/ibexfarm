@@ -226,6 +226,13 @@ form.create_account td.submit input {
     float: right;
 }
 
+form.update_email td.submit input {
+    float: right;
+}
+form.update_password td.submit input {
+    float: right;
+}
+
 form.login td.submit {
     padding-top: 0.5em;
 }

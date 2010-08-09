@@ -6,7 +6,6 @@
 <div id="experiments"></div>
 
 <h2 class="sep">Account admin</h2>
-<h3>Email</h3>
 [% IF message %]
 <div class="message">
 [% HTML.escape(message) %]
@@ -17,15 +16,30 @@
 [% HTML.escape(error) %]
 </div>
 [% END %]
-<form action="[% c.uri_for("/update_email") %]" method="POST">
+<h3>Email</h3>
+<form class="update_email" action="[% c.uri_for("/update_email") %]" method="POST">
 <table>
 <tr>
-<td><input type="text" name="email" value="[% HTML.escape(email_address) %]"/></td>
-<td><input type="submit" name="submit" value="[% IF email_address %]Update[% ELSE %]Add[% END %] email" /></td>
+<td><input type="text" name="email" size="30" value="[% HTML.escape(email_address) %]"/></td>
+</tr>
+<tr>
+<td class="submit"><input type="submit" name="submit" value="[% IF email_address %]Update[% ELSE %]Add[% END %] email" /></td>
 </tr>
 </table>
 </form>
-<h3>Deletion</h3>
-<p>
-<a href="[% c.uri_for("/delete_account") %]">&raquo; delete my account</a>.
+<h3>Password</h3>
+<p>Enter the new password twice:</p>
+<form class="update_password" action="[% c.uri_for("/update_password") %]" method="POST">
+<table>
+<tr>
+<td><input size="30" id="password1" type="password" name="password1" /></td>
+</tr>
+<tr>
+<td><input size="30" id="password2" type="password" name="password2" /></td>
+</tr>
+<tr>
+<td class="submit"><input type="submit" name="submit" value="Update password" /></td><td></td>
+</tr>
+</table>
+</form>
 <p>
