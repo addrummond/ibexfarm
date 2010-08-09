@@ -143,7 +143,7 @@ sub update_password :Absolute :Args(0) {
         }
     );
 
-    $c->stash->{message} = "Your password has been updated.";
+    $c->stash->{message} = "Your password has been updated. Use the new password next time you log in.";
     $c->stash->{template} = "user.tt";
 }
 
