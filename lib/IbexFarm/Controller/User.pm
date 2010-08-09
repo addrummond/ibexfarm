@@ -123,7 +123,7 @@ sub update_password :Absolute :Args(0) {
     my $password2 = $c->request->params->{password2};
 
     if (! $password1 || ! $password2) {
-        $c->stash->{error} = "You must fill in both fields.";
+        $c->stash->{error} = "You must fill in both password fields.";
         $c->stash->{template} = "user.tt";
         return;
     }
