@@ -38,7 +38,7 @@
 <td><input size="30" id="password2" type="password" name="password2" /></td>
 </tr>
 <tr>
-<td class="submit"><input type="submit" name="submit" value="Update password" /></td><td></td>
+<td class="submit"><input type="submit" name="submit" value="Update password" /></td>
 </tr>
 </table>
 </form>
