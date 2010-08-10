@@ -155,25 +155,32 @@ sub newaccount :Absolute :Args(0) {
     my $password2 = $c->request->params->{password2};
     my $email = $c->request->params->{email};
 
+    my $stash_user_info = sub {
+        $c->stash->{username} = $username;
+        $c->stash->{email} = $email;
+    };
+
     my $ispost = $c->req->method eq "POST";
 
     if ($ispost && (! ($username && $password && $password2))) {
         $c->stash->{error} = "You must fill in all the fields except email.";
         $c->stash->{template} = "newaccount.tt";
+        $stash_user_info->();
     }
     elsif ($ispost && (! IbexFarm::FNames::is_ok_fname($username))) {
         $c->stash->{error} = "Usernames may contain only " . IbexFarm::FNames::OK_CHARS_DESCRIPTION . ".";
         $c->stash->{template} = "newaccount.tt";
+        $stash_user_info->();
     }
     elsif ($ispost && ($password ne $password2)) {
         $c->stash->{error} = "The passwords do not match.";
         $c->stash->{template} = "newaccount.tt";
+        $stash_user_info->();
     }
     elsif ($ispost && ($email && (! IbexFarm::CheckEmail::is_ok_email($email)))) {
-        $c->stash->{username} = $username;
-        $c->stash->{email} = $email;
         $c->stash->{error} = "The email address you entered is not valid. (Note that you don't have to give an email if you don't want to.)";
         $c->stash->{template} = "newaccount.tt";
+        $stash_user_info->();
     }
     elsif (! $ispost) {
         $c->stash->{template} = "newaccount.tt";
