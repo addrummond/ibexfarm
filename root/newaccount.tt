@@ -18,6 +18,9 @@
 <th>Password:</th><td colspan="2"><input type="password" name="password" size="20" /></td>
 </tr>
 <tr>
+<th>Verify password:</th><td colspan="2"><input type="password" name="password2" size="20" /></td>
+</tr>
+<tr>
 <th>Email:</th><td><input type="text" name="email" size="20" value="[% HTML.escape(email) %]" /><td class="field_comment">(optional)</span></td>
 </tr>
 <tr>
