@@ -36,4 +36,9 @@ sub update_json_file {
     return $newjson;
 }
 
-our @EXPORT_OK = qw( update_json_file );
+# Files to skip when going through the contents of a directory.
+sub is_special_file {
+    return shift =~ /^[:.]/;
+}
+
+our @EXPORT_OK = qw( update_json_file is_special_file );

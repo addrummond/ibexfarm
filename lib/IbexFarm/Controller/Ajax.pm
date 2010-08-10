@@ -218,7 +218,7 @@ sub browse :Path("browse") :Args(0) {
     opendir my $DIR, $dir or die "Unable to open dir for browsing ('$dir'): $!";
     my @entries;
     while (defined (my $e = readdir($DIR))) {
-        next if $e =~ /^[:.]/;
+        next if IbexFarm::Util::is_special_file($e);
 
         my $fn = catfile($dir, $e);
         my $stats = stat($fn) or die "Unable to stat file for browsing: $!";
@@ -300,7 +300,7 @@ sub experiments :Path("experiments") :Args(0) {
     opendir my $DIR, $dir or die "Unable to open dir '$dir' for user: $!";
     my @exps;
     while (defined (my $e = readdir($DIR))) {
-        next if $e =~ /^[:.]/ || $e eq IbexFarm->config->{USER_FILE_NAME};
+        next if IbexFarm::Util::is_special_file($e) || $e eq IbexFarm->config->{USER_FILE_NAME};
 
         # Find the ibex version.
         my $versionfile = catfile($dir, $e, IbexFarm->config->{ibex_archive_root_dir}, "VERSION");
@@ -843,7 +843,7 @@ sub from_git_repo :Path("from_git_repo") {
 
         opendir my $DIR, catdir($tmpdir, $dir) or die "Unable to open dir: $!";
         while (defined (my $entry = readdir($DIR))) {
-            next if $entry =~ /^\./;
+            next if IbexFarm::Util::is_special_file($entry);
 
             my $moddir = sub {
                 push @dirs_modified, $dir unless (grep { $_ eq $dir } @dirs_modified);

@@ -6,6 +6,7 @@ use parent 'Catalyst::Controller';
 use File::Spec::Functions qw( catdir catfile );
 use Archive::Zip;
 use IbexFarm::AjaxHeaders qw( ajax_headers );
+use IbexFarm::Util;
 
 #
 # Sets the actions in this controller to be registered with no prefix
@@ -24,7 +25,7 @@ my $get_experiment_count = sub {
         my $DIR;
         opendir $DIR, catdir(IbexFarm->config->{deployment_dir}) or return $experiment_count_cache;
         while (defined (my $e = readdir($DIR))) {
-            next if $e =~ /^\./;
+            next if IbexFarm::Util::is_special_file($e);
             if (-d catdir(IbexFarm->config->{deployment_dir}, $e)) {
                 my $DIR2;
                 unless (opendir $DIR2, catdir(IbexFarm->config->{deployment_dir}, $e)) {
@@ -76,7 +77,7 @@ sub zip_archive :Path("zip_archive") {
             my $zdir = $zip->addDirectory($dir);
             opendir my $DIR, $dd or die "Unable to open dir: $!";
             while (defined (my $entry = readdir($DIR))) {
-                next if $entry =~ /^\./;
+                next if IbexFarm::Util::is_special_file($entry);
                 $zip->addFile(catfile($dd, $entry), "$dir/$entry"); # Archive::Zip always uses '/'.
             }
         }
