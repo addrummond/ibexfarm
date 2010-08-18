@@ -34,6 +34,9 @@ sub deploy {
     my %args = @_;
     use YAML;
 
+    # To avoid weird errors resulting from deleting files/dirs above/at the CWD.
+    chdir $args{deployment_dir} or die "Could not chdir to deployment dir: $!";
+
     IbexFarm::FNames::is_ok_fname($args{name}) or die "Bad name!";
 
     my $dd = catdir($args{deployment_dir}, $args{name});
