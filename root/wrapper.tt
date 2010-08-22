@@ -34,6 +34,18 @@
 [% END %]
 /* ]]> */
 </style>
+[% IF IS_IE %]
+<!--[if IE]>
+<style type="text/css">
+/* <![CDATA[ */
+[% FILTER $CSS_FILTER(1) %]
+[% BASE_URO = c.uri_for('/') %]
+[% PROCESS main_iehacks.css.tt %]
+[% END %]
+/* ]]> */
+</style>
+<![endif]-->
+[% END %]
 <title>Ibex farm [% template.title or '' %]</title>
 </head>
 <body>

@@ -1,0 +1,28 @@
+form.create_account input {
+    width: 11em; 
+}
+form.create_account td.submit input {
+    width: auto;
+}
+
+form.login input {
+    width: 11em;
+}
+form.login td.submit input {
+    width: auto;
+}
+
+form.update_email input {
+    width: 16.5em;
+}
+form.update_email td.submit input {
+    width: auto;
+}
+
+form.update_password input {
+    width: 16.5em;
+}
+form.update_password td.submit input {
+    width: auto;
+}
+

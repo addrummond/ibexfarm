@@ -7,12 +7,21 @@ use File::Spec::Functions qw( catdir catfile );
 use Archive::Zip;
 use IbexFarm::AjaxHeaders qw( ajax_headers );
 use IbexFarm::Util;
+use YAML::XS;
 
 #
 # Sets the actions in this controller to be registered with no prefix
 # so they function identically to actions created in MyApp.pm
 #
 __PACKAGE__->config->{namespace} = '';
+
+# Used for detecting IE (so that we don't send special IE CSS if it's not required).
+sub begin :Private {
+    my ($self, $c) = @_;
+    if ($c->req->headers->{'user-agent'} =~ /MSIE/) { 
+        $c->stash->{IS_IE} = 1;
+    }
+}
 
 my $experiment_count_cache = 0;
 my $experiment_count_cache_last_update = 0;

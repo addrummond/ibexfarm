@@ -117,6 +117,10 @@ input {
     padding-left: 0;
     margin-left: 0;
 }
+input[type=submit] {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
 
 .message, .message_, .box, .error {
     display: table;
