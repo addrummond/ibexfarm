@@ -7,7 +7,6 @@ use File::Spec::Functions qw( catdir catfile );
 use Archive::Zip;
 use IbexFarm::AjaxHeaders qw( ajax_headers );
 use IbexFarm::Util;
-use YAML::XS;
 
 #
 # Sets the actions in this controller to be registered with no prefix
