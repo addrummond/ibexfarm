@@ -338,7 +338,7 @@ sub newexperiment :Path("newexperiment") :Args(0) {
     }
     else {
         if (! IbexFarm::FNames::is_ok_fname($ps->{name})) {
-            $c->stash->{error} = "Experiment names may contain only " . escape_html(IbexFarm::FNames::OK_CHARS_DESCRIPTION) . '.';
+            $c->stash->{error} = "Experiment names may contain only " . escape_html(IbexFarm::FNames::OK_CHARS_DESCRIPTION) . 'and must be less than ' . IbexFarm->config->{max_fname_length} . ' characters long.';
             $c->detach($c->view("JSON"));
         }
         else {
@@ -421,7 +421,7 @@ sub rename_file :Path("rename_file") {
     my $newname = $c->req->params->{newname};
 
     unless (IbexFarm::FNames::is_ok_fname($newname)) {
-        $c->stash->{error} = "Filenames may contain only " . escape_html(IbexFarm::FNames::OK_CHARS_DESCRIPTION);
+        $c->stash->{error} = "Filenames may contain only " . escape_html(IbexFarm::FNames::OK_CHARS_DESCRIPTION) . ' and must be less than ' . IbexFarm->config->{max_fname_length} . ' characters long.';
         $c->detach($c->view("JSON"));
         return;
     }
@@ -507,7 +507,7 @@ sub upload_file :Path("upload_file") {
 
     if (! IbexFarm::FNames::is_ok_fname($fname)) {
         ajax_headers($c, 'text/html', 'UTF-8');
-        $c->res->body("Filenames may contain only " . IbexFarm::FNames::OK_CHARS_DESCRIPTION);
+        $c->res->body("Filenames may contain only " . IbexFarm::FNames::OK_CHARS_DESCRIPTION . ' and must be less than ' . IbexFarm->config->{max_fname_length} . ' characters long.');
         return 0;
     }
 
@@ -583,7 +583,7 @@ sub rename_experiment :Path("rename_experiment") {
     my $newname = $c->req->params->{newname};
 
     unless (IbexFarm::FNames::is_ok_fname($newname)) {
-        $c->stash->{error} = "Experiment names may contain only " . escape_html(IbexFarm::FNames::OK_CHARS_DESCRIPTION);
+        $c->stash->{error} = "Experiment names may contain only " . escape_html(IbexFarm::FNames::OK_CHARS_DESCRIPTION) . ' and must be less than ' . IbexFarm->config->{max_fname_length} . ' characters long.';
         $c->detach($c->view("JSON"));
         return;
     }

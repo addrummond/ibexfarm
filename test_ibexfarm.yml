@@ -10,6 +10,8 @@ ibex_version: "3.0"
 deployment_dir: "/tmp"
 deployment_www_dir: "/tmp/www/"
 
+max_fname_length: 150
+
 dirs: [ "js_includes", "css_includes", "data_includes", "chunk_includes", "server_state", "results" ]
 sync_dirs: [ "js_includes", "css_includes", "data_includes", "chunk_includes", "server_state" ]
 dirs_to_types:

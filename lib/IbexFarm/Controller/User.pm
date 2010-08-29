@@ -168,7 +168,7 @@ sub newaccount :Absolute :Args(0) {
         $stash_user_info->();
     }
     elsif ($ispost && (! IbexFarm::FNames::is_ok_fname($username))) {
-        $c->stash->{error} = "Usernames may contain only " . IbexFarm::FNames::OK_CHARS_DESCRIPTION . ".";
+        $c->stash->{error} = "Usernames may contain only " . IbexFarm::FNames::OK_CHARS_DESCRIPTION . "and must be less than " . IbexFarm->config->{max_fname_length} . " characters long.";
         $c->stash->{template} = "newaccount.tt";
         $stash_user_info->();
     }
