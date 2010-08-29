@@ -9,7 +9,7 @@ use parent 'Exporter';
 sub is_ok_fname {
     my $fname = shift;
     return 0 if scalar($fname) > IbexFarm->config->{max_fname_length};
-    return $fname =~ /^[A-Za-z0-9_-][A-Za-z0-9_.-]*$/; # Keep in sync with mkdb.sql.
+    return $fname =~ /^[A-Za-z0-9_-][A-Za-z0-9_.-]*$/;
 }
 
 use constant OK_CHARS_DESCRIPTION => "letters, numbers, '.', '-' and '_'";
