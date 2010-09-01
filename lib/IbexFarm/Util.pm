@@ -6,6 +6,7 @@ use warnings;
 use parent 'Exporter';
 
 use JSON::XS;
+use File::Spec::Functions qw( catfile );
 
 sub update_json_file {
     my ($filename, $updatef) = @_;
@@ -39,6 +40,16 @@ sub update_json_file {
 # Files to skip when going through the contents of a directory.
 sub is_special_file {
     return shift =~ /^[:.]/;
+}
+
+sub get_experiment_version {
+    my $edir = shift;
+    open my $vf, catfile($edir, IbexFarm->config->{ibex_archive_root_dir}, 'VERSION');
+    my $version = <$vf>;
+    close $vf or die "Unable to close 'VERSION' file: $!";
+    die "Unable to read from 'VERSION' file: $!" unless (defined $version);
+    $version =~ s/\s*$//;
+    return $version;
 }
 
 our @EXPORT_OK = qw( update_json_file is_special_file );

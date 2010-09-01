@@ -26,6 +26,8 @@ sub manage :Absolute {
 
     $c->stash->{experiment_base_url} = IbexFarm->config->{experiment_base_url};
     $c->stash->{experiment} = $experiment;
+    $c->stash->{ibex_version} =
+        IbexFarm::Util::get_experiment_version(catdir(IbexFarm->config->{deployment_dir}, $c->user->username, $experiment));
 
     # In the old (dumb) days we stored the git URL per user rather than per user per experiment.
     # So that we don't have to update old USER files, we still honor the old way. Note that

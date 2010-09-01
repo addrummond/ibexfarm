@@ -11,7 +11,7 @@
 <p class="smallprint goto">
 Go to the <a href="[% c.uri_for("/myaccount") %]">my account</a> page to view your other experiments or to create/delete experiments.
 </p>
-<h2 class="expheader">Experiment &lsquo;[% experiment %]&rsquo;</h2>
+<h2 class="expheader">Experiment &lsquo;[% experiment %]&rsquo; (ibex [% ibex_version %])</h2>
 <div id="git">
 <span>Update from git repo&raquo;</span><span class="new"> new</span>
 <span class="help"><a rel="external" href="[% c.uri_for('/githelp') %]">(help)</a></span>

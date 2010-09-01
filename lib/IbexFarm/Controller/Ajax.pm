@@ -301,15 +301,10 @@ sub experiments :Path("experiments") :Args(0) {
     my @exps;
     while (defined (my $e = readdir($DIR))) {
         next if IbexFarm::Util::is_special_file($e) || $e eq IbexFarm->config->{USER_FILE_NAME};
-
-        # Find the ibex version.
-        my $versionfile = catfile($dir, $e, IbexFarm->config->{ibex_archive_root_dir}, "VERSION");
-        open my $vf, $versionfile or die "Unable to open 'VERSION' file for reading: $!";
-        my $version = <$vf>;
-        close $vf or die "Unable to close 'VERSION' file: $!";
-        die "Unable to read from 'VERSION' file: $!" unless (defined $version);
-
-        push @exps, [$e, $version];
+        # If one experiment is corrupt, we should still list the others.
+        eval {
+            push @exps, [$e, IbexFarm::Util::get_experiment_version(catdir($dir, $e))];
+        };
     }
     closedir $DIR or die "Unable to close dir '$dir' for user: $!";
 
