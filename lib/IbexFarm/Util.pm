@@ -44,7 +44,7 @@ sub is_special_file {
 
 sub get_experiment_version {
     my $edir = shift;
-    open my $vf, catfile($edir, IbexFarm->config->{ibex_archive_root_dir}, 'VERSION');
+    open my $vf, catfile($edir, IbexFarm->config->{ibex_archive_root_dir}, 'VERSION') or die "Unable to open VERSION file";
     my $version = <$vf>;
     close $vf or die "Unable to close 'VERSION' file: $!";
     die "Unable to read from 'VERSION' file: $!" unless (defined $version);
