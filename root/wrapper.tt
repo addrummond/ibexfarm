@@ -8,8 +8,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
 <script type="text/javascript">/* <![CDATA[ */ BASE_URI="[% c.uri_for('/') %]";[% IF experiment %]EXPERIMENT="[% experiment %]";[% END %] /* ]]> */</script>
+[% FOREACH f IN template.external_js_scripts.split('\s+') %]
+<script type="text/javascript" src="[% c.uri_for(f) %]"></script>
+[% END %]
+[% FOREACH f IN template.external_css_files.split('\s+') %]
+<link rel="stylesheet" type="text/css" href="[% c.uri_for(f) %]"></style>
+[% END %]
 <script type="text/javascript">
 /* <![CDATA[ */
 [% FILTER $JS_FILTER(1) %]

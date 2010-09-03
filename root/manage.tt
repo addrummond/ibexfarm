@@ -1,6 +1,8 @@
 [% USE HTML %]
 [% USE URL %]
 [% META title = '- Manage Experiment' %]
+[% META external_js_scripts = '/static/codemirror/codemirror.js' %]
+[% META external_css_files = '/static/jqueryui/jquery-ui-1.8.4.custom.css' %]
 [% META js_scripts = 'uicommon.js ajaxupload.js fman.js' %]
 
 <div class="cwrap1"><div class="cwrap2"><div class="cwrap3">

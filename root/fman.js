@@ -43,6 +43,7 @@ $.widget("ui.browseFile", {
         var download;
         var delete_;
         var upload;
+        var edit;
         var ays;
         var rename;
         var rename_opts;
@@ -72,15 +73,21 @@ $.widget("ui.browseFile", {
                         .append(rename = ((! this.options.writable) ? null : ++ncols && $("<td>")
                                 .append($("<div>")
                                         .addClass("rename")
-                                        .append(" | ")
+                                        .append("&nbsp;|&nbsp;")
                                         .append($("<span>").addClass("linklike").text("rename")))))
                         .append(((! this.options.writable) ? null : ++ncols && $("<td>")
                                 .append($("<div>")
-                                        .append(" | ")
+                                        .append("&nbsp;|&nbsp;")
                                         .append(upload = $("<span>")
-                                                             .addClass("linklike")
-                                                             .text("upload new version"))
-                                        .append(")"))))
+                                                         .addClass("linklike")
+                                                         .text("upload new version")))))
+                        .append(((! this.options.writable) ? null : ++ncols && $("<td>")
+                                 .append($("<div>")
+                                         .append("&nbsp;|&nbsp;")
+                                         .append(edit = $("<span>")
+                                                        .addClass("linklike")
+                                                 .text("edit")))))
+                        .append(++ncols && $("<td>").text(")"))
                         .attr('title', 'Modified ' + show_date(this.options.modified)))
                 .append((! this.options.writable) ? null : $("<tr>")
                         .append($("<td colspan='" + ncols + "'>")
@@ -245,6 +252,19 @@ $.widget("ui.browseFile", {
                 }
             });
         }
+        if (edit) {
+            edit.click(function () {
+                var editdialog = $("<div>").dialog({ title: t.options.filename });
+                var editte;
+                editdialog.append(editte = $("<textarea>"));
+                var editor = new CodeMirror(CodeMirror.replace(editte[0]), {
+                    path: BASE_URI + "static/codemirror/",
+                    parserfile: [ BASE_URI + "static/codemirror/tokenizejavascript.js", BASE_URI + "static/codemirror/parsejavascript.js" ],
+                    stylesheet: BASE_URI + "static/codemirror/jscolors.css",
+                    content: ""
+                });
+            });
+        }
     }
 });
 
@@ -276,15 +296,16 @@ $.widget("ui.browseDir", {
             t.element.append(table = $("<table>")
                              .append($("<tr>")
                                      .append($("<th>")
-                                             .text(t.options.dir + "/ (")
+                                             .text(t.options.dir)
+                                             .append($("<span>").css('font-weight', 'normal').html("&nbsp;("))
                                              .append(upload = $("<span>")
                                                      .addClass("linklike")
                                                      .text("upload a file to this directory"))
-                                             .append(" | ")
+                                             .append($("<span>").css('font-weight', 'normal').html("&nbsp;|&nbsp;"))
                                              .append(refresh_link = $("<span>")
                                                      .addClass("linklike")
                                                      .text("refresh"))
-                                             .append(")")))
+                                             .append($("<span>").css('font-weight', 'normal').text(")"))))
                              .append($("<tr>")
                                      .append($("<td>")
                                              .append(upload_msg = $("<div>").hide()))));
