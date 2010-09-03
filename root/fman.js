@@ -1,6 +1,22 @@
 var MAX_GETPROG_FAILS = 10;
 var UPLOAD_PROGRESS_INTERVAL = 300;
 
+// Used for setting up syntax highlighting for CodeMirror.
+var EXTENSION_TO_HIGHLIGHT_CONFIG = {
+    css: {
+        parserfile: 'parsecss.js',
+        stylesheet: 'csscolors.css'
+    },
+    js: {
+        parserfile: [ 'tokenizejavascript.js', 'parsejavascript.js' ],
+        stylehseet: 'jscolors.css'
+    },
+    html: {
+        parserfile: 'parsehtmlmixed.js',
+        stylehseet: 'xmlcolors.css'
+    }
+};
+
 function show_date (date) {
     return date[0] + '-' + date[1] + '-' + date[2] + ' ' + date[3] + ':' + date[4] + ':' + date[5];
 }
@@ -39,6 +55,11 @@ $.widget("ui.browseFile", {
         var spinContainer;
         this.element.append(spinContainer = $("<div>").css('float', 'left'));
 
+        var downloadLink = BASE_URI +
+                           'ajax/download/' + escape(EXPERIMENT) + '/' +
+                           escape(this.options.dir) + '/' +
+                           escape(this.options.filename);
+
         var t = this;
         var download;
         var delete_;
@@ -60,10 +81,7 @@ $.widget("ui.browseFile", {
                                 .append(download = $("<a>")
                                                            .addClass(this.options.writable ? "writable" : "unwritable")
                                                            .attr('target', '_blank')
-                                                           .attr('href', BASE_URI +
-                                                                         'ajax/download/' + escape(EXPERIMENT) + '/' +
-                                                                         escape(this.options.dir) + '/' +
-                                                                         escape(this.options.filename))
+                                                           .attr('href', downloadLink)
                                                            .text(this.options.filename)))))
                         .append(delete_ = ((! this.options.writable) ? null : ++ncols && $("<td>")
                                 .append($("<div>")
@@ -87,7 +105,7 @@ $.widget("ui.browseFile", {
                                          .append(edit = $("<span>")
                                                         .addClass("linklike")
                                                  .text("edit")))))
-                        .append(++ncols && $("<td>").text(")"))
+                        .append(((! this.options.writable) ? null : ++ncols && $("<td>").text(")")))
                         .attr('title', 'Modified ' + show_date(this.options.modified)))
                 .append((! this.options.writable) ? null : $("<tr>")
                         .append($("<td colspan='" + ncols + "'>")
@@ -256,12 +274,17 @@ $.widget("ui.browseFile", {
             edit.click(function () {
                 var editdialog = $("<div>").dialog({ title: t.options.filename });
                 var editte;
-                editdialog.append(editte = $("<textarea>"));
-                var editor = new CodeMirror(CodeMirror.replace(editte[0]), {
-                    path: BASE_URI + "static/codemirror/",
-                    parserfile: [ BASE_URI + "static/codemirror/tokenizejavascript.js", BASE_URI + "static/codemirror/parsejavascript.js" ],
-                    stylesheet: BASE_URI + "static/codemirror/jscolors.css",
-                    content: ""
+                
+                $.get(downloadLink, function (data) {
+                    editdialog.append(editte = $("<textarea>"));
+                    editte.attr('value', data);
+
+                    var editor = new CodeMirror(CodeMirror.replace(editte[0]), {
+                        path: BASE_URI + "static/codemirror/",
+                        parserfile: [ BASE_URI + "static/codemirror/tokenizejavascript.js", BASE_URI + "static/codemirror/parsejavascript.js" ],
+                        stylesheet: BASE_URI + "static/codemirror/jscolors.css",
+                        content: editte.attr('value')
+                    });
                 });
             });
         }
@@ -574,7 +597,7 @@ $(document).ready(function () {
             $("#files").append(w = $("<div>").browseDir({ dir: sdirs[i] }));
             dirsWidgetHash[sdirs[i]] = w;
         }
-    })
+    });
 
     $("#gitsync").click(sync_git);
     $("#git input[type=text]").keypress(function (e) { if (e.which == 13 /*return*/) sync_git(e); });
