@@ -405,3 +405,16 @@ ul.githelp li {
 #gitstatus .giterror {
     color: [% heading_color %];
 }
+
+/* For CodeMirror. Should probably have this in a separate CSS file really,
+   but it's convenient to be able to use some of the vars defined above.
+   Cross-check font sizes with css files in root/static/codemirror. */
+.CodeMirror-line-numbers {
+    margin-top: .4em;
+    font-size: 10pt;
+    font-family: monospace;
+    color: [% lightish %];
+    border-right: 1px solid [% light %];
+    padding-right: 0.25em;
+    margin-right: 0.5em;
+}

@@ -272,19 +272,47 @@ $.widget("ui.browseFile", {
         }
         if (edit) {
             edit.click(function () {
-                var editdialog = $("<div>").dialog({ title: t.options.filename });
-                var editte;
+                var HEIGHT_SAFETY_MARGIN = 5; // px
+                var editte = null;
+                var editor = null;
+
+                var editdialog = $("<div>").dialog({
+                    title: t.options.filename,
+                    width: 420,
+                    height: 450,
+                    minWidth: 420,
+                    minHeight: 450,
+                    // CodeMirror resizes itself width-wise just fine, but it's vertical resizing seems
+                    // to be broken when embedded inside a jQuery dialog, so we do this manually.
+                    resize: function () {
+                        if (editor && editor.wrapping) {
+                            $(editor.wrapping).height($(this).height() - HEIGHT_SAFETY_MARGIN);
+                        }
+                    },
+                    buttons: {
+                        "Discard changes": function () {
+
+                        },
+                        "Save changes": function () {
+
+                        }
+                    }
+                });
                 
                 $.get(downloadLink, function (data) {
-                    editdialog.append(editte = $("<textarea>"));
+                    editdialog.append(editte = $("<div>"));
                     editte.attr('value', data);
 
-                    var editor = new CodeMirror(CodeMirror.replace(editte[0]), {
+                    editor = new CodeMirror(CodeMirror.replace(editte[0]), {
                         path: BASE_URI + "static/codemirror/",
                         parserfile: [ BASE_URI + "static/codemirror/tokenizejavascript.js", BASE_URI + "static/codemirror/parsejavascript.js" ],
                         stylesheet: BASE_URI + "static/codemirror/jscolors.css",
-                        content: editte.attr('value')
+                        lineNumbers: true,
+                        content: editte.attr('value'),
+                        width: "dynamic",
+                        height: "200px"//"dynamic"
                     });
+                    $(editor.wrapping).height(editdialog.height() - HEIGHT_SAFETY_MARGIN);
                 });
             });
         }
