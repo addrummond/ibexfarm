@@ -282,7 +282,7 @@ $.widget("ui.browseFile", {
                     height: 450,
                     minWidth: 420,
                     minHeight: 450,
-                    // CodeMirror resizes itself width-wise just fine, but it's vertical resizing seems
+                    // CodeMirror resizes itself width-wise just fine, but its vertical resizing seems
                     // to be broken when embedded inside a jQuery dialog, so we do this manually.
                     resize: function () {
                         if (editor && editor.wrapping) {
