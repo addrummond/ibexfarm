@@ -9,11 +9,15 @@ var EXTENSION_TO_HIGHLIGHT_CONFIG = {
     },
     js: {
         parserfile: [ 'tokenizejavascript.js', 'parsejavascript.js' ],
-        stylehseet: 'jscolors.css'
+        stylesheet: 'jscolors.css'
     },
     html: {
-        parserfile: 'parsehtmlmixed.js',
-        stylehseet: 'xmlcolors.css'
+        parserfile: [ 'parsecss.js', 'tokenizejavascript.js', 'parsejavascript.js', 'parsexml.js', 'parsehtmlmixed.js '],
+        stylesheet: 'xmlcolors.css'
+    },
+    '': { // Default
+        parserfile: 'parsedummy.js',
+        stylesheet: 'plain.css'
     }
 };
 
@@ -276,6 +280,13 @@ $.widget("ui.browseFile", {
                 var editte = null;
                 var editor = null;
 
+                var highlightConfig;
+                var m;
+                if (m = t.options.filename.match(/\.(.+)$/))
+                    highlightConfig = EXTENSION_TO_HIGHLIGHT_CONFIG[m[1].toLowerCase()];
+                if (!m || !highlightConfig)
+                    highlightConfig = EXTENSION_TO_HIGHLIGHT_CONFIG[''];
+
                 var editdialog = $("<div>").dialog({
                     title: t.options.filename,
                     width: 420,
@@ -303,14 +314,24 @@ $.widget("ui.browseFile", {
                     editdialog.append(editte = $("<div>"));
                     editte.attr('value', data);
 
+                    var prepath = BASE_URI + "static/codemirror/";
+                    function pre(o) {
+                        if (typeof(o) == "object") {
+                            for (var i = 0; i < o.length; ++i)
+                                o[i] = prepath + o[i];
+                            return o;
+                        }
+                        else return prepath + o;
+                    }
                     editor = new CodeMirror(CodeMirror.replace(editte[0]), {
-                        path: BASE_URI + "static/codemirror/",
-                        parserfile: [ BASE_URI + "static/codemirror/tokenizejavascript.js", BASE_URI + "static/codemirror/parsejavascript.js" ],
-                        stylesheet: BASE_URI + "static/codemirror/jscolors.css",
+                        path: prepath,
+                        parserfile: pre(highlightConfig.parserfile),//[ BASE_URI + "static/codemirror/tokenizejavascript.js", BASE_URI + "static/codemirror/parsejavascript.js" ],
+                        stylesheet: pre(highlightConfig.stylesheet),//BASE_URI + "static/codemirror/jscolors.css",
                         lineNumbers: true,
                         content: editte.attr('value'),
                         width: "dynamic",
-                        height: "200px"//"dynamic"
+                        height: "200px",
+                        textWrapping: false
                     });
                     $(editor.wrapping).height(editdialog.height() - HEIGHT_SAFETY_MARGIN);
                 });
