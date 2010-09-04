@@ -325,8 +325,8 @@ $.widget("ui.browseFile", {
                     }
                     editor = new CodeMirror(CodeMirror.replace(editte[0]), {
                         path: prepath,
-                        parserfile: pre(highlightConfig.parserfile),//[ BASE_URI + "static/codemirror/tokenizejavascript.js", BASE_URI + "static/codemirror/parsejavascript.js" ],
-                        stylesheet: pre(highlightConfig.stylesheet),//BASE_URI + "static/codemirror/jscolors.css",
+                        parserfile: pre(highlightConfig.parserfile),
+                        stylesheet: pre(highlightConfig.stylesheet),
                         lineNumbers: true,
                         content: editte.attr('value'),
                         width: "dynamic",
