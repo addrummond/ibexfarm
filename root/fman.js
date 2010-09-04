@@ -312,7 +312,6 @@ $.widget("ui.browseFile", {
                 
                 $.get(downloadLink, function (data) {
                     editdialog.append(editte = $("<div>"));
-                    editte.attr('value', data);
 
                     var prepath = BASE_URI + "static/codemirror/";
                     function pre(o) {
@@ -328,7 +327,7 @@ $.widget("ui.browseFile", {
                         parserfile: pre(highlightConfig.parserfile),
                         stylesheet: pre(highlightConfig.stylesheet),
                         lineNumbers: true,
-                        content: editte.attr('value'),
+                        content: data,
                         width: "dynamic",
                         height: "200px",
                         textWrapping: false
