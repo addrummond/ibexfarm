@@ -508,7 +508,10 @@ sub upload_file :Path("upload_file") {
         my $tmpfilename;
         ($up, $tmpfilename) = File::Temp::tempfile() or die "Unable to create temporary file during processing of upload request: $!";
         warn $contents, "\n\n\n";
-        print $up $contents or die "Error writing to temporary file during processing of upload request: $!";
+        if (! (print $up $contents)) {
+            close $up;
+            die "Error writing to temporary file during processing of upload request: $!";
+        }
 
         $move_up_to = sub {
             my $r = move($tmpfilename, shift);
