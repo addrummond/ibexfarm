@@ -503,7 +503,7 @@ sub upload_file :Path("upload_file") {
     my $move_up_to;
     if (! $up && (my $contents = $c->req->param("contents"))) {
         $fname or $c->detach('bad_request');
-        # Assume the file contents are just given as the post data. (This happens when
+        # Assume the file contents are given as 'contents' in the post data. (This happens when
         # the file is uploaded via an inline edit.)
         my $tmpfilename;
         ($up, $tmpfilename) = File::Temp::tempfile() or die "Unable to create temporary file during processing of upload request: $!";
