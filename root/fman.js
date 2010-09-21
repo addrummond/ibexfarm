@@ -121,7 +121,7 @@ $.widget("ui.browseFile", {
                 .rename({
                     name: this.options.filename,
                     cancelCallback: function () {
-                        rename_opts.hide("normal", function () {
+                        rename_opts.hide(STD_TOGGLE_SPEED, function () {
                             lock = false;
                         });
                     },
@@ -148,7 +148,7 @@ $.widget("ui.browseFile", {
                     actionText: "yes, delete it",
                     uncheckedMessage: "Check the box before clicking to confirm that you want to delete the file.",
                     cancelCallback: function () {
-                        ays.hide("normal", function () {
+                        ays.hide(STD_TOGGLE_SPEED, function () {
                             lock = false;
                         });
                     },
@@ -179,7 +179,7 @@ $.widget("ui.browseFile", {
                 if (lock && lock != "delete")
                     return;
 
-                ays.toggle("normal", function () {
+                ays.toggle(STD_TOGGLE_SPEED, function () {
                     lock = lock ? false : "delete";
                 });
             });
@@ -189,7 +189,7 @@ $.widget("ui.browseFile", {
                 if (lock && lock != "rename")
                     return;
 
-                rename_opts.toggle("normal", function () {
+                rename_opts.toggle(STD_TOGGLE_SPEED, function () {
                     lock = lock ? false : "rename";
                 });
             });
@@ -264,12 +264,12 @@ $.widget("ui.browseFile", {
 
                     if (! response.match(/^\s*$/)) {
                         ulmsg.addClass("error");
-                        ulmsg.html(response).append($("<span>").ok({click: function () { ulinfo.hide("normal"); }}));
+                        ulmsg.html(response).append($("<span>").ok({click: function () { ulinfo.hide(STD_TOGGLE_SPEED); }}));
                     }
                     else {
                         ulmsg.empty();
                         ulmsg.addClass("message");
-                        ulmsg.append($("<span>").text("Upload complete").append($("<span>").ok({click: function () { ulinfo.hide("normal"); }})));
+                        ulmsg.append($("<span>").text("Upload complete").append($("<span>").ok({click: function () { ulinfo.hide(STD_TOGGLE_SPEED); }})));
                     }
                 }
             });
@@ -310,15 +310,16 @@ $.widget("ui.browseFile", {
                     }
                 });
                 
-                $.get(downloadLink, function (data) {
+                spinnifyGET(editdialog, downloadLink, function (data) {
                     editdialog.append(editte = $("<div>"));
 
                     var prepath = BASE_URI + "static/codemirror/";
                     function pre(o) {
                         if (typeof(o) == "object") {
+                            var oo = new Array(o.length);
                             for (var i = 0; i < o.length; ++i)
-                                o[i] = prepath + o[i];
-                            return o;
+                                oo[i] = prepath + o[i];
+                            return oo;
                         }
                         else return prepath + o;
                     }
@@ -333,7 +334,7 @@ $.widget("ui.browseFile", {
                         textWrapping: false
                     });
                     $(editor.wrapping).height(editdialog.height() - HEIGHT_SAFETY_MARGIN);
-                });
+                }, "text/plain" /* "json" by default */);
             });
         }
     }
@@ -453,7 +454,7 @@ $.widget("ui.browseDir", {
                         upload_msg.addClass("error");
                         upload_msg.html(response)
                             .append(" (")
-                            .append($("<span>").addClass("ok").text("OK").click(function () { upload_msg.hide("normal"); }))
+                            .append($("<span>").addClass("ok").text("OK").click(function () { upload_msg.hide(STD_TOGGLE_SPEED); }))
                             .append(")");
                     }
                     else {
@@ -623,7 +624,7 @@ function sync_git(e) {
 }
 
 function show_hide_git() {
-    $("#git > div").toggle("normal", function () {
+    $("#git > div").toggle(STD_TOGGLE_SPEED, function () {
         if ($("#git > div").is(':visible')) {
             $("#git_url").focus();
             createCookie("gitslideopen" + $("#username")[0].innerHTML, "1", 10);

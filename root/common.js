@@ -4,6 +4,8 @@ $.getJSON=function(uri,callback){return $.post(uri,{},callback,"json");};
 (function(){var oldajax=$.ajax;$.ajax=function(opts){opts.type="POST";return oldajax(opts);};})();
 @*/
 
+var STD_TOGGLE_SPEED = "fast";
+
 // Taken from http://www.quirksmode.org/js/cookies.html
 function createCookie(name,value,days) {
     if (days) {

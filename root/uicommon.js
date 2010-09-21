@@ -195,6 +195,6 @@ $.widget("ui.rename", {
         this.rename_error.show();
     },
     hideError: function (error) {
-        this.rename_error.hide("normal");
+        this.rename_error.hide(STD_TOGGLE_SPEED);
     }
 });

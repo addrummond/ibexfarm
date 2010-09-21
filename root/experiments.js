@@ -32,11 +32,11 @@ $.widget("ui.addExperimentDialog", {
                                      .addClass("error")
                                      .html(data.error)
                                      .append(" (")
-                                     .append($("<span>").addClass("ok").text("OK").click(function () { t.element.find("p.error").hide("normal"); }))
+                                     .append($("<span>").addClass("ok").text("OK").click(function () { t.element.find("p.error").hide(STD_TOGGLE_SPEED); }))
                                      .append(")")));
                 }
                 else {
-                    t.element.hide("normal", function () {
+                    t.element.hide(STD_TOGGLE_SPEED, function () {
                         t.element.remove();
                         if (t.options.createdCallback)
                             t.options.createdCallback(input.attr('value'));
@@ -91,7 +91,7 @@ $.widget("ui.showExperiment", {
                             }, "json");
                         },
                         cancelCallback: function () {
-                            rename_opts.hide("normal", function () {
+                            rename_opts.hide(STD_TOGGLE_SPEED, function () {
                                 lock = false;
                             });
                         }
@@ -101,7 +101,7 @@ $.widget("ui.showExperiment", {
                 actionText: "delete",
                 uncheckedMessage: "Check the box before clicking to confirm that you want to delete the experiment.",
                 cancelCallback: function () {
-                    ays.hide("normal", function () { lock = false; });
+                    ays.hide(STD_TOGGLE_SPEED, function () { lock = false; });
                 },
                 actionCallback: function () {
                     spinnifyPOST(ays, BASE_URI + 'ajax/delete_experiment/' + escape(t.options.experiment[0]), { }, function (data) {
@@ -125,7 +125,7 @@ $.widget("ui.showExperiment", {
                 return;
 
             // Show the "are you sure?" thing.
-            ays.toggle("normal", function () {
+            ays.toggle(STD_TOGGLE_SPEED, function () {
                 lock = lock ? false : "delete";
             });
         });
@@ -133,7 +133,7 @@ $.widget("ui.showExperiment", {
             if (lock && lock != "rename")
                 return;
 
-            rename_opts.toggle("normal", function () {
+            rename_opts.toggle(STD_TOGGLE_SPEED, function () {
                 lock = lock ? false : "rename";
             });
             return true;
@@ -183,7 +183,7 @@ $.widget("ui.experimentList", {
                                      .addExperimentDialog({ createdCallback: refresh })
                                      .hide()));
             cexp.click(function () {
-                opts.toggle("normal");
+                opts.toggle(STD_TOGGLE_SPEED);
             });
         });
     }
