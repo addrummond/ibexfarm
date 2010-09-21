@@ -302,10 +302,17 @@ $.widget("ui.browseFile", {
                     },
                     buttons: {
                         "Discard changes": function () {
-
+                            editdialog.remove();
                         },
                         "Save changes": function () {
-
+                            spinnifyPOST(
+                                editdialog,
+                                BASE_URI + 'ajax/upload_file/' + escape(EXPERIMENT) + '/' + escape(t.options.dir) + '/' + escape(t.options.filename),
+                                { contents: editor.getCode() },
+                                function () {
+                                    alert("UPLOADED!");
+                                }
+                            );
                         }
                     }
                 });

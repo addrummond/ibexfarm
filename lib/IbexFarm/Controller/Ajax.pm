@@ -466,6 +466,8 @@ sub delete_file :Path("delete_file") {
 # for success) rather than JSON. This is to compensate for the inadequacies of the nasty
 # Javascript handling the uploading.
 #
+# TODO: This is a bit spaghettorial now that we have the additional complexity of inline edits.
+#
 sub upload_file :Path("upload_file") {
     my ($self, $c) = (shift, shift);
     $c->detach('unauthorized') unless $c->user_exists;
@@ -496,9 +498,35 @@ sub upload_file :Path("upload_file") {
     $c->prepare_body;
 
     my ($expname, $dir, $fname) = @_;
-    my $up = $c->req->upload('userfile') or $c->detach('bad_request');
-    # If the filename wasn't given, just use the name of the file that's being uploaded.
-    $fname ||= $up->filename;
+
+    my $up = $c->req->upload('userfile');
+    my $move_up_to;
+    if (! $up && (my $contents = $c->req->param("contents"))) {
+        $fname or $c->detach('bad_request');
+        # Assume the file contents are just given as the post data. (This happens when
+        # the file is uploaded via an inline edit.)
+        my $tmpfilename;
+        ($up, $tmpfilename) = File::Temp::tempfile() or die "Unable to create temporary file during processing of upload request: $!";
+        warn $contents, "\n\n\n";
+        print $up $contents or die "Error writing to temporary file during processing of upload request: $!";
+
+        $move_up_to = sub {
+            my $r = move($tmpfilename, shift);
+            close $up or die "Unable to close temporary file following upload request: $!";
+            $r;
+        };
+    }
+    elsif ($up) {
+        # If the filename wasn't given, just use the name of the file that's being uploaded.
+        $fname ||= $up->filename;
+
+        $move_up_to = sub {
+            $up->copy_to(shift);
+        };
+    }
+    else {
+        $c->detach('bad_request');
+    }
 
     if (! IbexFarm::FNames::is_ok_fname($fname)) {
         ajax_headers($c, 'text/html', 'UTF-8');
@@ -533,8 +561,7 @@ sub upload_file :Path("upload_file") {
         return 0;
     }
     else {
-        my $u = $up;
-        if (! $u) { $c->detach('bad_request'); return; }
+        if (! $up) { $c->detach('bad_request'); return; }
         else { # TODO: Else not actually necessary here.
             # Check that either (a) the file doesn't currently exist
             # or (b) that the user has permission to write to this file.
@@ -548,7 +575,7 @@ sub upload_file :Path("upload_file") {
                 $c->res->body("You do not have permission to upload to this location.");
             }
             else {
-                $u->copy_to($file) or die "Unable to copy uploaded file to final location: $!";
+                $move_up_to->($file) or die "Unable to copy uploaded file to final location: $!";
 
                 # Keep a record of the fact that the user uploaded this file, so that
                 # we know they're allowed to write to it. (First check that the user
