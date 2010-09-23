@@ -114,7 +114,7 @@ $.widget("ui.browseFile", {
                                                          .append(
                                                              $("<span>")
                                                              .addClass("new")
-                                                             .html("&thinsp;new")))))))
+                                                             .html("\u200Anew")))))))
                         .append(((! this.options.writable) ? null : ++ncols && $("<td>").text(")")))
                         .attr('title', 'Modified ' + show_date(this.options.modified)))
                 .append((! this.options.writable) ? null : $("<tr>")
