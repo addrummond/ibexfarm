@@ -369,10 +369,12 @@ td#gitspin {
     text-align: left;
 }
 
-#git .new {
+.new {
     font-size: [% stdvsmall %];
     font-weight: bold;
     color: [% heading_color %];
+    position: relative;
+    top: 0.25em;
 }
 #git .help {
     font-size: [% stdvsmall %];

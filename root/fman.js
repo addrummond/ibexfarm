@@ -106,9 +106,15 @@ $.widget("ui.browseFile", {
                         .append(((! this.options.writable) ? null : ++ncols && $("<td>")
                                  .append($("<div>")
                                          .append("&nbsp;|&nbsp;")
-                                         .append(edit = $("<span>")
-                                                        .addClass("linklike")
-                                                 .text("edit")))))
+                                         .append(edit = ($("<span>")
+                                                         .append(
+                                                             $("<span>")
+                                                             .addClass("linklike")
+                                                             .text("edit"))
+                                                         .append(
+                                                             $("<span>")
+                                                             .addClass("new")
+                                                             .html("&thinsp;new")))))))
                         .append(((! this.options.writable) ? null : ++ncols && $("<td>").text(")")))
                         .attr('title', 'Modified ' + show_date(this.options.modified)))
                 .append((! this.options.writable) ? null : $("<tr>")

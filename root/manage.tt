@@ -15,7 +15,7 @@ Go to the <a href="[% c.uri_for("/myaccount") %]">my account</a> page to view yo
 </p>
 <h2 class="expheader">Experiment &lsquo;[% experiment %]&rsquo; (ibex [% ibex_version %])</h2>
 <div id="git">
-<span>Update from git repo&raquo;</span><span class="new"> new</span>
+<span>Update from git repo&raquo;</span>
 <span class="help"><a rel="external" href="[% c.uri_for('/githelp') %]">(help)</a></span>
 <div>
 <div class="box">
