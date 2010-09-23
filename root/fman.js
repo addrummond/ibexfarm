@@ -288,9 +288,12 @@ $.widget("ui.browseFile", {
                     highlightConfig = EXTENSION_TO_HIGHLIGHT_CONFIG[''];
 
                 var editdialog = $("<div>").dialog({
+                    closeOnEscape: false,
+                    modal: false,
+                    position: [0, 0],
                     title: t.options.filename,
-                    width: 420,
-                    height: 450,
+                    width: 900,
+                    height: 700,
                     minWidth: 420,
                     minHeight: 450,
                     // CodeMirror resizes itself width-wise just fine, but its vertical resizing seems
@@ -310,13 +313,14 @@ $.widget("ui.browseFile", {
                                 BASE_URI + 'ajax/upload_file/' + escape(EXPERIMENT) + '/' + escape(t.options.dir) + '/' + escape(t.options.filename),
                                 { contents: editor.getCode() },
                                 function () {
-                                    alert("UPLOADED!");
+                                    editdialog.remove();
+                                    download.flash();
                                 }
                             );
                         }
                     }
                 });
-                
+
                 spinnifyGET(editdialog, downloadLink, function (data) {
                     editdialog.append(editte = $("<div>"));
 
@@ -341,6 +345,9 @@ $.widget("ui.browseFile", {
                         textWrapping: false
                     });
                     $(editor.wrapping).height(editdialog.height() - HEIGHT_SAFETY_MARGIN);
+
+                    // Doesn't seem to do any good :(
+                    $(editor.win).scroll(function () { e.stopPropagation(); });
                 }, "text/plain" /* "json" by default */);
             });
         }
