@@ -10,6 +10,7 @@
 [% stdindent_2 = "1em" %]
 [% stdsmall = "10pt" %]
 [% stdvsmall = "8pt" %]
+[% stdvvsmall = "6pt" %]
 [% light = "#E6E6E6" %]
 [% lightish = "#4c4346" %]
 [% lilgap = "25px" %]
@@ -370,7 +371,7 @@ td#gitspin {
 }
 
 .new {
-    font-size: [% stdvsmall %];
+    font-size: [% stdvvsmall %];
     font-weight: bold;
     color: [% heading_color %];
     position: relative;
