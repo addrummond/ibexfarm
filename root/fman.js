@@ -293,13 +293,18 @@ $.widget("ui.browseFile", {
                 if (!m || !highlightConfig)
                     highlightConfig = EXTENSION_TO_HIGHLIGHT_CONFIG[''];
 
+                $("body").css('overflow', 'hidden');
+                function cleanup() {
+                    $("body").css('overflow', 'scroll');
+                    $(this).remove();
+                }
                 var editdialog = $("<div>").dialog({
                     closeOnEscape: false,
-                    modal: false,
-                    position: [0, 0],
+                    modal: true,
+                    position: [25, 25],
                     title: t.options.filename,
-                    width: 900,
-                    height: 700,
+                    width: ($(window).width() - 50),
+                    height: ($(window).height() - 50),
                     minWidth: 420,
                     minHeight: 450,
                     // CodeMirror resizes itself width-wise just fine, but its vertical resizing seems
@@ -309,18 +314,17 @@ $.widget("ui.browseFile", {
                             $(editor.wrapping).height($(this).height() - HEIGHT_SAFETY_MARGIN);
                         }
                     },
+                    close: cleanup,
                     buttons: {
-                        "Discard changes": function () {
-                            editdialog.remove();
-                        },
+                        "Discard changes": cleanup,
                         "Save changes": function () {
                             spinnifyPOST(
                                 editdialog,
                                 BASE_URI + 'ajax/upload_file/' + escape(EXPERIMENT) + '/' + escape(t.options.dir) + '/' + escape(t.options.filename),
                                 { contents: editor.getCode() },
                                 function () {
-                                    editdialog.remove();
                                     download.flash();
+                                    cleanup.call(editdialog[0]);
                                 }
                             );
                         }
@@ -347,7 +351,6 @@ $.widget("ui.browseFile", {
                         lineNumbers: true,
                         content: data,
                         width: "dynamic",
-                        height: "200px",
                         textWrapping: false
                     });
                     $(editor.wrapping).height(editdialog.height() - HEIGHT_SAFETY_MARGIN);
