@@ -77,3 +77,12 @@ $(document).ready(function () {
         }
     }, 3000);
 });
+
+__IS_IE6__ = false;
+/*@cc_on
+@if (@_jscript_version == 5.6)
+    __IS_IE6__ = true;
+@elsif (@_jscript_version == 5.7)
+    __IS_IE6__ = !window.XMLHttpRequest;
+@end
+@*/

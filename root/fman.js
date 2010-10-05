@@ -103,10 +103,10 @@ $.widget("ui.browseFile", {
                                         .append(upload = $("<span>")
                                                          .addClass("linklike")
                                                          .text("upload new version")))))
-                        .append(((! this.options.writable) ? null : ++ncols && $("<td>")
+                        .append(((! this.options.writable || __IS_IE6__) ? null : ++ncols && $("<td>")
                                  .append($("<div>")
                                          .append("&nbsp;|&nbsp;")
-                                         .append(edit = ($("<span>")
+                                         .append(edit = $("<span>")
                                                          .append(
                                                              $("<span>")
                                                              .addClass("linklike")
@@ -114,7 +114,7 @@ $.widget("ui.browseFile", {
                                                          .append(
                                                              $("<span>")
                                                              .addClass("new")
-                                                             .html("\u200Anew")))))))
+                                                             .html("\u200Anew"))))))
                         .append(((! this.options.writable) ? null : ++ncols && $("<td>").text(")")))
                         .attr('title', 'Modified ' + show_date(this.options.modified)))
                 .append((! this.options.writable) ? null : $("<tr>")
