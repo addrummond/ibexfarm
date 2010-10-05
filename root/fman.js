@@ -351,9 +351,6 @@ $.widget("ui.browseFile", {
                         textWrapping: false
                     });
                     $(editor.wrapping).height(editdialog.height() - HEIGHT_SAFETY_MARGIN);
-
-                    // Doesn't seem to do any good :(
-                    $(editor.win).scroll(function () { e.stopPropagation(); });
                 }, "text/plain" /* "json" by default */);
             });
         }
