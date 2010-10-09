@@ -8,3 +8,12 @@ To run in debug mode, set the environment variable CATALYST_DEBUG=1.
 You need to create a configuration file 'ibexfarm.yml'. An example is
 given in 'test_ibexfarm.yml'. You can get a complete list of config
 variables by running 'findconfigvars.pl'.
+
+
+--------------------------------------------------------------------------------
+
+Author: Alex Drummond <a.d.drummond@gmail.com>
+
+Acknowledgements:
+
+    Marijn Haverbeke for his CodeMirror library (http://codemirror.net).
