@@ -27,6 +27,8 @@ use Catalyst qw/ConfigLoader
                 UploadProgress
                 /;
 use IbexFarm::AuthStore;
+use Log::Handler;
+use Moose;
 our $VERSION = '0.01';
 
 # Configure the application.
@@ -70,6 +72,16 @@ __PACKAGE__->config(
     user_password_salt_length => 32,
     user_password_hash_total_length => 118
 );
+
+after setup_finalize => sub {
+    # Open the event log, if we're keeping one.
+    if (__PACKAGE__->config->{event_log_file}) {
+        my $logger = Log::Handler->create_logger("event_log");
+        $logger->add(file => { filename => __PACKAGE__->config->{event_log_file},
+                               maxlevel => "debug",
+                               minlevel => "info" } );
+    }
+};
 
 # Start the application
 my @args;

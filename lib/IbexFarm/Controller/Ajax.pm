@@ -22,7 +22,7 @@ use HTML::GenerateUtil qw( escape_html );
 use IbexFarm::PasswordProtectExperiment::Factory;
 use IbexFarm::PasswordProtectExperiment::Apache;
 use JSON::XS;
-use IbexFarm::Util;
+use IbexFarm::Util qw( log_event );
 use Digest::MD5;
 use Data::Validate::URI;
 
@@ -367,6 +367,8 @@ sub newexperiment :Path("newexperiment") :Args(0) {
             );
             close $cnf or die "Unable to close 'CONFIG' file: $!";
 
+            log_event("New experiment " . $ps->{name} . " created by " . $c->user->{username});
+
             $c->detach($c->view("JSON")); # Empty dict indicates success.
         }
     }
@@ -696,6 +698,8 @@ sub delete_experiment :Path("delete_experiment") {
         die "Error deleting experiment '$expname' of user '", $c->user->username, "': [$r] $!";
     }
 
+    log_event("Experiment $expname deleted by " . $c->user->username);
+
     $c->detach($c->view("JSON")); # This will return the empty hash {} as the result.
 }
 
@@ -941,6 +945,10 @@ sub from_git_repo :Path("from_git_repo") {
 
     # Remove the temporary dir.
     rmtree([$tmpdir], 0, 0) or die "Unable to clean up temp dir in from_git_repo: $!";
+
+    log_event("Experiment " . $c->req->params->{expname} . " updated by " . $c->user->username .
+              " from git repo $git_url/" . $c->req->params->{branch} .
+              " (" . scalar(@files_modified) . " files modified).");
 
     $c->stash->{dirs_modified} = \@dirs_modified;
     $c->stash->{files_modified} = \@files_modified;

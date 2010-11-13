@@ -45,6 +45,8 @@ experiment_password_protection: Apache
 git_path: "/opt/local/bin/git"
 git_checkout_timeout_seconds: 25
 
+event_log_file: "/tmp/event_log"
+
 #'Plugin::Authentication':
 #    default_realm: users
 #    realms:

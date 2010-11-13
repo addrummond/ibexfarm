@@ -7,6 +7,7 @@ use parent 'Exporter';
 
 use JSON::XS;
 use File::Spec::Functions qw( catfile );
+use Log::Handler;
 
 sub update_json_file {
     my ($filename, $updatef) = @_;
@@ -52,4 +53,14 @@ sub get_experiment_version {
     return $version;
 }
 
-our @EXPORT_OK = qw( update_json_file is_special_file );
+my $event_logger;
+sub log_event {
+    my $info = shift;
+
+    if (IbexFarm->config->{event_log_file}) {
+        $event_logger = Log::Handler->get_logger("event_log") unless ($event_logger);
+        return $event_logger->info($info);
+    }
+}
+
+our @EXPORT_OK = qw( update_json_file is_special_file log_event );
