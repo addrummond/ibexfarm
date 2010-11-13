@@ -24,6 +24,7 @@ use IbexFarm::PasswordProtectExperiment::Apache;
 use JSON::XS;
 use IbexFarm::Util;
 use Digest::MD5;
+use Data::Validate::URI;
 
 my $get_default_config = sub {
     my %additions = @_;
@@ -770,12 +771,39 @@ sub password_protect_experiment :Path("password_protect_experiment") {
     $c->detach($c->view("JSON"));
 }
 
+# See http://www.kernel.org/pub/software/scm/git/docs/git-check-ref-format.html
+my $git_check_ref_format = sub {
+    my $ref = shift;
+
+    return (
+        $ref !~ /[[:cntrl:]]/ &&
+        $ref !~ /\.\./ &&
+        $ref !~ /[ ~^:?*\[]/ &&
+        $ref !~ /[\/.]$/ &&
+        $ref !~ /\.lock$/ &&
+        $ref !~ /@\{/ &&
+        $ref !~ /\\/ &&
+        # Additional checks not required by check-ref-format, but which seem prudent.
+        $ref !~ /[;&|]/
+    );
+};
+
 sub from_git_repo :Path("from_git_repo") {
     my ($self, $c) = (shift, shift);
     $c->detach('default') unless (IbexFarm->config->{git_path});
     $c->detach('unauthorized') unless ($c->user_exists);
     $c->detach('bad_request') unless ($c->req->method eq 'POST' && scalar(@_) == 0 && $c->req->params->{url} && $c->req->params->{expname});
     my $git_url = $c->req->params->{url};
+
+    # Check that the git url is sane.
+    if (! defined(is_uri($git_url)) || ($git_url !~ /^git:\/\// && $git_url !~ /^https?:\/\//)) {
+        $c->stash->{error} = "Bad git URL";
+        $c->detach($c->view("JSON"));
+    }
+    elsif ($c->req->params->{branch} && ! $git_check_ref_format->($c->req->params->{branch}))
+        $c->stash->{error} = "Bad characters in git branch/revision";
+        $c->detach($c->view("JSON"));
+    }
 
     # The commented out code below is the old code, which (quite bizarrely stupidly) didn't
     # maintain a separate history for each experiemnt.
