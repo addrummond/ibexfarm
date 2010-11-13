@@ -788,6 +788,7 @@ my $git_check_ref_format = sub {
     );
 };
 
+# This check is designed to be performed after a generic check for a valid URL.
 my $check_git_url = sub {
     my $url = shift;
     return (
