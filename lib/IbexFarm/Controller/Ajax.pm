@@ -441,6 +441,8 @@ sub rename_file :Path("rename_file") {
                            add => [ catfile($dir, $newname) ],
                            del => [ catfile($dir, $fname) ]);
 
+        log_event("User " . $c->user->username . " modified experiment $expname.");
+
         $c->detach($c->view("JSON"));
     }
 }
@@ -460,6 +462,8 @@ sub delete_file :Path("delete_file") {
         unlink $file or die "Error deleting a file ('$file'): $!";
 
         $manage_UPLOADED->($c->user->username, $expname, del => [ catfile($dir, $fname) ]);
+
+        log_event("User " . $c->user->username . " modified experiment $expname.");
 
         $c->detach($c->view("JSON"));
     }
@@ -595,6 +599,9 @@ sub upload_file :Path("upload_file") {
 
                 ajax_headers($c, 'text/html', 'UTF-8');
                 $c->res->body(" "); # Have to set it to something because otherwise Catalyst thinks it hasn't been set (!)
+
+                log_event("User " . $c->user->username . " modified experiment $expname.");
+
                 return 0;
             }
         }
@@ -664,6 +671,8 @@ sub rename_experiment :Path("rename_experiment") {
         if ($ewwwdir) {
             move($ewwwdir, $newewwwdir) or die "Error moving www: $!";
         }
+
+        log_event("User " . $c->user->username . " modified experiment $expname.");
 
         $c->detach($c->view("JSON"));
     }

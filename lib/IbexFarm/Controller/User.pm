@@ -8,7 +8,7 @@ use IbexFarm::FNames;
 use IbexFarm::CheckEmail;
 use File::Path qw( rmtree );
 use Digest;
-use IbexFarm::Util;
+use IbexFarm::Util qw( log_event );
 
 sub login :Absolute :Args(0) {
     my ($self, $c) = @_;
@@ -18,9 +18,11 @@ sub login :Absolute :Args(0) {
 
     if ($username && $password) {
         if ($c->authenticate({ username => $username, password => $password })) {
+            log_event("User $username logged in.");
             $c->response->redirect($c->uri_for('/myaccount'));
         }
         else {
+            log_event("User $username FAILED to log in.");
             $c->stash->{username} = $username;
             $c->stash->{error} = "The details you entered were not recognized.";
             $c->stash->{template} = "login.tt";
@@ -53,6 +55,9 @@ sub delete_account :Absolute :Args(0) {
             die "Inconsistency when deleting user account!";
         }
 
+        log_event("User " . $c->user->username . " deleted.");
+
+        my $username = $c->user->username;
         $c->logout;
 
         $c->stash->{template} = "deleted.tt";
@@ -225,6 +230,8 @@ sub newaccount :Absolute :Args(0) {
             $c->authenticate({ username => $username, password => $password }) or
                 die "Unable to authenticate following account creation.";
 
+            log_event("User account $username created.");
+
             $c->response->redirect($c->uri_for('/myaccount'));
         }
     }
@@ -250,7 +257,9 @@ sub myaccount :Absolute :Args(0) {
 sub logout :Absolute :Args(0) {
     my ($self, $c) = @_;
 
+    my $username = $c->user->username;
     $c->logout;
+    log_event("User $username logged out.");
     $c->response->redirect($c->uri_for('/'));
 }
 
