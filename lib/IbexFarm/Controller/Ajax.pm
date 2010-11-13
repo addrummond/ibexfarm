@@ -806,11 +806,11 @@ sub from_git_repo :Path("from_git_repo") {
     my $git_url = $c->req->params->{url};
 
     # Check that the git url is sane.
-    if (! defined(is_uri($git_url)) || (! $check_git_url->($git_url))) {
+    if (! defined(Data::Validate::URI::is_uri($git_url)) || (! $check_git_url->($git_url))) {
         $c->stash->{error} = "Bad git URL";
         $c->detach($c->view("JSON"));
     }
-    elsif ($c->req->params->{branch} && ! $git_check_ref_format->($c->req->params->{branch}))
+    elsif ($c->req->params->{branch} && ! $git_check_ref_format->($c->req->params->{branch})) {
         $c->stash->{error} = "Bad characters in git branch/revision";
         $c->detach($c->view("JSON"));
     }
