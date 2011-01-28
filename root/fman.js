@@ -9,7 +9,8 @@ var EXTENSION_TO_HIGHLIGHT_CONFIG = {
     },
     js: {
         parserfile: [ 'tokenizejavascript.js', 'parsejavascript.js' ],
-        stylesheet: 'jscolors.css'
+        stylesheet: 'jscolors.css',
+        indentUnit: 4
     },
     html: {
         parserfile: [ 'parsecss.js', 'tokenizejavascript.js', 'parsejavascript.js', 'parsexml.js', 'parsehtmlmixed.js '],
@@ -348,6 +349,7 @@ $.widget("ui.browseFile", {
                         path: prepath,
                         parserfile: pre(highlightConfig.parserfile),
                         stylesheet: pre(highlightConfig.stylesheet),
+                        indentUnit: highlightConfig.indentUnit || 2,
                         lineNumbers: true,
                         content: data,
                         width: "dynamic",
