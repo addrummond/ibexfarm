@@ -314,11 +314,12 @@ $.widget("ui.browseFile", {
                                     savedMessageCurrentlyShowing = true;
                                     // TODO: Maybe put some of this in a CSS file.
                                     buttonpane.append($("<div>")
-                                                      .text("Saved")
+                                                      .text("(saved)")
                                                       .css('float', 'right').css('margin-right', '0.5em')
                                                       .css('padding-left', '0.5em').css('padding-right', '0.5em')
                                                       .css('font-family', buttonpaneFirstButton.css('font-family'))
                                                       .css('font-size', buttonpaneFirstButton.css('font-size'))
+                                                      .css('font-weight', 'bold')
                                                       .css('position', 'relative')
                                                       .css('top', buttonpaneFirstButton.css('padding-top'))
                                                       .css('margin-top', buttonpane.css('margin-top')).flash({
