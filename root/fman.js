@@ -111,11 +111,7 @@ $.widget("ui.browseFile", {
                                                          .append(
                                                              $("<span>")
                                                              .addClass("linklike")
-                                                             .text("edit"))
-                                                         .append(
-                                                             $("<span>")
-                                                             .addClass("new")
-                                                             .html("\u200Anew"))))))
+                                                                 .text("edit"))))))
                         .append(((! this.options.writable) ? null : ++ncols && $("<td>").text(")")))
                         .attr('title', 'Modified ' + show_date(this.options.modified)))
                 .append((! this.options.writable) ? null : $("<tr>")
@@ -295,11 +291,52 @@ $.widget("ui.browseFile", {
                     highlightConfig = EXTENSION_TO_HIGHLIGHT_CONFIG[''];
 
                 $("body").css('overflow', 'hidden');
+                var editdialog = $("<div>");
                 function cleanup() {
                     $("body").css('overflow', 'scroll');
                     $(this).remove();
                 }
-                var editdialog = $("<div>").dialog({
+                var buttonpane = null; // Set in a minute.
+                var buttonpaneFirstButton = null; // Ditto.
+                var savedMessageCurrentlyShowing = false;
+                function save(closeAfter) {
+                    return function () {
+                        spinnifyPOST(
+                            buttonpane,
+                            BASE_URI + 'ajax/upload_file/' + escape(EXPERIMENT) + '/' + escape(t.options.dir) + '/' + escape(t.options.filename),
+                            { contents: editor.getCode() },
+                            function () {
+                                if (closeAfter) {
+                                    cleanup.call(editdialog);
+                                    download.flash();
+                                }
+                                else if (! savedMessageCurrentlyShowing) {
+                                    savedMessageCurrentlyShowing = true;
+                                    // TODO: Maybe put some of this in a CSS file.
+                                    buttonpane.append($("<div>")
+                                                      .text("Saved")
+                                                      .css('float', 'right').css('margin-right', '0.5em')
+                                                      .css('padding-left', '0.5em').css('padding-right', '0.5em')
+                                                      .css('font-family', buttonpaneFirstButton.css('font-family'))
+                                                      .css('font-size', buttonpaneFirstButton.css('font-size'))
+                                                      .css('position', 'relative')
+                                                      .css('top', buttonpaneFirstButton.css('padding-top'))
+                                                      .css('margin-top', buttonpane.css('margin-top')).flash({
+                                        type: 'message',
+                                        finishedCallback: function() {
+                                            this.remove();
+                                            savedMessageCurrentlyShowing = false;
+                                        }
+                                    }));
+                                }
+                            },
+                            null/*type*/,
+                            false/*dontWait*/,
+                            function(div) { div.css('float', 'right').css('margin-right', '1em').css('margin-top', buttonpane.css('margin-top')); }
+                        );
+                    }
+                }
+                editdialog.dialog({
                     closeOnEscape: false,
                     modal: true,
                     position: [25, 25],
@@ -318,19 +355,12 @@ $.widget("ui.browseFile", {
                     close: cleanup,
                     buttons: {
                         "Discard changes": cleanup,
-                        "Save changes": function () {
-                            spinnifyPOST(
-                                editdialog,
-                                BASE_URI + 'ajax/upload_file/' + escape(EXPERIMENT) + '/' + escape(t.options.dir) + '/' + escape(t.options.filename),
-                                { contents: editor.getCode() },
-                                function () {
-                                    download.flash();
-                                    cleanup.call(editdialog[0]);
-                                }
-                            );
-                        }
+                        "Save changes": save(false),
+                        "Save and close": save(true)
                     }
                 });
+                buttonpane = $('.ui-dialog div.ui-dialog-buttonpane');
+                buttonpaneFirstButton = $(buttonpane.find('button')[0]);
 
                 spinnifyGET(editdialog, downloadLink, function (data) {
                     editdialog.append(editte = $("<div>"));

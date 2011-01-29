@@ -55,13 +55,15 @@ add2("toggle");
 // Code for doing ajax spinner thingy.
 // By default, this waits 500ms before adding a spinner (distracting to have them
 // flash for <500ms).
-function spinnifyAjax(spincontainer, ajaxArgs, dontWait) {
+function spinnifyAjax(spincontainer, ajaxArgs, dontWait, manip) {
     var origError = ajaxArgs.error;
     var origSuccess = ajaxArgs.success;
 
     var spinner = $("<div>")
                   .css('width', 16).css('height', 16)
                   .css('background-image', "url('" + BASE_URI + 'static/images/ajax-loader.gif' + "')");
+    if (manip)
+        manip(spinner);
     var timeoutId;
     if (! dontWait) timeoutId = setTimeout(function () { spincontainer.append(spinner); }, 500);
     else spincontainer.append(spinner);
@@ -77,22 +79,22 @@ function spinnifyAjax(spincontainer, ajaxArgs, dontWait) {
     };
     return $.ajax(ajaxArgs);
 }
-function spinnifyPOST(spincontainer, url, args, callback, type, dontWait) {
+function spinnifyPOST(spincontainer, url, args, callback, type, dontWait, manip) {
     return spinnifyAjax(spincontainer, {
         url: url,
         data: args,
         type: "POST",
         success: callback,
-        dataType: type
-    }, dontWait);
+        dataType: type,
+    }, dontWait, manip);
 }
-function spinnifyGET(spincontainer, url, callback, type, dontWait) {
+function spinnifyGET(spincontainer, url, callback, type, dontWait, manip) {
     return spinnifyAjax(spincontainer, {
         url: url,
         type: "GET",
         success: callback,
-        dataType: type || "json"
-    }, dontWait);
+        dataType: type || "json",
+    }, dontWait, manip);
 }
 
 (function (isChrome) {
@@ -107,12 +109,18 @@ $.widget("ui.flash", {
         if (! isChrome) {
             this.element.effect("highlight", {color: color}, 2500, function () {
                 t.element.attr('id', null);
+                if (t.options.finishedCallback)
+                    t.options.finishedCallback.call(t.element);
             });
         }
         else {
             var old = this.element.css('background-color');
             this.element.css('background-color', color);
-            setTimeout(function () { t.element.attr('id', null); t.element.css('background-color', old); }, 2500);
+            setTimeout(function () {
+                t.element.attr('id', null); t.element.css('background-color', old);
+                if (t.options.finishedCallback)
+                    t.options.finishedCallback.call(t.element);
+            }, 2500);
         }
     }
 });
