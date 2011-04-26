@@ -46,7 +46,8 @@ my $get_default_config = sub {
         CACHE_DIR => "cache",
         JS_INCLUDES_LIST => ["block"],
         CSS_INCLUDES_LIST => ["block"],
-        DATA_INCLUDES_LIST => ["block"]
+        DATA_INCLUDES_LIST => ["block"],
+        SIMPLE_RESULTS_FILE_COMMENTS => \0
     );
     for my $k (keys %additions) { $h{$k} = $additions{$k}; }
     return \%h;
