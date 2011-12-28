@@ -5,6 +5,10 @@ server will serve static files.
 
 To run in debug mode, set the environment variable CATALYST_DEBUG=1.
 
+Example:
+
+    STATIC=1 CATALYST_DEBUG=1 perl script/ibexfarm_server.pl
+
 You need to create a configuration file 'ibexfarm.yml'. An example is
 given in 'test_ibexfarm.yml'. You can get a complete list of config
 variables by running 'findconfigvars.pl'.
