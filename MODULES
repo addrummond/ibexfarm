@@ -15,4 +15,10 @@ Digest
 Archive::Zip
 Data::Validate::URI
 Log::Handler
-
+Crypt::OpenPGP
+Params::Classify
+Sub::Identify
+Variable::Magic
+DateTime
+Class::ISA
+namespace::clean # latest version of.
