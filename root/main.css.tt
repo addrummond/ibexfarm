@@ -16,7 +16,7 @@
 [% lilgap = "25px" %]
 [% bgap = "30px" %]
 
-[% round = "-moz-border-radius: $rounding; -webkit-border-radius: $rounding;" %]
+[% round = "border-radius: $rounding; -moz-border-radius: $rounding; -webkit-border-radius: $rounding;" %]
 
 table {
     border-spacing: 0;
