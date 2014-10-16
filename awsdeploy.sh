@@ -77,12 +77,12 @@ git_checkout_timeout_seconds: 25
 
 event_log_file: "/tmp/event_log"
 
-experiment_base_url: r"http://${SERVER_HOST}/ibexexps/"
+experiment_base_url: r"""http://${SERVER_HOST}/ibexexps/"""
 
 python_hashbang: "/opt/local/bin/python"
 
-config_url: r"${SERVER_HOST}/ibexfarm/ajax/config"
-config_permitted_hosts: ["localhost", r"${SERVER_HOST}", spellout.user.openhosting.com", "spellout.net"]
+config_url: r"""${SERVER_HOST}/ibexfarm/ajax/config"""
+config_permitted_hosts: ["localhost", r"""${SERVER_HOST}""", spellout.user.openhosting.com", "spellout.net"]
 
 EOFEOF
 }
