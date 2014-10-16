@@ -117,6 +117,16 @@ append_to_etc_hosts() {
 EOFEOF
 }
 
+write_domain_home() {
+    cat <<EOFEOF >/var/www/index.html
+<html>
+<body>
+You are probably looking for the <a href="/ibexfarm">Ibex Farm</a>.
+</body>
+</html>
+EOFEOF
+}
+
 yes | yum update &&
 
 # Stop pointless services running.
@@ -187,4 +197,5 @@ ln -s /usr/bin/python /opt/local/bin/python &&
 
 write_ibex_config &&
 append_to_apache_config &&
-append_to_etc_hosts
+append_to_etc_hosts &&
+write_domain_home
