@@ -117,13 +117,16 @@ append_to_etc_hosts() {
 EOFEOF
 }
 
-yum update &&
+yes | yum update &&
 
 # Stop pointless services running.
 service sendmail stop &&
 
 # Instal basic utilities.
 yes | yum install git &&
+
+# Install apache.
+yes | yum install httpd &&
 
 #
 # BEGINNING OF HIDEOUS PERL INSTALLATION.
@@ -174,9 +177,7 @@ mkdir /var/ibexfarm/deploy &&
 chown apache:apache /var/ibexfarm/deploy/ &&
 wget http://gdurl.com/V--j -O /var/ibexfarm/ibex-deploy.tar.gz &&
 chown apache:apache /var/ibexfarm/ibex-deploy.tar.gz &&
-mkdir /var/www/ibexfarm &&
 mkdir /var/www/ibexexps &&
-chown apache:apache /var/www/ibexfarm &&
 chown apache:apache /var/www/ibexexps &&
 mkdir /opt/local &&
 mkdir /opt/local/bin &&
