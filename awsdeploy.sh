@@ -138,7 +138,7 @@ yes | yum update &&
 # Stop pointless services running.
 service sendmail stop &&
 
-# Instal basic utilities.
+# Install basic utilities.
 yes | yum install git &&
 
 # Install apache.
