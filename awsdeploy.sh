@@ -10,7 +10,10 @@
 #
 # It should be run as follows on a fresh instance:
 #
-#    sudo bash awsdeploy.sh
+#    SERVER_HOST=foo.bar.com sudo bash awsdeploy.sh
+#
+# If you don't have a domain set up, you can just pass the IP address of your
+# EC2 instance as the value for SERVER_HOST.
 #
 # Once everything's set up, you can start the http server with the following:
 #
@@ -21,6 +24,14 @@
 #
 # Note that installing all of the Perl modules can take a loooooong time.
 #
+#
+
+if [ -n "$SERVER_HOST" ]; then
+    echo "You must define the SERVER_HOST environment variable."
+    echo "Script will now exit (without doing anything)"
+    exit 1
+fi
+
 
 write_ibex_config() {
     cat <<EOFEOF > /var/ibexfarm/ibexfarm/ibexfarm.yaml
@@ -67,7 +78,7 @@ git_checkout_timeout_seconds: 25
 
 event_log_file: "/tmp/event_log"
 
-experiment_base_url: "http://spellout.net/ibexexps/"
+experiment_base_url: "http://${SERVER_HOST}/ibexexps/"
 
 python_hashbang: "/opt/local/bin/python"
 
