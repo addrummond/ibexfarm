@@ -110,6 +110,10 @@ EOFEOF
 }
 
 append_to_etc_hosts() {
+    # URLs containing spellout.user.openhosting.com and spellout.net are
+    # scattered through all of the server.py scripts, so it's best just to
+    # redirect these to localhost. (Nice design idea there, me.)
+
     cat <<EOFEOF >>/etc/hosts
 
 127.0.0.1   spellout.user.openhosting.com
@@ -128,6 +132,7 @@ EOFEOF
     chown apache:apache /var/www/index.html
 }
 
+# Install any available updates.
 yes | yum update &&
 
 # Stop pointless services running.
@@ -194,8 +199,7 @@ mkdir /opt/local &&
 mkdir /opt/local/bin &&
 ln -s /usr/bin/python /opt/local/bin/python &&
 
-# ...
-
+# Write/modify various config files and index.html for http://spellout.net
 write_ibex_config &&
 append_to_apache_config &&
 append_to_etc_hosts &&
