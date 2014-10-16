@@ -24,6 +24,8 @@
 #
 # Note that installing all of the Perl modules can take a loooooong time.
 #
+# By default, the script downloads a suitable tarball for the latest version
+# of ibex.
 #
 
 if [ -z "$SERVER_HOST" ]; then
@@ -67,6 +69,10 @@ quota_max_files_in_dir: 500
 quota_max_file_size: 1048576
 quota_max_total_size: 1048576
 quota_record_dir: "/tmp/quota"
+
+password_protect_apache:
+    htpasswd: "/usr/bin/htpasswd"
+    passwd_file: "/etc/httpd/conf/httpdpasswd"
 
 max_upload_size_bytes: 1048576
 
@@ -205,6 +211,10 @@ wget http://gdurl.com/V--j -O /var/ibexfarm/ibex-deploy.tar.gz &&
 chown apache:apache /var/ibexfarm/ibex-deploy.tar.gz &&
 mkdir /var/www/ibexexps &&
 chown apache:apache /var/www/ibexexps &&
+
+# Set up http password protection config.
+touch /etc/httpd/conf/httpdpasswd
+chown apache:apache /etc/httpd/conf/httpdpasswd
 
 # Python, on the original Ibex Farm VPS, was installed in /opt/local, so we
 # add a symlink to make the transition easier. (Old experiments assume this
