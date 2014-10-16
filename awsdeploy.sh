@@ -195,6 +195,10 @@ wget http://gdurl.com/V--j -O /var/ibexfarm/ibex-deploy.tar.gz &&
 chown apache:apache /var/ibexfarm/ibex-deploy.tar.gz &&
 mkdir /var/www/ibexexps &&
 chown apache:apache /var/www/ibexexps &&
+
+# Python, on the original Ibex Farm VPS, was installed in /opt/local, so we
+# add a symlink to make the transition easier. (Old experiments assume this
+# path in the hashbangs of their server.py files.)
 mkdir /opt/local &&
 mkdir /opt/local/bin &&
 ln -s /usr/bin/python /opt/local/bin/python &&
