@@ -125,6 +125,7 @@ You are probably looking for the <a href="/ibexfarm">Ibex Farm</a>.
 </body>
 </html>
 EOFEOF
+    chown apache:apache /var/www/index.html
 }
 
 yes | yum update &&
