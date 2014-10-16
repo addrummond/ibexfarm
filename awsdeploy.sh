@@ -14,7 +14,7 @@
 #
 # Once everything's set up, you can start the http server with the following:
 #
-#    sudo service http start
+#    sudo service httpd start
 #
 # Experiments go in /var/www/ibexexps and /var/ibexfarm/deploy. The ibex
 # tarball should be called ibex-deploy.tar.gz and goes in /var/ibexfarm.
