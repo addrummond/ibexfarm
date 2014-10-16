@@ -82,7 +82,7 @@ experiment_base_url: "http://${SERVER_HOST}/ibexexps/"
 
 python_hashbang: "/opt/local/bin/python"
 
-config_url: "http://spellout.user.openhosting.com/ibexfarm/ajax/config"
+config_url: "${SERVER_HOST}/ibexfarm/ajax/config"
 config_permitted_hosts: ["localhost", "spellout.user.openhosting.com", "spellout.net"]
 
 EOFEOF
