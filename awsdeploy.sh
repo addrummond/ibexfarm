@@ -228,7 +228,7 @@ sh mkdist2.sh deploy &&
 cp dist/ibex-deploy.tar.gz /var/ibexfarm &&
 chown apache:apache /var/ibexfarm/ibex-deploy.tar.gz &&
 rm /tmp/ibextarball.tar.gz &&
-rm -r /tmp/ibex-${IBEX_VERSION} &&
+rm -r "/tmp/ibex-${IBEX_VERSION}" &&
 cd ~ &&
 
 # Set up http password protection config.
