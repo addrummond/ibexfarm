@@ -26,7 +26,7 @@
 #
 #
 
-if [ -n "$SERVER_HOST" ]; then
+if [ -z "$SERVER_HOST" ]; then
     echo "You must define the SERVER_HOST environment variable."
     echo "Script will now exit (without doing anything)"
     exit 1
