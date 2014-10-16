@@ -13,7 +13,8 @@
 #    SERVER_HOST=foo.bar.com IBEX_VERSION=0.3.6 sudo bash awsdeploy.sh
 #
 # If you don't have a domain set up, you can just pass the IP address of your
-# EC2 instance as the value for SERVER_HOST.
+# EC2 instance as the value for SERVER_HOST. If you want to use a custom ibex
+# tarball, you can set IBEX_URL instead of IBEX_VERSION.
 #
 # Once everything's set up, you can start the http server with the following:
 #
@@ -213,7 +214,12 @@ mkdir /var/www/ibexexps &&
 chown apache:apache /var/www/ibexexps &&
 
 # Set up ibex tarball.
-wget https://webspr.googlecode.com/files/ibex-${IBEX_VERSION}.tar.gz -O /tmp/ibextarball.tar.gz &&
+if [ -z ${IBEX_VERSION} ]; then
+    IBEX_TARBALL_URL="$IBEX_URL"
+else
+    IBEX_TARBALL_URL="https://webspr.googlecode.com/files/ibex-${IBEX_VERSION}.tar.gz"
+fi
+wget "$IBEX_TARBALL_URL" -O /tmp/ibextarball.tar.gz &&
 tar -C /tmp -xzf /tmp/ibextarball.tar.gz &&
 MYPWD="$PWD" &&
 cd /tmp/ibex-${IBEX_VERSION} &&
@@ -246,4 +252,21 @@ chown -R apache:apache /var/l-apps/ &&
 write_ibex_config &&
 append_to_apache_config &&
 append_to_etc_hosts &&
-write_domain_home
+write_domain_home &&
+
+echo
+echo
+echo
+echo "Everything appears to have been set up successfully."
+echo
+echo "Run:"
+echo
+echo "    sudo service httpd start"
+echo
+echo "to start the web server."
+echo
+echo "*********************************************************************"
+echo "** Make sure that you have set up your EC2 instance to allow       **"
+echo "**            outside connections on port 80.                      **"
+echo "*********************************************************************"
+echo
