@@ -4,9 +4,22 @@
 # This script either automates or fails to automate the deployment of Ibex Farm
 # on an Amazon AWS instance running the Amazon Linux distro.
 #
+# It was last tested with:
+#
+#    Amazon Linux AMI 2014.09 (HVM) - ami-08842d60
+#
 # It should be run as follows on a fresh instance:
 #
 #    sudo bash awsdeploy.sh
+#
+# Once everything's set up, you can start the http server with the following:
+#
+#    service http start
+#
+# Experiments go in /var/www/ibexexps and /var/ibexfarm/deploy. The ibex
+# tarball should be called ibex-deploy.tar.gz and goes in /var/ibexfarm.
+#
+# Note that installing all of the Perl modules can take a loooooong time.
 #
 
 write_ibex_config() {
