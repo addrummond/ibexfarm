@@ -10,7 +10,7 @@
 #
 # It should be run as follows on a fresh instance:
 #
-#    SERVER_HOST=foo.bar.com IBEX_VERSION=0.3.6 sudo bash awsdeploy.sh
+#    sudo SERVER_HOST=foo.bar.com IBEX_VERSION=0.3.6 bash awsdeploy.sh
 #
 # If you don't have a domain set up, you can just pass the IP address of your
 # EC2 instance as the value for SERVER_HOST. If you want to use a custom ibex
@@ -214,25 +214,26 @@ mkdir /var/www/ibexexps &&
 chown apache:apache /var/www/ibexexps &&
 
 # Set up ibex tarball.
-if [ -z ${IBEX_VERSION} ]; then
+if [ -z "$IBEX_VERSION" ]; then
     IBEX_TARBALL_URL="$IBEX_URL"
 else
     IBEX_TARBALL_URL="https://webspr.googlecode.com/files/ibex-${IBEX_VERSION}.tar.gz"
 fi
 wget "$IBEX_TARBALL_URL" -O /tmp/ibextarball.tar.gz &&
 tar -C /tmp -xzf /tmp/ibextarball.tar.gz &&
-MYPWD="$PWD" &&
 cd /tmp/ibex-${IBEX_VERSION} &&
-sh mkdish.sh deploy &&
+# The cp utility on Amazon linux only supports -x, not -X (!)
+sed -e 's/-X/-x/g' mkdist.sh > mkdist2.sh &&
+sh mkdist2.sh deploy &&
 cp dist/ibex-deploy.tar.gz /var/ibexfarm &&
 chown apache:apache /var/ibexfarm/ibex-deploy.tar.gz &&
 rm /tmp/ibextarball.tar.gz &&
 rm -r /tmp/ibex-${IBEX_VERSION} &&
-cd "$MYPWD" &&
+cd ~ &&
 
 # Set up http password protection config.
-touch /etc/httpd/conf/httpdpasswd
-chown apache:apache /etc/httpd/conf/httpdpasswd
+touch /etc/httpd/conf/httpdpasswd &&
+chown apache:apache /etc/httpd/conf/httpdpasswd &&
 
 # Python, on the original Ibex Farm VPS, was installed in /opt/local, so we
 # add a symlink to make the transition easier. (Old experiments assume this
@@ -254,19 +255,19 @@ append_to_apache_config &&
 append_to_etc_hosts &&
 write_domain_home &&
 
-echo
-echo
-echo
-echo "Everything appears to have been set up successfully."
-echo
-echo "Run:"
-echo
-echo "    sudo service httpd start"
-echo
-echo "to start the web server."
-echo
-echo "*********************************************************************"
-echo "** Make sure that you have set up your EC2 instance to allow       **"
-echo "**            outside connections on port 80.                      **"
-echo "*********************************************************************"
+echo &&
+echo &&
+echo &&
+echo "Everything appears to have been set up successfully." &&
+echo &&
+echo "Run:" &&
+echo &&
+echo "    sudo service httpd start" &&
+echo &&
+echo "to start the web server." &&
+echo &&
+echo "*********************************************************************" &&
+echo "** Make sure that you have set up your EC2 instance to allow       **" &&
+echo "**            outside connections on port 80.                      **" &&
+echo "*********************************************************************" &&
 echo
