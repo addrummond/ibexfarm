@@ -32,7 +32,6 @@ if [ -z "$SERVER_HOST" ]; then
     exit 1
 fi
 
-
 write_ibex_config() {
     cat <<EOFEOF > /var/ibexfarm/ibexfarm/ibexfarm.yaml
 ---
