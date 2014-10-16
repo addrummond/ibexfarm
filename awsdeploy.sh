@@ -10,7 +10,7 @@
 #
 # It should be run as follows on a fresh instance:
 #
-#    SERVER_HOST=foo.bar.com sudo bash awsdeploy.sh
+#    SERVER_HOST=foo.bar.com IBEX_VERSION=0.3.6 sudo bash awsdeploy.sh
 #
 # If you don't have a domain set up, you can just pass the IP address of your
 # EC2 instance as the value for SERVER_HOST.
@@ -209,10 +209,20 @@ git clone https://github.com/addrummond/ibexfarm.git /var/ibexfarm/ibexfarm &&
 chown -R apache:apache /var/ibexfarm/ &&
 mkdir /var/ibexfarm/deploy &&
 chown apache:apache /var/ibexfarm/deploy/ &&
-wget http://gdurl.com/V--j -O /var/ibexfarm/ibex-deploy.tar.gz &&
-chown apache:apache /var/ibexfarm/ibex-deploy.tar.gz &&
 mkdir /var/www/ibexexps &&
 chown apache:apache /var/www/ibexexps &&
+
+# Set up ibex tarball.
+wget https://webspr.googlecode.com/files/ibex-${IBEX_VERSION}.tar.gz -O /tmp/ibextarball.tar.gz &&
+tar -C /tmp -xzf /tmp/ibextarball.tar.gz &&
+MYPWD="$PWD" &&
+cd /tmp/ibex-${IBEX_VERSION} &&
+sh mkdish.sh deploy &&
+cp dist/ibex-deploy.tar.gz /var/ibexfarm &&
+chown apache:apache /var/ibexfarm/ibex-deploy.tar.gz &&
+rm /tmp/ibextarball.tar.gz &&
+rm -r /tmp/ibex-${IBEX_VERSION} &&
+cd "$MYPWD" &&
 
 # Set up http password protection config.
 touch /etc/httpd/conf/httpdpasswd
