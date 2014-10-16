@@ -14,7 +14,8 @@
 #
 # If you don't have a domain set up, you can just pass the IP address of your
 # EC2 instance as the value for SERVER_HOST. If you want to use a custom ibex
-# tarball, you can set IBEX_URL instead of IBEX_VERSION.
+# tarball, you can set IBEX_URL. Otherwise, the script will automatically
+# download the tarball for the given ibex version (if it exists).
 #
 # Once everything's set up, you can start the http server with the following:
 #
@@ -25,12 +26,20 @@
 #
 # Note that installing all of the Perl modules can take a loooooong time.
 #
-# By default, the script downloads a suitable tarball for the latest version
-# of ibex.
+# You may want to edit webmaster_name and webmaster_email in the
+# write_ibex_config() function below.
 #
 
 if [ -z "$SERVER_HOST" ]; then
     echo "You must define the SERVER_HOST environment variable."
+    echo "Script will now exit (without doing anything)"
+    exit 1
+fi
+
+if [ -z "$IBEX_VERSION" || "$IBEX_VERSION" !~ ^[0-9A-Za-z_.-]$ ];
+    echo "You must define the IBEX_VERSION environment variable."
+    echo "This error may also be produced if IBEX_VERSION does not consist"
+    echo "solely of letters, digits and '.', '-' or '_' characters."
     echo "Script will now exit (without doing anything)"
     exit 1
 fi
@@ -45,7 +54,7 @@ webmaster_email: "a.d.drummond@gmail.com"
 
 ibex_archive: "/var/ibexfarm/ibex-deploy.tar.gz"
 ibex_archive_root_dir: "ibex-deploy"
-ibex_version: "0.3.6"
+ibex_version: "${IBEX_VERSION}"
 deployment_dir: "/var/ibexfarm/deploy"
 deployment_www_dir: "/var/www/ibexexps"
 
@@ -214,7 +223,7 @@ mkdir /var/www/ibexexps &&
 chown apache:apache /var/www/ibexexps &&
 
 # Set up ibex tarball.
-if [ -z "$IBEX_VERSION" ]; then
+if [ -n "$IBEX_URL" ]; then
     IBEX_TARBALL_URL="$IBEX_URL"
 else
     IBEX_TARBALL_URL="https://webspr.googlecode.com/files/ibex-${IBEX_VERSION}.tar.gz"
