@@ -119,8 +119,10 @@ DocumentRoot "/var/www"
 
 AddHandler cgi-script .py
 
-<Directory />
-Options +ExecCGI
+<Directory "/var/www/ibexexps" >
+    Options +ExecCGI +FollowSymLinks
+    AllowOverride AuthConfig
+    DirectoryIndex experiment.html
 </Directory>
 EOFEOF
 }
