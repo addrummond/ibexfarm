@@ -14,7 +14,7 @@
 #
 # Once everything's set up, you can start the http server with the following:
 #
-#    service http start
+#    sudo service http start
 #
 # Experiments go in /var/www/ibexexps and /var/ibexfarm/deploy. The ibex
 # tarball should be called ibex-deploy.tar.gz and goes in /var/ibexfarm.
@@ -23,7 +23,7 @@
 #
 
 write_ibex_config() {
-    cat <<EOFEOF > /home/ibex/ibexfarm/ibexfarm.yaml
+    cat <<EOFEOF > /var/ibexfarm/ibexfarm/ibexfarm.yaml
 ---
 name: IbexFarm
 
@@ -162,7 +162,7 @@ cpanm Variable::Magic &&
 cpanm DateTime &&
 cpanm Class::ISA &&
 cpanm Catalyst::Authentication::User::Hash &&
-cpanm Catalyst/Plugin/Session/State/Cookie.pm &&
+cpanm Catalyst::Plugin::Session::State::Cookie &&
 cpanm Catalyst::View::TT &&
 cpanm Archive::Tar &&
 #
@@ -172,7 +172,7 @@ cpanm Archive::Tar &&
 # Set up deployment dir etc.
 mkdir /var/ibexfarm &&
 git clone https://github.com/addrummond/ibexfarm.git /var/ibexfarm/ibexfarm &&
-chown -R apache:apache /home/ibex/ibexfarm &&
+chown -R apache:apache /var/ibexfarm/ &&
 mkdir /var/ibexfarm/deploy &&
 chown apache:apache /var/ibexfarm/deploy/ &&
 wget http://gdurl.com/V--j -O /var/ibexfarm/ibex-deploy.tar.gz &&
