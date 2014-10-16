@@ -216,10 +216,10 @@ ln -s /usr/bin/python /opt/local/bin/python &&
 
 # These paths are hardcoded in various old experiments, so we need to create
 # symlinks.
-mkdir /var/l-apps
-mkdir /var/l-apps/ibexfarm
-ln -s /var/ibexfarm/deploy/ /var/l-apps/ibexfarm/deploy
-chown -R apache:apache /var/l-apps/
+mkdir /var/l-apps &&
+mkdir /var/l-apps/ibexfarm &&
+ln -s /var/ibexfarm/deploy/ /var/l-apps/ibexfarm/deploy &&
+chown -R apache:apache /var/l-apps/ &&
 
 # Write/modify various config files and index.html for http://spellout.net
 write_ibex_config &&
