@@ -273,7 +273,7 @@ write_domain_home &&
 echo &&
 echo &&
 echo &&
-echo "*********************************************************************"
+echo "*********************************************************************" &&
 echo "* Everything appears to have been set up successfully.              *" &&
 echo "*                                                                   *" &&
 echo "* Run:                                                              *" &&
@@ -281,7 +281,7 @@ echo "*                                                                   *" &&
 echo "*     sudo service httpd start                                      *" &&
 echo "*                                                                   *" &&
 echo "* to start the web server.                                          *" &&
-echo "*                                                                   *"&&
+echo "*                                                                   *" &&
 echo "*********************************************************************" &&
 echo "** Make sure that you have set up your EC2 instance to allow       **" &&
 echo "**            outside connections on port 80.                      **" &&
