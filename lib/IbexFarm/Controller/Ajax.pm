@@ -119,7 +119,7 @@ sub config_ : Path("config") :Args(0) { # 'config' seems to be reserved by Catal
     # or (c) they're logged in as the user who owns this experiment.
     unless ((! $c->req->hostname) ||
             $c->req->hostname eq "localhost" ||
-            (grep { $_ eq $c->req->hostname } @{IbexFarm->config->{config_permitted_hosts}}) ||
+            (grep { $_ eq $c->req->hostname || $_ eq $c->req->address } @{IbexFarm->config->{config_permitted_hosts}}) ||
             ($c->user_exists && $c->user->username eq $username)) {
         $c->detach('unauthorized');
     }

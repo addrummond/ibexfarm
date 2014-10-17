@@ -99,12 +99,12 @@ git_checkout_timeout_seconds: 25
 
 event_log_file: "/tmp/event_log"
 
-experiment_base_url: r"""http://${SERVER_HOST}/ibexexps/"""
+experiment_base_url: "http://${SERVER_HOST}/ibexexps/"
 
 python_hashbang: "/opt/local/bin/python"
 
-config_url: r"""${SERVER_HOST}/ibexfarm/ajax/config"""
-config_permitted_hosts: ["localhost", r"""${SERVER_HOST}""", spellout.user.openhosting.com", "spellout.net"]
+config_url: "http://${SERVER_HOST}/ibexfarm/ajax/config"
+config_permitted_hosts: ["localhost", "${SERVER_HOST}", "spellout.user.openhosting.com", "spellout.net"]
 
 EOFEOF
 }
@@ -273,14 +273,15 @@ write_domain_home &&
 echo &&
 echo &&
 echo &&
-echo "Everything appears to have been set up successfully." &&
-echo &&
-echo "Run:" &&
-echo &&
-echo "    sudo service httpd start" &&
-echo &&
-echo "to start the web server." &&
-echo &&
+echo "*********************************************************************"
+echo "* Everything appears to have been set up successfully.              *" &&
+echo "*                                                                   *" &&
+echo "* Run:                                                              *" &&
+echo "*                                                                   *" &&
+echo "*     sudo service httpd start                                      *" &&
+echo "*                                                                   *" &&
+echo "* to start the web server.                                          *" &&
+echo "*                                                                   *"&&
 echo "*********************************************************************" &&
 echo "** Make sure that you have set up your EC2 instance to allow       **" &&
 echo "**            outside connections on port 80.                      **" &&
