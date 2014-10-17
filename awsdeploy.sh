@@ -36,12 +36,18 @@ if [ -z "$SERVER_HOST" ]; then
     exit 1
 fi
 
-if [ -z "$IBEX_VERSION" || "$IBEX_VERSION" !~ ^[0-9A-Za-z_.-]$ ];
+ibex_version_error() {
     echo "You must define the IBEX_VERSION environment variable."
     echo "This error may also be produced if IBEX_VERSION does not consist"
     echo "solely of letters, digits and '.', '-' or '_' characters."
     echo "Script will now exit (without doing anything)"
     exit 1
+}
+if [ -z "$IBEX_VERSION" ]; then
+    ibex_version_error
+fi
+if ! [[ "$IBEX_VERSION" =~ ^[0-9A-Za-z_.-]+$ ]]; then
+    ibex_version_error
 fi
 
 write_ibex_config() {
