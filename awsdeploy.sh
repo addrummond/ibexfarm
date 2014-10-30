@@ -270,6 +270,18 @@ append_to_apache_config &&
 append_to_etc_hosts &&
 write_domain_home &&
 
+# There appears to be a small memory leak which will cause experiments to stop
+# working after a certain period on an EC2 microinstance. As a temporary solution,
+# restart apache every day.
+cat <<EOF >/tmp/editrootcrontab.sh
+#!/bin/sh
+echo "@daily service httpd restart" > $1
+exit 0
+EOF &&
+chmod a+x /tmp/editrootcrontab.sh &&
+EDITOR=/tmp/editrootcrontab.sh sudo crontab -e &&
+rm /tmp/editrootcrontab.sh &&
+
 echo &&
 echo &&
 echo &&
