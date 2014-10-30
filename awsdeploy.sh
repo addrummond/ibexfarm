@@ -162,6 +162,9 @@ You are probably looking for the <a href="/ibexfarm">Ibex Farm</a>.
 </body>
 </html>
 EOFEOF
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
     chown apache:apache /var/www/index.html
 }
 
@@ -272,13 +275,16 @@ write_domain_home &&
 # There appears to be a small memory leak which will cause experiments to stop
 # working after a certain period on an EC2 microinstance. As a temporary solution,
 # restart apache every day.
-cat <<EOF >/tmp/editrootcrontab.sh
+write_editrootcrontab() {
+    cat <<"EOF" >/tmp/editrootcrontab.sh
 #!/bin/sh
 echo "@daily service httpd restart" > $1
 exit 0
-EOF &&
+EOF
+}
+write_editrootcrontab &&
 chmod a+x /tmp/editrootcrontab.sh &&
-EDITOR=/tmp/editrootcrontab.sh sudo crontab -e &&
+EDITOR=/tmp/editrootcrontab.sh crontab -u root -e &&
 rm /tmp/editrootcrontab.sh &&
 
 echo &&
