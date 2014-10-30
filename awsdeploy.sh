@@ -21,8 +21,7 @@
 #
 #    sudo service httpd start
 #
-# Experiments go in /var/www/ibexexps and /var/ibexfarm/deploy. The ibex
-# tarball should be called ibex-deploy.tar.gz and goes in /var/ibexfarm.
+# Experiments go in /var/www/ibexexps and /var/ibexfarm/deploy.
 #
 # Note that installing all of the Perl modules can take a loooooong time.
 #
