@@ -274,11 +274,11 @@ write_domain_home &&
 
 # There appears to be a small memory leak which will cause experiments to stop
 # working after a certain period on an EC2 microinstance. As a temporary solution,
-# restart apache every day.
+# restart apache every hour.
 write_editrootcrontab() {
     cat <<"EOF" >/tmp/editrootcrontab.sh
 #!/bin/sh
-echo "@daily service httpd restart" > $1
+echo "@hourly service httpd restart" > $1
 exit 0
 EOF
 }
