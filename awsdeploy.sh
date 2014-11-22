@@ -294,7 +294,7 @@ write_monitorscript() {
 #!/bin/sh
 while true; do
     FREEMEM=`free -m | head -n 2 | tail -n 1 | awk '{ print $4; }'`
-    if [ $FREEMEM -lt 2000 ]; then
+    if [ $FREEMEM -lt 200 ]; then
         service httpd restart
     fi
     sleep 10
