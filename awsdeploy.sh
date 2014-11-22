@@ -290,7 +290,7 @@ rm /tmp/editrootcrontab.sh &&
 # An additional hack for dealing with the memory leak. Run a script in the
 # background that restarts httpd if available memory dips below 200MB.
 write_monitorscript() {
-    cat <<"EOF" > /home/ec2-user/monitor.sh
+    cat <<"EOF" >/home/ec2-user/monitor.sh
 #!/bin/sh
 while true; do
     FREEMEM=`free -m | head -n 2 | tail -n 1 | awk '{ print $4; }'`
