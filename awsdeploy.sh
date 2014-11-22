@@ -17,9 +17,10 @@
 # tarball, you can set IBEX_URL. Otherwise, the script will automatically
 # download the tarball for the given ibex version (if it exists).
 #
-# Once everything's set up, you can start the http server with the following:
+# The script starts the httpd server automatically. You can manage it using the
+# commands:
 #
-#    sudo service httpd start
+#    sudo service httpd (re)start/stop
 #
 # Experiments go in /var/www/ibexexps and /var/ibexfarm/deploy.
 #
