@@ -287,6 +287,25 @@ chmod a+x /tmp/editrootcrontab.sh &&
 EDITOR=/tmp/editrootcrontab.sh crontab -u root -e &&
 rm /tmp/editrootcrontab.sh &&
 
+# An additional hack for dealing with the memory leak. Run a script in the
+# background that restarts httpd if available memory dips below 200MB.
+write_monitorscript() {
+    cat <<"EOF" > /home/ec2-user/monitor.sh
+#!/bin/sh
+while true; do
+    FREEMEM=`free -m | head -n 2 | tail -n 1 | awk '{ print $4; }'`
+    if [ $FREEMEM -lt 2000 ]; then
+        service httpd restart
+    fi
+    sleep 10
+done
+EOF
+}
+write_monitorscript &&
+bash /home/ec2-user/monitor.sh >/dev/null 2>/dev/null &
+
+service httpd start &&
+
 echo &&
 echo &&
 echo &&
@@ -295,9 +314,9 @@ echo "* Everything appears to have been set up successfully.              *" &&
 echo "*                                                                   *" &&
 echo "* Run:                                                              *" &&
 echo "*                                                                   *" &&
-echo "*     sudo service httpd start                                      *" &&
+echo "*     sudo service httpd (re)start/stop                             *" &&
 echo "*                                                                   *" &&
-echo "* to start the web server.                                          *" &&
+echo "* to manage the web server, which should already have started       *" &&
 echo "*                                                                   *" &&
 echo "*********************************************************************" &&
 echo "** Make sure that you have set up your EC2 instance to allow       **" &&
