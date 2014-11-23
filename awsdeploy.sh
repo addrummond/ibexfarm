@@ -278,7 +278,7 @@ write_domain_home &&
 # restart apache every hour.
 write_editrootcrontab() {
     cat <<"EOF" >/tmp/editrootcrontab.sh
-#!/bin/sh
+#!/bin/bash
 echo "@hourly service httpd restart" > $1
 exit 0
 EOF
@@ -292,7 +292,7 @@ rm /tmp/editrootcrontab.sh &&
 # background that restarts httpd if available memory dips below 200MB.
 write_monitorscript() {
     cat <<"EOF" >/home/ec2-user/monitor.sh
-#!/bin/sh
+#!/bin/bash
 while true; do
     FREEMEM=`free -m | head -n 2 | tail -n 1 | awk '{ print $4; }'`
     if [ $FREEMEM -lt 200 ]; then
