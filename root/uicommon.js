@@ -1,11 +1,11 @@
-function caseInsensitiveSortingFunction (x,y) { 
-  var a = String(x).toUpperCase(); 
-  var b = String(y).toUpperCase(); 
-  if (a > b) 
-     return 1 
-  if (a < b) 
-     return -1 
-  return 0; 
+function caseInsensitiveSortingFunction (x,y) {
+  var a = String(x).toUpperCase();
+  var b = String(y).toUpperCase();
+  if (a > b)
+     return 1
+  if (a < b)
+     return -1
+  return 0;
 }
 
 // Add "before_show", "after_show", "before_hide", "after_hide",
@@ -83,6 +83,7 @@ function spinnifyPOST(spincontainer, url, args, callback, type, dontWait, manip)
     return spinnifyAjax(spincontainer, {
         url: url,
         data: args,
+        contentType: "application/x-www-form-urlencoded; charset=UTF-8",
         type: "POST",
         success: callback,
         dataType: type,
