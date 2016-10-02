@@ -273,38 +273,6 @@ append_to_apache_config &&
 append_to_etc_hosts &&
 write_domain_home &&
 
-# There appears to be a small memory leak which will cause experiments to stop
-# working after a certain period on an EC2 microinstance. As a temporary solution,
-# restart apache every hour.
-write_editrootcrontab() {
-    cat <<"EOF" >/tmp/editrootcrontab.sh
-#!/bin/bash
-echo "@hourly service httpd restart" > $1
-exit 0
-EOF
-}
-write_editrootcrontab &&
-chmod a+x /tmp/editrootcrontab.sh &&
-EDITOR=/tmp/editrootcrontab.sh crontab -u root -e &&
-rm /tmp/editrootcrontab.sh &&
-
-# An additional hack for dealing with the memory leak. Run a script in the
-# background that restarts httpd if available memory dips below 200MB.
-write_monitorscript() {
-    cat <<"EOF" >/home/ec2-user/monitor.sh
-#!/bin/bash
-while true; do
-    FREEMEM=`free -m | head -n 2 | tail -n 1 | awk '{ print $4; }'`
-    if [ $FREEMEM -lt 200 ]; then
-        service httpd restart
-    fi
-    sleep 10
-done
-EOF
-}
-write_monitorscript &&
-bash /home/ec2-user/monitor.sh >/dev/null 2>/dev/null &
-
 service httpd start &&
 
 echo &&
