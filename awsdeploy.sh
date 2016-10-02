@@ -193,31 +193,31 @@ yes | yum install perl-MooseX-Types perl-MooseX-ConfigFromFile perl-MooseX-Getop
 yes | yum install perl-Time-HiRes &&
 yes | yum install perl-Time-Piece &&
 yes | yum install gcc &&
-cpanm Catalyst::Devel &&
-cpanm Catalyst::Plugin::RequireSSL &&
-cpanm Catalyst::Plugin::Session::Store::FastMmap &&
-cpanm JSON &&
-cpanm Catalyst::View::JSON &&
-cpanm Template::Plugin::Filter::Minify::CSS &&
-cpanm Template::Plugin::Filter::Minify::JavaScript &&
-cpanm Catalyst::Plugin::Cache::FastMmap &&
-cpanm Catalyst::Plugin::UploadProgress &&
-cpanm HTML::GenerateUtil &&
-cpanm Class::Factory &&
-cpanm JSON::XS &&
-cpanm Digest &&
-cpanm Archive::Zip &&
-cpanm Data::Validate::URI &&
-cpanm Log::Handler &&
-cpanm Crypt::OpenPGP &&
-cpanm Params::Classify &&
-cpanm Variable::Magic &&
-cpanm DateTime &&
-cpanm Class::ISA &&
-cpanm Catalyst::Authentication::User::Hash &&
-cpanm Catalyst::Plugin::Session::State::Cookie &&
-cpanm Catalyst::View::TT &&
-cpanm Archive::Tar &&
+cpanm --notest Catalyst::Devel &&
+cpanm --notest Catalyst::Plugin::RequireSSL &&
+cpanm --notest Catalyst::Plugin::Session::Store::FastMmap &&
+cpanm --notest JSON &&
+cpanm --notest Catalyst::View::JSON &&
+cpanm --notest Template::Plugin::Filter::Minify::CSS &&
+cpanm --notest Template::Plugin::Filter::Minify::JavaScript &&
+cpanm --notest Catalyst::Plugin::Cache::FastMmap &&
+cpanm --notest Catalyst::Plugin::UploadProgress &&
+cpanm --notest HTML::GenerateUtil &&
+cpanm --notest Class::Factory &&
+cpanm --notest JSON::XS &&
+cpanm --notest Digest &&
+cpanm --notest Archive::Zip &&
+cpanm --notest Data::Validate::URI &&
+cpanm --notest Log::Handler &&
+cpanm --notest Crypt::OpenPGP &&
+cpanm --notest Params::Classify &&
+cpanm --notest Variable::Magic &&
+cpanm --notest DateTime &&
+cpanm --notest Class::ISA &&
+cpanm --notest Catalyst::Authentication::User::Hash &&
+cpanm --notest Catalyst::Plugin::Session::State::Cookie &&
+cpanm --notest Catalyst::View::TT &&
+cpanm --notest Archive::Tar &&
 #
 # END OF HIDEOUS PERL INSTALLATION.
 #
