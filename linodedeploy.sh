@@ -2,13 +2,9 @@
 
 #
 # This script either automates or fails to automate the deployment of Ibex Farm
-# on an Amazon AWS instance running the Amazon Linux distro.
+# on a Linode server running CentOS 7.
 #
-# It was last tested with:
-#
-#    Amazon Linux AMI 2014.09 (HVM) - ami-08842d60
-#
-# It should be run as follows on a fresh instance:
+# It should be run as follows:
 #
 #    sudo SERVER_HOST=foo.bar.com IBEX_VERSION=0.3.6 bash awsdeploy.sh
 #
@@ -124,8 +120,7 @@ PerlModule IbexFarm
     Alias /ibexfarm/static/ /var/ibexfarm/ibexfarm/root/static/
     <Directory /var/ibexfarm/ibexfarm/root/static/>
         Options none
-        Order allow,deny
-        Allow from all
+        Require all granted
     </Directory>
     <Location /ibexfarm/static>
         SetHandler default-handler
@@ -172,9 +167,6 @@ EOFEOF
 # Install any available updates.
 yes | yum update &&
 
-# Stop pointless services running.
-service sendmail stop &&
-
 # Install basic utilities.
 yes | yum install git &&
 
@@ -184,15 +176,17 @@ yes | yum install httpd &&
 #
 # BEGINNING OF HIDEOUS PERL INSTALLATION.
 #
-yes | yum install mod_perl mod_perl-devel &&
-yes | yum install perl-App-cpanminus.noarch &&
-yes | yum install perl-Moose &&
-yes | yum install perl-MooseX-Types &&
-yes | yum install perl-namespace-autoclean &&
-yes | yum install perl-MooseX-Types perl-MooseX-ConfigFromFile perl-MooseX-Getopt perl-MooseX-Role-Parameterized perl-MooseX-SimpleConfig perl-MooseX-StrictConstructorperl-MooseX-Types-DateTime &&
-yes | yum install perl-Time-HiRes &&
-yes | yum install perl-Time-Piece &&
-yes | yum install gcc &&
+yum install -y gcc &&
+yum install -y perl-App-cpanminus.noarch &&
+yum install -y perl-namespace-autoclean &&
+yum install -y epel-release &&
+yum install -y mode_perl &&
+cpanm --notest Moose &&
+cpanm --notest MooseX::Types &&
+cpanm --notest MooseX::ConfigFromFile MooseX::Getopt MooseX::Role::Parameterized MooseX::SimpleConfig MooseX::StrictConstructor MooseX::Types::DateTime &&
+cpanm --notest Namespace::Autoclean &&
+cpanm --notest Time::HiRes &&
+cpanm --notest Time::Piece &&
 cpanm --notest Catalyst::Devel &&
 cpanm --notest Catalyst::Plugin::RequireSSL &&
 cpanm --notest Catalyst::Plugin::Session::Store::FastMmap &&
@@ -288,7 +282,7 @@ echo "*                                                                   *" &&
 echo "* to manage the web server, which should already have started       *" &&
 echo "*                                                                   *" &&
 echo "*********************************************************************" &&
-echo "** Make sure that you have set up your EC2 instance to allow       **" &&
+echo "** Make sure that you have set up the linode to allow              **" &&
 echo "**            outside connections on port 80.                      **" &&
 echo "*********************************************************************" &&
 echo
