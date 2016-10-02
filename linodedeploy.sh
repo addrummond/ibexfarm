@@ -6,7 +6,7 @@
 #
 # It should be run as follows:
 #
-#    sudo SERVER_HOST=foo.bar.com IBEX_VERSION=0.3.6 bash awsdeploy.sh
+#    sudo SERVER_HOST=foo.bar.com IBEX_VERSION=0.3.6 bash linodedeploy.sh
 #
 # If you don't have a domain set up, you can just pass the IP address of your
 # EC2 instance as the value for SERVER_HOST. If you want to use a custom ibex
