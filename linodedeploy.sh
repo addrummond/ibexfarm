@@ -168,10 +168,13 @@ EOFEOF
 yes | yum update &&
 
 # Install basic utilities.
-yes | yum install git &&
+yum install -y git &&
 
 # Install apache.
-yes | yum install httpd &&
+yum install -y httpd &&
+
+# Often useful for various things (e.g. gdcp).
+yum install -y python-pip &&
 
 #
 # BEGINNING OF HIDEOUS PERL INSTALLATION.
