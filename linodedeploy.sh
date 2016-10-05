@@ -20,8 +20,6 @@
 #
 # Experiments go in /var/www/ibexexps and /var/ibexfarm/deploy.
 #
-# Note that installing all of the Perl modules can take a loooooong time.
-#
 # You may want to edit webmaster_name and webmaster_email in the
 # write_ibex_config() function below.
 #
