@@ -69,7 +69,7 @@
 |
 <a href="[% c.uri_for("/newaccount") %]">create an account</a>
 [% END %] |
-<a rel="external" href="http://code.google.com/p/webspr/wiki/Documentation03">ibex docs</a> (<a href="http://spellout.net/latest_ibex_manual.pdf">pdf</a>)
+<a rel="external" href="https://github.com/addrummond/ibex/blob/master/docs/manual.md">ibex docs</a> (<a href="http://spellout.net/latest_ibex_manual.pdf">pdf</a>)
 [% IF c.user_exists %]
 <p>
 You are logged in as <a id="username" href="[% c.uri_for("/myaccount") %]">[% c.user.username %]</a> (<a href="[% c.uri_for("/logout") %]">logout</a>).
