@@ -181,7 +181,7 @@ yum install -y gcc &&
 yum install -y perl-App-cpanminus.noarch &&
 yum install -y perl-namespace-autoclean &&
 yum install -y epel-release &&
-yum install -y mode_perl &&
+yum install -y mod_perl &&
 cpanm --notest Moose &&
 cpanm --notest MooseX::Types &&
 cpanm --notest MooseX::ConfigFromFile MooseX::Getopt MooseX::Role::Parameterized MooseX::SimpleConfig MooseX::StrictConstructor MooseX::Types::DateTime &&
