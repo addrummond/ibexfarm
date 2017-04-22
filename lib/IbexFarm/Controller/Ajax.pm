@@ -515,15 +515,17 @@ sub upload_file :Path("upload_file") {
         # the file is uploaded via an inline edit.)
         my $tmpfilename;
         ($up, $tmpfilename) = File::Temp::tempfile() or die "Unable to create temporary file during processing of upload request: $!";
+        log_event($contents);
         if (! (print $up $contents)) {
             close $up;
             die "Error writing to temporary file during processing of upload request: $!";
         }
 
+        $up->flush();
+
         $move_up_to = sub {
-            my $r = move($tmpfilename, shift);
-            close $up or die "Unable to close temporary file following upload request: $!";
-            $r;
+            copy($tmpfilename, shift) or die "Unable to copy temporary file";
+            close $up;
         };
     }
     elsif ($up) {
