@@ -37,7 +37,6 @@ div#outer1 {
     top: [% lilgap %];
     width: 100%;
     background-color: [% outer_background %];
-    padding-bottom: 100px;
 }
 div#outer2 {
     [% round %]
