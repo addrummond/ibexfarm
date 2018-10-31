@@ -93,9 +93,11 @@ sub deploy {
                 my $ddd = catdir($args{www_dir}, $args{name});
                 if (! -d $ddd) { mkdir $ddd or die "Unable to create www dir '$ddd': $!"; }
                 # Copy the file.
-                copy $f, $ddd or die "Unable to copy file in www dir: $!";
-                if ($fname eq "server.py") {
-                    chmod 0755, catfile($ddd, $fname) or die "Unable to chmod 0755 server.py after copying: $!";
+                if (-f $f) {
+                    copy $f, $ddd or die "Unable to copy file in www dir: $!";
+                    if ($fname eq "server.py") {
+                        chmod 0755, catfile($ddd, $fname) or die "Unable to chmod 0755 server.py after copying: $!";
+                    }
                 }
             }
         }
