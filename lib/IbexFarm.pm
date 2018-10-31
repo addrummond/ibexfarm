@@ -16,6 +16,8 @@ use Catalyst::Runtime 5.80;
 use parent qw/Catalyst/;
 use Catalyst qw/ConfigLoader
 
+                ConfigLoader::Environment
+
                 Authentication
                 Authentication::Credential::Password
 
