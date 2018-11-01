@@ -71,7 +71,7 @@ quota_record_dir: '/tmp/quota'\n\
 \n\
 password_protect_apache:\n\
     htpasswd: '/usr/bin/htpasswd'\n\
-    passwd_file: '/etc/httpd/conf/httpdpasswd'\n\
+    passwd_file: '/etc/apache2/conf.d/httpdpasswd'\n\
 \n\
 max_upload_size_bytes: 1048576\n\
 \n\
