@@ -16,7 +16,8 @@ RUN apk add \
     gdbm \
     apache2-dev \
     curl \
-    apache2-utils
+    apache2-utils \
+    shadow
 RUN cd /tmp && \
     wget http://apache.org/dist/perl/mod_perl-2.0.10.tar.gz && \
     tar -xzf mod_perl-2.0.10.tar.gz && \
