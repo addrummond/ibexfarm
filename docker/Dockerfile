@@ -181,9 +181,9 @@ PerlModule IbexFarm\n\
 DocumentRoot \"/var/www\"\n\
 \n\
 AddHandler cgi-script .py\n\
-Alias "/ibexexps" "/ibexexps"\n\
+Alias "/ibexexps" "/ibexdata/ibexexps"\n\
 \n\
-<Directory \"/ibexexps\" >\n\
+<Directory \"/ibexdata/ibexexps\" >\n\
     Options +ExecCGI +FollowSymLinks\n\
     AllowOverride AuthConfig\n\
     DirectoryIndex experiment.html\n\
@@ -208,6 +208,11 @@ PerlSetEnv IBEXFARM_webmaster_name \${IBEXFARM_webmaster_name}\n" >> /etc/apache
 
 # Fix handling of base URL in Catalyst
 RUN echo 'sub auto : Private { my ($self, $c) = @_; $c->req->base(URI->new("/ibexfarm/")); }; 1' >> /var/ibexfarm/ibexfarm/lib/IbexFarm/Controller/Root.pm
+
+# Fix the id of the apache user and group so we know what they are
+# when doing chowns in the host system.
+RUN groupmod -g 987654 apache && \
+    usermod -u 987654 apache
 
 EXPOSE 80
 ENTRYPOINT ["/usr/sbin/httpd", "-D", "FOREGROUND"]
