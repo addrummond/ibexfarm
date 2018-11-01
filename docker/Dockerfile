@@ -111,6 +111,7 @@ PerlModule IbexFarm\n\
 DocumentRoot \"/var/www\"\n\
 \n\
 AddHandler cgi-script .py\n\
+Alias "/ibexexps" "/ibexexps"\n\
 \n\
 <Directory \"/ibexexps\" >\n\
     Options +ExecCGI +FollowSymLinks\n\
