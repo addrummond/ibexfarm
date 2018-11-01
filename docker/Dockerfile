@@ -2,7 +2,7 @@ FROM alpine:3.8
 
 # Install required alpine linux packages.
 RUN apk update
-RUN apk add git perl perl-dev musl-dev python apache2 gcc make perl-app-cpanminus perl-namespace-autoclean gdbm apache2-dev curl
+RUN apk add git perl perl-dev musl-dev python apache2 gcc make perl-app-cpanminus perl-namespace-autoclean gdbm apache2-dev curl apache2-utils
 RUN cd /tmp && wget http://apache.org/dist/perl/mod_perl-2.0.10.tar.gz && tar -xzf mod_perl-2.0.10.tar.gz && cd mod_perl-2.0.10/ && perl Makefile.PL MP_APXS=/usr/bin/apxs && make && make install
 
 # Load modperl in httpd conf
