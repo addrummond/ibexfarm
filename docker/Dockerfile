@@ -2,27 +2,96 @@ FROM alpine:3.8
 
 # Install required alpine linux packages.
 RUN apk update
-RUN apk add git perl perl-dev musl-dev python apache2 gcc make perl-app-cpanminus perl-namespace-autoclean gdbm apache2-dev curl apache2-utils
-RUN cd /tmp && wget http://apache.org/dist/perl/mod_perl-2.0.10.tar.gz && tar -xzf mod_perl-2.0.10.tar.gz && cd mod_perl-2.0.10/ && perl Makefile.PL MP_APXS=/usr/bin/apxs && make && make install
+RUN apk add \
+    git \
+    perl \
+    perl-dev \
+    musl-dev \
+    python \
+    apache2 \
+    gcc \
+    make \
+    perl-app-cpanminus \
+    perl-namespace-autoclean \
+    gdbm \
+    apache2-dev \
+    curl \
+    apache2-utils
+RUN cd /tmp && \
+    wget http://apache.org/dist/perl/mod_perl-2.0.10.tar.gz && \
+    tar -xzf mod_perl-2.0.10.tar.gz && \
+    cd mod_perl-2.0.10/ && \
+    perl Makefile.PL MP_APXS=/usr/bin/apxs && \
+    make && make install
 
 # Load modperl in httpd conf
-RUN echo >> /etc/apache2/httpd.conf && echo "LoadModule perl_module /usr/lib/apache2/mod_perl.so" >> /etc/apache2/httpd.conf
+RUN echo >> /etc/apache2/httpd.conf && \
+    echo "LoadModule perl_module /usr/lib/apache2/mod_perl.so" >> /etc/apache2/httpd.conf
 
 # Build Crypt::Rijndael perl module manually because we need to apply a patch
 # to rijndael.h.
-RUN cd /tmp && wget https://cpan.metacpan.org/authors/id/L/LE/LEONT/Crypt-Rijndael-1.13.tar.gz && tar -xzf Crypt-Rijndael-1.13.tar.gz && cd Crypt-Rijndael-1.13/ && perl Makefile.PL && sed -i s/__uint8_t/uint8_t/g rijndael.h && sed -i s/__uint32_t/uint32_t/g rijndael.h && make install
+RUN cd /tmp && \
+    wget https://cpan.metacpan.org/authors/id/L/LE/LEONT/Crypt-Rijndael-1.13.tar.gz && \
+    tar -xzf Crypt-Rijndael-1.13.tar.gz && \
+    cd Crypt-Rijndael-1.13/ && \
+    perl Makefile.PL && \
+    sed -i s/__uint8_t/uint8_t/g rijndael.h && \
+    sed -i s/__uint32_t/uint32_t/g rijndael.h && make install
 
 # Install the remaining required perl modules using cpanm.
-RUN cpanm --notest --no-wget --curl Moose MooseX::Types MooseX::ConfigFromFile MooseX::Getopt MooseX::Role::Parameterized MooseX::SimpleConfig MooseX::StrictConstructor MooseX::Types::DateTime Time::HiRes Time::Piece Catalyst::Devel Catalyst::Plugin::RequireSSL Catalyst::Plugin::Session::Store::FastMmap JSON Catalyst::View::JSON Template::Plugin::Filter::Minify::CSS Template::Plugin::Filter::Minify::JavaScript Catalyst::Plugin::Cache::FastMmap Catalyst::Plugin::UploadProgress HTML::GenerateUtil Class::Factory JSON::XS Digest Archive::Zip Data::Validate::URI Log::Handler Crypt::OpenPGP Params::Classify Variable::Magic DateTime Class::ISA Catalyst::Authentication::User::Hash Catalyst::Plugin::Session::State::Cookie Catalyst::View::TT Archive::Tar Catalyst::Plugin::ConfigLoader::Environment
+RUN cpanm --notest --no-wget --curl \
+    Moose \
+    MooseX::Types \
+    MooseX::ConfigFromFile \
+    MooseX::Getopt \
+    MooseX::Role::Parameterized \
+    MooseX::SimpleConfig \
+    MooseX::StrictConstructor \
+    MooseX::Types::DateTime \
+    Time::HiRes \
+    Time::Piece \
+    Catalyst::Devel \
+    Catalyst::Plugin::RequireSSL \
+    Catalyst::Plugin::Session::Store::FastMmap \
+    JSON Catalyst::View::JSON \
+    Template::Plugin::Filter::Minify::CSS \
+    Template::Plugin::Filter::Minify::JavaScript \
+    Catalyst::Plugin::Cache::FastMmap \
+    Catalyst::Plugin::UploadProgress \
+    HTML::GenerateUtil \
+    Class::Factory JSON::XS \
+    Digest Archive::Zip \
+    Data::Validate::URI \
+    Log::Handler \
+    Crypt::OpenPGP \
+    Params::Classify \
+    Variable::Magic \
+    DateTime \
+    Class::ISA \
+    Catalyst::Authentication::User::Hash \
+    Catalyst::Plugin::Session::State::Cookie \
+    Catalyst::View::TT \
+    Archive::Tar \
+    Catalyst::Plugin::ConfigLoader::Environment
 
 # Set up deployment dirs.
-RUN mkdir /var/ibexfarm && git clone https://github.com/addrummond/ibexfarm.git /var/ibexfarm/ibexfarm && chown -R apache:apache /var/ibexfarm/ && mkdir /var/ibexfarm/deploy && chown apache:apache /var/ibexfarm/deploy/ && mkdir /var/www/ibexexps && chown apache:apache /var/www/ibexexps
+RUN mkdir /var/ibexfarm && \
+    git clone https://github.com/addrummond/ibexfarm.git /var/ibexfarm/ibexfarm && \
+    chown -R apache:apache /var/ibexfarm/
 
 # Checkout the revision of github.com/addrummond/ibex corresponding to 0.3.9
 # and create a tarball.
-RUN cd /tmp && git clone https://github.com/addrummond/ibex && cd ibex && git checkout 9e903f9 && rm -rf .git && cd .. && tar -czf ibex-deploy.tar.gz ibex && mv ibex-deploy.tar.gz /var/ibexfarm
+RUN cd /tmp && \
+    git clone https://github.com/addrummond/ibex && \
+    cd ibex && \
+    git checkout 9e903f9 && \
+    rm -rf .git && \
+    cd .. && \
+    tar -czf ibex-deploy.tar.gz ibex && \
+    mv ibex-deploy.tar.gz /var/ibexfarm
 
-RUN touch /etc/apache2/conf.d/httpdpasswd && chown apache:apache /etc/apache2/conf.d/httpdpasswd
+RUN touch /etc/apache2/conf.d/httpdpasswd && \
+    chown apache:apache /etc/apache2/conf.d/httpdpasswd
 
 # This is the dir apache2 wants to put its PID file in.
 RUN mkdir /run/apache2
