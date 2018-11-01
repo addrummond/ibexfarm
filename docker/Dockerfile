@@ -39,7 +39,7 @@ RUN cd /tmp && \
     sed -i s/__uint32_t/uint32_t/g rijndael.h && make install
 
 # Install the remaining required perl modules using cpanm.
-RUN cpanm --notest --no-wget --curl \
+RUN cpanm --notest --no-man-pages --no-wget --curl \
     Moose \
     MooseX::Types \
     MooseX::ConfigFromFile \
