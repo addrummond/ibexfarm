@@ -113,8 +113,8 @@ webmaster_email: 'IBEX_WEBMASTER_EMAIL'\n\
 ibex_archive: '/var/ibexfarm/ibex-deploy.tar.gz'\n\
 ibex_archive_root_dir: 'ibex'\n\
 ibex_version: '0.3.9'\n\
-deployment_dir: '/var/ibexfarm/deploy'\n\
-deployment_www_dir: '/var/www/ibexexps'\n\
+deployment_dir: '/deploy'\n\
+deployment_www_dir: '/ibexexps'\n\
 \n\
 max_fname_length: 150\n\
 \n\
