@@ -112,10 +112,11 @@ DocumentRoot \"/var/www\"\n\
 \n\
 AddHandler cgi-script .py\n\
 \n\
-<Directory \"/var/www/ibexexps\" >\n\
+<Directory \"/ibexexps\" >\n\
     Options +ExecCGI +FollowSymLinks\n\
     AllowOverride AuthConfig\n\
     DirectoryIndex experiment.html\n\
+    Require all granted\n\
 </Directory>\n\
 #\n\
 # Relax access to content within /var/www.\n\
