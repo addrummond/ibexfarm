@@ -237,7 +237,7 @@ SSLEngine on\n\
 SSLCertificateFile      /ibexdata/cert.pem\n\
 SSLCertificateKeyFile   /ibexdata/privkey.pem\n\
 SSLCertificateChainFile /ibexdata/chain.pem\n\
-CustomLog /dev/stdout "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"\n\
+CustomLog /dev/stdout \"%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \\\"%r\\\" %b\"\n\
 </VirtualHost>\n" > /etc/apache2/conf.d/ssl.conf
 
 # Fix handling of base URL in Catalyst
