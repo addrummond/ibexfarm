@@ -208,7 +208,7 @@ PerlSetEnv IBEXFARM_webmaster_email \${IBEXFARM_webmaster_email}\n\
 PerlSetEnv IBEXFARM_webmaster_name \${IBEXFARM_webmaster_name}\n" >> /etc/apache2/httpd.conf
 
 # Fix handling of base URL in Catalyst
-RUN echo 'sub auto : Private { my ($self, $c) = @_; $c->req->base(URI->new("/ibexfarm/")); }; 1' >> /var/ibexfarm/ibexfarm/lib/IbexFarm/Controller/Root.pm
+RUN echo 'sub auto : Private { my ($self, $c) = @_; $c->req->base(URI->new("/")); }; 1' >> /var/ibexfarm/ibexfarm/lib/IbexFarm/Controller/Root.pm
 
 # Fix the id of the apache user and group so we know what they are
 # when doing chowns in the host system.
