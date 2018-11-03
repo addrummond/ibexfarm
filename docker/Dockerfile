@@ -215,6 +215,31 @@ PerlSetEnv IBEXFARM_url_prefix \"\${IBEXFARM_url_prefix}\"\n\
 PerlSetEnv IBEXFARM_webmaster_email \"\${IBEXFARM_webmaster_email}\"\n\
 PerlSetEnv IBEXFARM_webmaster_name \"\${IBEXFARM_webmaster_name}\"\n" >> /etc/apache2/httpd.conf
 
+# Apache https config
+RUN printf "LoadModule ssl_module modules/mod_ssl.so\n\
+LoadModule socache_shmcb_module modules/mod_socache_shmcb.so\n\
+SSLRandomSeed startup file:/dev/urandom 512\n\
+SSLRandomSeed connect builtin\n\
+SSLCipherSuite HIGH:MEDIUM:!MD5:!RC4:!3DES:!ADH\n\
+SSLProxyCipherSuite HIGH:MEDIUM:!MD5:!RC4:!3DES:!ADH\n\
+SSLHonorCipherOrder on\n\
+SSLProtocol all -SSLv3\n\
+SSLProxyProtocol all -SSLv3\n\
+SSLPassPhraseDialog  builtin\n\
+SSLSessionCache        \"shmcb:/var/cache/mod_ssl/scache(512000)\"\n\
+SSLSessionCacheTimeout  300\n\
+<VirtualHost *:443>\n\
+ServerName www.example.com:443\n\
+ServerAdmin you@example.com\n\
+ErrorLog /dev/stderr\n\
+TransferLog /dev/stdout\n\
+SSLEngine on\n\
+SSLCertificateFile      /ibexdata/cert.pem\n\
+SSLCertificateKeyFile   /ibexdata/privkey.pem\n\
+SSLCertificateChainFile /ibexdata/chain.pem\n\
+CustomLog /dev/stdout "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"\n\
+</VirtualHost>\n" > /etc/apache2/conf.d/ssl.conf
+
 # Fix handling of base URL in Catalyst
 RUN echo 'sub auto : Private { my ($self, $c) = @_; $c->req->base(URI->new(IbexFarm->config->{url_prefix})); }; 1' >> /var/ibexfarm/ibexfarm/lib/IbexFarm/Controller/Root.pm
 
