@@ -17,6 +17,7 @@ RUN apk add \
     apache2-dev \
     curl \
     apache2-utils \
+    apache2-ssl \
     shadow \
     vim
 RUN cd /tmp && \
