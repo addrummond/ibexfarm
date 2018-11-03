@@ -101,7 +101,7 @@ RUN mkdir /run/apache2
 # Add domain home
 RUN printf "<!DOCTYPE html><html>\n\
 <body>\n\
-You are probably looking for the <a href="/ibexfarm">Ibex Farm</a>.\n\
+You are probably looking for the <a href="./ibexfarm">Ibex Farm</a>.\n\
 </body>\n\
 </html>\n" > /var/www/index.html
 
@@ -157,7 +157,7 @@ experiment_base_url: '/ibexexps/'\n\
 \n\
 python_hashbang: '/usr/bin/python'\n\
 \n\
-config_url: 'http://localhost/ibexfarm/ajax/config'\n\
+config_url: 'http://localhost/ajax/config'\n\
 config_permitted_hosts: ['localhost', '::1']\n" > /var/ibexfarm/ibexfarm/ibexfarm.yaml
 
 ## Append to Apache config
@@ -165,7 +165,7 @@ RUN printf "ServerName localhost\n\
 \n\
 PerlSwitches -I/var/ibexfarm/ibexfarm/lib\n\
 PerlModule IbexFarm\n\
-    <Location /ibexfarm>\n\
+    <Location />\n\
         SetHandler modperl\n\
         PerlResponseHandler IbexFarm\n\
     </Location>\n\
