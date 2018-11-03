@@ -164,7 +164,8 @@ config_url: 'http://localhost/ajax/config'\n\
 config_permitted_hosts: ['localhost', '::1']\n" > /var/ibexfarm/ibexfarm/ibexfarm.yaml
 
 ## Append to Apache config
-RUN printf "LoadModule ssl_module modules/mod_ssl.so\n\
+RUN printf "LoadModule ssl_module /usr/lib/apache2/mod_ssl.so\n\
+\n\
 <IfModule mod_ssl.c>\n\
 SSLRandomSeed startup builtin\n\
 SSLRandomSeed startup file:/dev/urandom 512\n\
