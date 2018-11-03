@@ -168,7 +168,7 @@ RUN printf "ServerName localhost\n\
 PerlSwitches -I/var/ibexfarm/ibexfarm/lib\n\
 PerlModule IbexFarm\n\
 \n\
-<LocationMatch \"^/(?!((static/)|(ibexexps/)))\">\n\
+<LocationMatch \"^/(?!(?:static/|ibexexps/))\">\n\
     SetHandler modperl\n\
     PerlResponseHandler IbexFarm\n\
 </LocationMatch>\n\
