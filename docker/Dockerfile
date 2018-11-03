@@ -99,13 +99,6 @@ RUN touch /etc/apache2/conf.d/httpdpasswd && \
 # This is the dir apache2 wants to put its PID file in.
 RUN mkdir /run/apache2
 
-# Add domain home
-RUN printf "<!DOCTYPE html><html>\n\
-<body>\n\
-You are probably looking for the <a href="./ibexfarm">Ibex Farm</a>.\n\
-</body>\n\
-</html>\n" > /var/www/index.html
-
 # Main ibex farm config.
 RUN printf "---\n\
 name: IbexFarm\n\
