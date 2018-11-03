@@ -207,9 +207,9 @@ ErrorLog /dev/stderr\n\
 TransferLog /dev/stdout\n\
 \n\
 LoadModule cgi_module modules/mod_cgi.so\n\
-PerlSetEnv IBEXFARM_url_prefix \${IBEXFARM_url_prefix}\n\
-PerlSetEnv IBEXFARM_webmaster_email \${IBEXFARM_webmaster_email}\n\
-PerlSetEnv IBEXFARM_webmaster_name \${IBEXFARM_webmaster_name}\n" >> /etc/apache2/httpd.conf
+PerlSetEnv IBEXFARM_url_prefix \"\${IBEXFARM_url_prefix}\"\n\
+PerlSetEnv IBEXFARM_webmaster_email \"\${IBEXFARM_webmaster_email}\"\n\
+PerlSetEnv IBEXFARM_webmaster_name \"\${IBEXFARM_webmaster_name}\"\n" >> /etc/apache2/httpd.conf
 
 # Fix handling of base URL in Catalyst
 RUN echo 'sub auto : Private { my ($self, $c) = @_; $c->req->base(URI->new(IbexFarm->config->{url_prefix})); }; 1' >> /var/ibexfarm/ibexfarm/lib/IbexFarm/Controller/Root.pm
