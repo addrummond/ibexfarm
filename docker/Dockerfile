@@ -170,12 +170,12 @@ PerlModule IbexFarm\n\
         PerlResponseHandler IbexFarm\n\
     </Location>\n\
 \n\
-    Alias /ibexfarm/static/ /var/ibexfarm/ibexfarm/root/static/\n\
+    Alias /static/ /var/ibexfarm/ibexfarm/root/static/\n\
     <Directory /var/ibexfarm/ibexfarm/root/static/>\n\
         Options none\n\
         Require all granted\n\
     </Directory>\n\
-    <Location /ibexfarm/static>\n\
+    <Location /static>\n\
         SetHandler default-handler\n\
     </Location>\n\
 \n\
