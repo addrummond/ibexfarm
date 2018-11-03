@@ -164,7 +164,31 @@ config_url: 'http://localhost/ajax/config'\n\
 config_permitted_hosts: ['localhost', '::1']\n" > /var/ibexfarm/ibexfarm/ibexfarm.yaml
 
 ## Append to Apache config
-RUN printf "ServerName localhost\n\
+RUN printf "LoadModule ssl_module modules/mod_ssl.so\n\
+<IfModule mod_ssl.c>\n\
+SSLRandomSeed startup builtin\n\
+SSLRandomSeed startup file:/dev/urandom 512\n\
+SSLRandomSeed connect builtin\n\
+SSLRandomSeed connect file:/dev/urandom 512\n\
+\n\
+AddType application/x-x509-ca-cert .crt\n\
+AddType application/x-pkcs7-crl    .crl\n\
+\n\
+SSLPassPhraseDialog  builtin\n\
+\n\
+SSLSessionCache        shmcb:/var/cache/mod_ssl/scache(512000)\n\
+SSLSessionCacheTimeout  300\n\
+\n\
+SSLMutex  default
+\n\
+SSLCipherSuite  ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA\n\
+SSLProtocol All -SSLv2 -SSLv3 -TLSv1\n\
+\n\
+SSLHonorCipherOrder On\n\
+Header always set Strict-Transport-Security \"max-age=63072000; includeSubDomains\"\n\
+Header always set X-Frame-Options DENY\n\
+</IfModule>\n\
+ServerName localhost\n\
 \n\
 PerlSwitches -I/var/ibexfarm/ibexfarm/lib\n\
 PerlModule IbexFarm\n\
