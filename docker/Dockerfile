@@ -241,5 +241,5 @@ RUN echo 'sub auto : Private { my ($self, $c) = @_; $c->req->base(URI->new(IbexF
 RUN groupmod -g 987654 apache && \
     usermod -u 987654 apache
 
-EXPOSE 80
+EXPOSE 80 443
 ENTRYPOINT ["/usr/sbin/httpd", "-D", "FOREGROUND"]
