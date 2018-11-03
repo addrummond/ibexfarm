@@ -165,19 +165,20 @@ RUN printf "ServerName localhost\n\
 \n\
 PerlSwitches -I/var/ibexfarm/ibexfarm/lib\n\
 PerlModule IbexFarm\n\
-    <Location />\n\
-        SetHandler modperl\n\
-        PerlResponseHandler IbexFarm\n\
-    </Location>\n\
+
+<LocationMatch \"^/(?!((static/)|(ibexexps/)))\">\n\
+    SetHandler modperl\n\
+    PerlResponseHandler IbexFarm\n\
+</LocationMatch>\n\
 \n\
-    Alias /static/ /var/ibexfarm/ibexfarm/root/static/\n\
-    <Directory /var/ibexfarm/ibexfarm/root/static/>\n\
-        Options none\n\
-        Require all granted\n\
-    </Directory>\n\
-    <Location /static>\n\
-        SetHandler default-handler\n\
-    </Location>\n\
+Alias /static/ /var/ibexfarm/ibexfarm/root/static/\n\
+<Directory /var/ibexfarm/ibexfarm/root/static/>\n\
+    Options none\n\
+    Require all granted\n\
+</Directory>\n\
+<Location /static>\n\
+    SetHandler default-handler\n\
+</Location>\n\
 \n\
 DocumentRoot \"/var/www\"\n\
 \n\
