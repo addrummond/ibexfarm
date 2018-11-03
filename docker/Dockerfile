@@ -163,6 +163,9 @@ python_hashbang: '/usr/bin/python'\n\
 config_url: 'http://localhost/ajax/config'\n\
 config_permitted_hosts: ['localhost', '::1']\n" > /var/ibexfarm/ibexfarm/ibexfarm.yaml
 
+## Control Apache port from main http.conf only
+RUN sed -i 's/^Listen[ \t].*$//' /etc/apache2/conf.d/ssl.conf
+
 ## Append to Apache config
 RUN printf "LoadModule ssl_module /usr/lib/apache2/mod_ssl.so\n\
 \n\
