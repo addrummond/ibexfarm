@@ -206,7 +206,8 @@ TransferLog /dev/stdout\n\
 LoadModule cgi_module modules/mod_cgi.so\n\
 PerlSetEnv IBEXFARM_url_prefix \"\${IBEXFARM_url_prefix}\"\n\
 PerlSetEnv IBEXFARM_webmaster_email \"\${IBEXFARM_webmaster_email}\"\n\
-PerlSetEnv IBEXFARM_webmaster_name \"\${IBEXFARM_webmaster_name}\"\n" >> /etc/apache2/httpd.conf
+PerlSetEnv IBEXFARM_webmaster_name \"\${IBEXFARM_webmaster_name}\"\n\
+PerlSetEnv IBEXFARM_config_url_envvar \"\${IBEXFARM_config_url_envvar}\"\n\" >> /etc/apache2/httpd.conf
 
 # Apache https config
 RUN printf "LoadModule ssl_module modules/mod_ssl.so\n\
