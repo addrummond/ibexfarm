@@ -88,7 +88,10 @@ RUN cd /tmp && \
     git clone https://github.com/addrummond/ibex && \
     cd ibex && \
     git checkout 9e903f9 && \
-    rm -rf .git && \
+    rm -rf .git* && \
+    rm -rf docs && \
+    rm -rf contrib && \
+    rm -f LICENSE README example_lighttpd.conf mkdist.sh server_conf.py && \
     cd .. && \
     tar -czf ibex-deploy.tar.gz ibex && \
     mv ibex-deploy.tar.gz /var/ibexfarm
