@@ -80,7 +80,7 @@ sub deploy {
                 print $sdotpyfh "EXTERNAL_CONFIG_URL = ", $to_py_escaped_string->($args{external_config_url}), "\n";
             }
             if ($args{external_config_url_envvar}) {
-                print $sdotpyfh "import os\nEXTERNAL_CONFIG_URL = os.environ.get(", $to_py_escaped_string->($args{external_config_url_envvar}), ")\n";
+                print $sdotpyfh "import os\nEXTERNAL_CONFIG_URL = os.environ.get(", $to_py_escaped_string->($args{external_config_url_envvar}), ", '')\n";
             }
             if ($args{external_config_url} || $args{external_config_url_envvar}) {
                 print $sdotpyfh "EXTERNAL_CONFIG_PASS_PARAMS = " . ($args{pass_params} ? "True" : "False") . "\n";
