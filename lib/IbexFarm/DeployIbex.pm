@@ -78,6 +78,11 @@ sub deploy {
             if ($args{hashbang}) { print $sdotpyfh "#!$args{hashbang}\n"; }
             if ($args{external_config_url}) {
                 print $sdotpyfh "EXTERNAL_CONFIG_URL = ", $to_py_escaped_string->($args{external_config_url}), "\n";
+            }
+            if ($args{external_config_url_envvar}) {
+                print $sdotpyfh "import os\nEXTERNAL_CONFIG_URL = os.environ.get(", $to_py_escaped_string->($args{external_config_url_envvar}), ")\n";
+            }
+            if ($args{external_config_url} || $args{external_config_url_envvar}) {
                 print $sdotpyfh "EXTERNAL_CONFIG_PASS_PARAMS = " . ($args{pass_params} ? "True" : "False") . "\n";
                 print $sdotpyfh "EXTERNAL_CONFIG_METHOD = 'GET'\n\n";
             }
