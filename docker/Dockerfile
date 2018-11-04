@@ -156,6 +156,9 @@ python_hashbang: '/usr/bin/python'\n\
 config_url: 'http://localhost/ajax/config'\n\
 config_permitted_hosts: ['localhost', '::1']\n" > /var/ibexfarm/ibexfarm/ibexfarm.yaml
 
+## Choose port Apache listens on based on env var
+RUN sed -i 's/^Listen[\t ].*/Listen ${IBEXFARM_port}'/ /etc/apache2/httpd.conf
+
 ## Append to Apache config
 RUN printf "ServerName localhost\n\
 \n\
