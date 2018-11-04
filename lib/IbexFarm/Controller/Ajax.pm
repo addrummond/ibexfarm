@@ -115,11 +115,13 @@ sub config_ : Path("config") :Args(0) { # 'config' seems to be reserved by Catal
     my $experiment_name = $rdir[$#rdir];
 
     # Authentication: we allow this if either (a) it's a local request,
-    # (b) it's from one of the hosts specified in the config file
+    # (b) it's from one of the hosts specified in the config file,
+    # (c) Ibexfarm->config->{host} is defined and the host is the same,
     # or (c) they're logged in as the user who owns this experiment.
     unless ((! $c->req->hostname) ||
             $c->req->hostname eq "localhost" ||
             (grep { $_ eq $c->req->hostname || $_ eq $c->req->address } @{IbexFarm->config->{config_permitted_hosts}}) ||
+	    (IbexFarm->config->{host} eq $c->req->hostname || IbexFarm->config->{host} eq $c->req->address) ||
             ($c->user_exists && $c->user->username eq $username)) {
         $c->detach('unauthorized');
     }
@@ -591,7 +593,7 @@ sub upload_file :Path("upload_file") {
                 $move_up_to->($file) or die "Unable to copy uploaded file to final location: $!";
 
                 # Keep a record of the fact that the user uploaded this file, so that
-                # we know they're allowed to write to it. (First check that the user
+                # we know they're ed to write to it. (First check that the user
                 # hasn't already uploaded this file to make sure that we don't add
                 # duplicate entries).
                 $manage_UPLOADED->($c->user->username,
