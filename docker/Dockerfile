@@ -234,7 +234,7 @@ CustomLog /dev/stdout \"%%t %%h %%{SSL_PROTOCOL}x %%{SSL_CIPHER}x \\\"%%r\\\" %%
 # config depending on port.
 RUN rm -f /etc/apache2/conf.d/ssl.conf && \
     echo '#!/bin/sh' > /var/ibexfarm/start.sh && \
-    printf "rm -f /etc/apache2/conf.d/ssl.conf\nif [ \"\$IBEXFARM_port\" = \"443\" ]; then\n  ln -s /var/ibexfarm/ssl.conf /etc/apache2/conf.d/ssl.conf\nfi\nexec /usr/sbin/httpd -D FOREGROUND\n" > /var/ibexfarm/start.sh && \
+    printf "rm -f /etc/apache2/conf.d/ssl.conf\nif [ \"\$IBEXFARM_port\" = \"443\" ]; then\n  ln -s /var/ibexfarm/ssl.conf /etc/apache2/conf.d/ssl.conf\nfi\nexec /usr/sbin/httpd -D FOREGROUND\n" >> /var/ibexfarm/start.sh && \
     chmod +x /var/ibexfarm/start.sh
 
 # Fix handling of base URL in Catalyst
