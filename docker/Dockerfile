@@ -156,9 +156,6 @@ python_hashbang: '/usr/bin/python'\n\
 config_url: 'http://localhost/ajax/config'\n\
 config_permitted_hosts: ['localhost', '::1']\n" > /var/ibexfarm/ibexfarm/ibexfarm.yaml
 
-## Control Apache port from main http.conf only
-RUN sed -i 's/^Listen[ \t].*$//' /etc/apache2/conf.d/ssl.conf
-
 ## Append to Apache config
 RUN printf "ServerName localhost\n\
 \n\
@@ -231,7 +228,13 @@ SSLCertificateFile      /ibexdata/cert.pem\n\
 SSLCertificateKeyFile   /ibexdata/privkey.pem\n\
 SSLCertificateChainFile /ibexdata/chain.pem\n\
 CustomLog /dev/stdout \"%%t %%h %%{SSL_PROTOCOL}x %%{SSL_CIPHER}x \\\"%%r\\\" %%b\"\n\
-</VirtualHost>\n" > /etc/apache2/conf.d/ssl.conf
+</VirtualHost>\n" > /var/ibexfarm/ssl.conf
+
+# Create wrapper we use to run httpd, including or not including
+RUN rm -f /etc/apache2/conf.d/ssl.conf && \
+    echo '#!/bin/sh' > /var/ibexfarm/start.sh && \
+    printf "rm -f /etc/apache2/conf.d/ssl.conf\nif [ \"\$IBEXFARM_port\" = \"443\" ]; then\n  ln -s /var/ibexfarm/ssl.conf /etc/apache2/conf.d/ssl.conf\nfi\nexec /usr/sbin/httpd -D FOREGROUND\n" > /var/ibexfarm/start.sh && \
+    chmod +x /var/ibexfarm/start.sh
 
 # Fix handling of base URL in Catalyst
 RUN echo 'sub auto : Private { my ($self, $c) = @_; $c->req->base(URI->new(IbexFarm->config->{url_prefix})); }; 1' >> /var/ibexfarm/ibexfarm/lib/IbexFarm/Controller/Root.pm
@@ -242,4 +245,4 @@ RUN groupmod -g 987654 apache && \
     usermod -u 987654 apache
 
 EXPOSE 80 443
-ENTRYPOINT ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+ENTRYPOINT ["/var/ibexfarm/start.sh"]
