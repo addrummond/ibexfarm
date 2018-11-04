@@ -219,8 +219,8 @@ SSLPassPhraseDialog  builtin\n\
 SSLSessionCache        \"shmcb:/var/cache/mod_ssl/scache(512000)\"\n\
 SSLSessionCacheTimeout  300\n\
 <VirtualHost *:443>\n\
-ServerName www.example.com:443\n\
-ServerAdmin you@example.com\n\
+ServerName \"\${IBEXFARM_host}:443\"\n\
+ServerAdmin \"\${IBEXFARM_webmaster_email}\"\n\
 ErrorLog /dev/stderr\n\
 TransferLog /dev/stdout\n\
 SSLEngine on\n\
