@@ -204,6 +204,7 @@ ErrorLog /dev/stderr\n\
 TransferLog /dev/stdout\n\
 \n\
 LoadModule cgi_module modules/mod_cgi.so\n\
+PerlSetEnv IBEXFARM_host \"\${IBEXFARM_host}\"\n\
 PerlSetEnv IBEXFARM_url_prefix \"\${IBEXFARM_url_prefix}\"\n\
 PerlSetEnv IBEXFARM_webmaster_email \"\${IBEXFARM_webmaster_email}\"\n\
 PerlSetEnv IBEXFARM_webmaster_name \"\${IBEXFARM_webmaster_name}\"\n\
