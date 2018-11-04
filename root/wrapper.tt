@@ -1,15 +1,15 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 [%# <?xml version="1.0" encoding="UTF-8"?>%]
 [% USE Filter.Minify.CSS %]
 [% USE Filter.Minify.JavaScript %]
 [% CSS_FILTER = c.debug ? "repeat" : "minify_css" %]
 [% JS_FILTER = c.debug ? "repeat" : "minify_js" %]
 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="https://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <link rel="icon" type="image/x-icon" href="[% c.uri_for('/static/images/favicon.ico') %]">
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
 <script type="text/javascript">/* <![CDATA[ */ BASE_URI="[% c.uri_for('/') %]";[% IF experiment %]EXPERIMENT="[% experiment %]";[% END %] /* ]]> */</script>
 [% FOREACH f IN template.external_js_scripts.split('\s+') %]
 <script type="text/javascript" src="[% c.uri_for(f) %]"></script>
