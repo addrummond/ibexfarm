@@ -354,6 +354,7 @@ sub newexperiment :Path("newexperiment") :Args(0) {
                 name => $ps->{name},
                 hashbang => IbexFarm->config->{python_hashbang},
                 external_config_url => IbexFarm->config->{config_url},
+		external_config_url_envvar => IbexFarm->config->{config_url_envvar},
                 pass_params => 1,
                 www_dir => $wwwdir
             );
