@@ -117,12 +117,15 @@ sub config_ : Path("config") :Args(0) { # 'config' seems to be reserved by Catal
     # Authentication: we allow this if either (a) it's a local request,
     # (b) it's from one of the hosts specified in the config file,
     # (c) Ibexfarm->config->{host} is defined and the host is the same,
-    # or (c) they're logged in as the user who owns this experiment.
+    # (d) they're logged in as the user who owns this experiment, or
+    # (e) a secret is defined in the config and they have the right
+    # secret in the url. (Talk about historical cruft!)
     unless ((! $c->req->hostname) ||
             $c->req->hostname eq "localhost" ||
             (grep { $_ eq $c->req->hostname || $_ eq $c->req->address } @{IbexFarm->config->{config_permitted_hosts}}) ||
 	    (IbexFarm->config->{host} eq $c->req->hostname || IbexFarm->config->{host} eq $c->req->address) ||
-            ($c->user_exists && $c->user->username eq $username)) {
+            ($c->user_exists && $c->user->username eq $username) ||
+	    (IbexFarm->config->{config_secret} && $ps->{secret} && IbexFarm->config->{config_secret} eq $ps->{secret})) {
         $c->detach('unauthorized');
     }
 
