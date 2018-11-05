@@ -20,6 +20,8 @@ RUN apk add \
     apache2-ssl \
     shadow \
     vim
+
+# Install modperl
 RUN cd /tmp && \
     wget http://apache.org/dist/perl/mod_perl-2.0.10.tar.gz && \
     tar -xzf mod_perl-2.0.10.tar.gz && \
