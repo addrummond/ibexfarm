@@ -212,6 +212,18 @@ LoadModule cgi_module modules/mod_cgi.so\n\
 # SetEnv rather than PerlSetEnv for IBEXFARM_config_url because\n\
 # it needs to go through to CGI scripts, not modperl code.\n\
 SetEnv IBEXFARM_config_url \"\${IBEXFARM_config_url}\"\n\
+PerlSetEnv IBEXFARM_name \"\${IBEXFARM_name}\"\n\
+PerlSetEnv IBEXFARM_ibex_archive \"\${IBEXFARM_ibex_archive}\"\n\
+PerlSetEnv IBEXFARM_ibex_archive_root_dir \"\${IBEXFARM_ibex_archive_root_dir}\"\n\
+PerlSetEnv IBEXFARM_deployment_dir \"\${IBEXFARM_deployment_dir}\"\n\
+PerlSetEnv IBEXFARM_deployment_www_dir \"\${IBEXFARM_deployment_www_dir}\"\n\
+PerlSetEnv IBEXFARM_max_fname_length \"\${IBEXFARM_max_fname_length}\"\n\
+PerlSetEnv IBEXFARM_max_upload_size_bytes \"\${IBEXFARM_max_upload_size_bytes}\"\n\
+PerlSetEnv IBEXFARM_password_protect_apache \"\${IBEXFARM_password_protect_apache}\"\n\
+PerlSetEnv IBEXFARM_git_path \"\${IBEXFARM_git_path}\"\n\
+PerlSetEnv IBEXFARM_git_checkout_timeout_seconds \"\${IBEXFARM_git_checkout_timeout_seconds}\"\n\
+PerlSetEnv IBEXFARM_experiment_base_url \"\${IBEXFARM_experiment_base_url}\"\n\
+PerlSetEnv IBEXFARM_python_hashbang \"\${IBEXFARM_python_hashbang}\"\n\
 PerlSetEnv IBEXFARM_host \"\${IBEXFARM_host}\"\n\
 PerlSetEnv IBEXFARM_url_prefix \"\${IBEXFARM_url_prefix}\"\n\
 PerlSetEnv IBEXFARM_webmaster_email \"\${IBEXFARM_webmaster_email}\"\n\
