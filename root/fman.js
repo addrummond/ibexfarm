@@ -22,6 +22,17 @@ var EXTENSION_TO_HIGHLIGHT_CONFIG = {
     }
 };
 
+function absUrl(u) {
+    if (! u.match(/^https?:\/\//i)) {
+        // window.location.origin can't be trusted to give consistent results across browsers.
+        var o = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+        if (u.length > 0 && u.charAt(0) != '/')
+            u = '/' + u;
+        return o + u;
+    }
+    return u;
+}
+
 function show_date (date) {
     return date[0] + '-' + date[1] + '-' + date[2] + ' ' + date[3] + ':' + date[4] + ':' + date[5];
 }
@@ -368,13 +379,17 @@ $.widget("ui.browseFile", {
 
                     var prepath = BASE_URI + "static/codemirror/";
                     function pre(o) {
+                        // using absUrl here because codemirror doesn't deal with
+                        // relative paths.
                         if (typeof(o) == "object") {
                             var oo = new Array(o.length);
                             for (var i = 0; i < o.length; ++i)
-                                oo[i] = prepath + o[i];
+                                oo[i] = absUrl(prepath + o[i]);
                             return oo;
                         }
-                        else return prepath + o;
+                        else {
+                            return absUrl(prepath + o);
+                        }
                     }
                     editor = new CodeMirror(CodeMirror.replace(editte[0]), {
                         path: prepath,
