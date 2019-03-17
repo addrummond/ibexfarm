@@ -4,6 +4,18 @@ use strict;
 use warnings;
 use parent 'Catalyst::Controller';
 use File::Spec::Functions qw( catfile catdir );
+use URI;
+
+my $experiment_base_url = (sub {
+    my $b = IbexfarmConfig->{url_prefix};
+    my $e = IbexfarmConfig->{experiment_base_url};
+    # URI module does weird things if the base url doesn't
+    # end with a '/'
+    if ($b !~ /\/$/) {
+        $b .= '/';
+    }
+    return URI->new($e)->abs($b)->as_string;
+})->();
 
 sub manage :Absolute {
     my ($self, $c, $experiment) = (shift, shift, shift);
@@ -24,7 +36,7 @@ sub manage :Absolute {
     $c->flash->{back_uri} = $c->uri_for('/manage/' . $experiment);
     $c->flash->{experiment_name} = $experiment;
 
-    $c->stash->{experiment_base_url} = IbexFarm->config->{experiment_base_url};
+    $c->stash->{experiment_base_url} = $experiment_base_url;
     $c->stash->{experiment} = $experiment;
     $c->stash->{ibex_version} =
         IbexFarm::Util::get_experiment_version(catdir(IbexFarm->config->{deployment_dir}, $c->user->username, $experiment));
