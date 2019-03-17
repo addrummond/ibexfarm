@@ -7,8 +7,8 @@ use File::Spec::Functions qw( catfile catdir );
 use URI;
 
 my $experiment_base_url = (sub {
-    my $b = IbexfarmConfig->{url_prefix};
-    my $e = IbexfarmConfig->{experiment_base_url};
+    my $b = IbexFarm->config->{url_prefix};
+    my $e = IbexFarm->config->{experiment_base_url};
     # URI module does weird things if the base url doesn't
     # end with a '/'
     if ($b !~ /\/$/) {
