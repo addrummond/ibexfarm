@@ -121,4 +121,9 @@ sub default :Path {
 
 sub end : ActionClass('RenderView') {}
 
+sub auto : Private {
+    my ($self, $c) = @_;
+    $c->req->base(URI->new(IbexFarm->config->{url_prefix}));
+}
+
 1;
