@@ -3,7 +3,7 @@ services:
   ibexfarm:
     environment:
       IBEXFARM_src_dir: ${IBEXFARM_src_dir:-/ibexfarm.git}
-      IBEXFARM_url_prefix: ${IBEXFARM_url_prefix:-'/'}
+      IBEXFARM_url_prefix: ${IBEXFARM_url_prefix:-/}
       IBEXFARM_port: ${IBEXFARM_port:-80}
       IBEXFARM_config_url_envvar: ${IBEXFARM_config_url_envvar:-IBEXFARM_config_url}
       IBEXFARM_config_url: ${IBEXFARM_config_url:-http://localhost/ajax/config}
