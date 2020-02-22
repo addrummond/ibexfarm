@@ -9,6 +9,7 @@ services:
       IBEXFARM_config_url: ${IBEXFARM_config_url:-http://localhost/ajax/config}
       IBEXFARM_webmaster_email: ${IBEXFARM_webmaster_email:-example@example.com}
       IBEXFARM_webmaster_name: ${IBEXFARM_webmaster_name:-Anonymous Coward}
+      IBEXFARM_front_page_html_message: ${IBEXFARM_front_page_html_message}
     ports:
       - "${IBEXFARM_host_port:-8888}:${IBEXFARM_port:-80}"
     volumes:

@@ -165,35 +165,10 @@ PerlSetEnv IBEXFARM_url_prefix \"\${IBEXFARM_url_prefix}\"\n\
 PerlSetEnv IBEXFARM_webmaster_email \"\${IBEXFARM_webmaster_email}\"\n\
 PerlSetEnv IBEXFARM_webmaster_name \"\${IBEXFARM_webmaster_name}\"\n\
 PerlSetEnv IBEXFARM_config_secret \"\${IBEXFARM_config_secret}\"\n\
-PerlSetEnv IBEXFARM_config_url_envvar \"\${IBEXFARM_config_url_envvar}\"\n" >> /etc/apache2/httpd.conf
+PerlSetEnv IBEXFARM_config_url_envvar \"\${IBEXFARM_config_url_envvar}\"\n\
+PerlSetEnv IBEXFARM_front_page_html_message \"\${IBEXFARM_front_page_html_message}\n" >> /etc/apache2/httpd.conf
 
-# Apache https config
-RUN printf "LoadModule ssl_module modules/mod_ssl.so\n\
-LoadModule socache_shmcb_module modules/mod_socache_shmcb.so\n\
-SSLRandomSeed startup file:/dev/urandom 512\n\
-SSLRandomSeed connect builtin\n\
-SSLCipherSuite HIGH:MEDIUM:!MD5:!RC4:!3DES:!ADH\n\
-SSLProxyCipherSuite HIGH:MEDIUM:!MD5:!RC4:!3DES:!ADH\n\
-SSLHonorCipherOrder on\n\
-SSLProtocol all -SSLv3\n\
-SSLProxyProtocol all -SSLv3\n\
-SSLPassPhraseDialog  builtin\n\
-SSLSessionCache        \"shmcb:/var/cache/mod_ssl/scache(512000)\"\n\
-SSLSessionCacheTimeout  300\n\
-<VirtualHost *:443>\n\
-ServerName \"\${IBEXFARM_host}:443\"\n\
-ServerAdmin \"\${IBEXFARM_webmaster_email}\"\n\
-ErrorLog /dev/stderr\n\
-TransferLog /dev/stdout\n\
-SSLEngine on\n\
-SSLCertificateFile      /ibexdata/cert.pem\n\
-SSLCertificateKeyFile   /ibexdata/privkey.pem\n\
-SSLCertificateChainFile /ibexdata/chain.pem\n\
-CustomLog /dev/stdout \"%%t %%h %%{SSL_PROTOCOL}x %%{SSL_CIPHER}x \\\"%%r\\\" %%b\"\n\
-</VirtualHost>\n" > /var/ibexfarm/ssl.conf
-
-# Create wrapper we use to run httpd, including or not including ssl
-# config depending on port.
+# Create wrapper we use to run httpd.
 RUN rm -f /etc/apache2/conf.d/ssl.conf && \
     printf "#!bin/sh\n\
 echo 'Starting the Ibex Farm...'\n\
@@ -260,7 +235,7 @@ mkdir -p /ibexdata/ibexexps\n\
 \n\
 chown -R apache:apache /ibexdata\n\
 \n\
-rm -f /etc/apache2/conf.d/ssl.conf\nif [ \"\$IBEXFARM_port\" = \"443\" ]; then\n  ln -s /var/ibexfarm/ssl.conf /etc/apache2/conf.d/ssl.conf\nfi\nexec /usr/sbin/httpd -D FOREGROUND\n\
+exec /usr/sbin/httpd -D FOREGROUND\n\
 " > /var/ibexfarm/start.sh && \
     chmod +x /var/ibexfarm/start.sh
 

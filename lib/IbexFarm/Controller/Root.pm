@@ -59,6 +59,7 @@ sub index :Path :Args(0) {
     $c->stash->{example_experiment_user} = IbexFarm->config->{example_experiment_user} || "example";
     $c->stash->{example_experiment_name} = IbexFarm->config->{example_experiment_name} || "example";
     $c->stash->{webmaster_email} = IbexFarm->config->{webmaster_email};
+    $c->stash->{front_page_html_message} = IbexFarm->config->{front_page_html_message};
     $c->stash->{template} = "frontpage.tt";
 }
 
