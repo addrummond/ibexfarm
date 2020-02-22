@@ -166,7 +166,7 @@ PerlSetEnv IBEXFARM_webmaster_email \"\${IBEXFARM_webmaster_email}\"\n\
 PerlSetEnv IBEXFARM_webmaster_name \"\${IBEXFARM_webmaster_name}\"\n\
 PerlSetEnv IBEXFARM_config_secret \"\${IBEXFARM_config_secret}\"\n\
 PerlSetEnv IBEXFARM_config_url_envvar \"\${IBEXFARM_config_url_envvar}\"\n\
-PerlSetEnv IBEXFARM_front_page_html_message \"\${IBEXFARM_front_page_html_message}\n" >> /etc/apache2/httpd.conf
+PerlSetEnv IBEXFARM_front_page_html_message \"\${IBEXFARM_front_page_html_message}\"\n" >> /etc/apache2/httpd.conf
 
 # Create wrapper we use to run httpd.
 RUN rm -f /etc/apache2/conf.d/ssl.conf && \
