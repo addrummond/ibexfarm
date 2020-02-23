@@ -17,7 +17,6 @@ use File::Copy qw( move copy );
 use File::Temp;
 use DateTime;
 use Encode;
-use Encode::Guess;
 use HTML::GenerateUtil qw( escape_html );
 use IbexFarm::PasswordProtectExperiment::Factory;
 use IbexFarm::PasswordProtectExperiment::Apache;
@@ -290,10 +289,7 @@ sub download :Path("download") {
     close $fh or die "Unable to close '$f' after slurping: $!";
     die "Unable to slurp '$f': $!" unless defined($contents);
 
-    my $decoder = Encode::Guess->guess($contents);
-    my $encoding = ref($decoder) ? $decoder->name : "UTF-8";
-
-    ajax_headers($c, IbexFarm->config->{dirs_to_types}{$dir}, $encoding);
+    ajax_headers($c, IbexFarm->config->{dirs_to_types}{$dir}, "utf-8");
     $c->res->body($contents || " ");
     return 0;
 }
