@@ -11,11 +11,6 @@ use JSON::XS;
 use Digest;
 use Crypt::Argon2;
 
-# Customized version of Catalyst::Authentication::User::Hash.
-# (Yeah yeah, we really shouldn't need to override this method just to
-# do simple salty password hashing, but there are crufty back compat issues
-# with the old DBIx hashed passwords we have from when we were still using
-# the postgres database. Yuck!)
 {
     package MyUserHash;
     use base 'Catalyst::Authentication::User::Hash';
