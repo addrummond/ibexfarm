@@ -107,7 +107,7 @@ RUN mkdir /var/ibexfarm && \
 
 RUN touch /etc/apache2/conf.d/httpdpasswd && \
     chown apache:apache /etc/apache2/conf.d/httpdpasswd && \
-    mkdir /run/apache2 && \
+    mkdir -p /run/apache2 && \
     sed -i 's/^Listen[\t ].*/Listen ${IBEXFARM_port}'/ /etc/apache2/httpd.conf && \
     printf "ServerName localhost\n\
 \n\
