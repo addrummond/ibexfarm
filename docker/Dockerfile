@@ -168,6 +168,11 @@ PerlSetEnv IBEXFARM_webmaster_email \"\${IBEXFARM_webmaster_email}\"\n\
 PerlSetEnv IBEXFARM_webmaster_name \"\${IBEXFARM_webmaster_name}\"\n\
 PerlSetEnv IBEXFARM_config_secret \"\${IBEXFARM_config_secret}\"\n\
 PerlSetEnv IBEXFARM_config_url_envvar \"\${IBEXFARM_config_url_envvar}\"\n\
+PerlSetEnv IBEXFARM_argon2id_t_cost \"\${IBEXFARM_argon2id_t_cost}\"\n\
+PerlSetEnv IBEXFARM_argon2id_m_factor \"\${IBEXFARM_argon2id_m_factor}\"\n\
+PerlSetEnv IBEXFARM_argon2id_parallelism \"\${IBEXFARM_argon2id_parallelism}\"\n\
+PerlSetEnv IBEXFARM_argon2id_tag_size \"\${IBEXFARM_argon2id_tag_size}\"\n\
+PerlSetEnv IBEXFARM_argon2id_salt_length \"\${IBEXFARM_argon2id_salt_length}\"\n\
 PerlSetEnv IBEXFARM_front_page_html_message \"\${IBEXFARM_front_page_html_message}\"\n" >> /etc/apache2/httpd.conf
 
 # Create wrapper we use to run httpd.

@@ -70,9 +70,14 @@ __PACKAGE__->config(
     },
     USER_FILE_NAME => 'USER',
 
-    user_password_hash_algo => 'SHA-512',
-    user_password_salt_length => 32,
-    user_password_hash_total_length => 118
+    user_password_hash_algo => 'SHA-512', # legacy
+    user_password_salt_length => 32, # legacy
+    user_password_hash_total_length => 118, # legacy
+    argon2id_salt_length => 16,
+    argon2id_t_cost => 5,
+    argon2id_m_factor => '32M',
+    argon2id_parallelism => 1,
+    argon2id_tag_size => 16
 );
 
 after setup_finalize => sub {

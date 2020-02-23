@@ -27,8 +27,15 @@ my $get_salt = sub {
 
 my $make_pw_hash = sub {
     my $password = shift;
-    my $salt = $get_salt->(IbexFarm->config->{user_password_salt_length});
-    return Crypt::Argon2::argon2id_pass($password, $salt, 3, '32M', 1, 16);
+    my $salt = $get_salt->(IbexFarm->config->{argon2id_salt_length});
+    return Crypt::Argon2::argon2id_pass(
+        $password,
+        $salt,
+        IbexFarm->config->{argon2id_t_cost},
+        IbexFarm->config->{argon2id_m_factor},
+        IbexFarm->config->{argon2id_parallelism},
+        IbexFarm->config->{argon2id_tag_size},
+    );
 };
 
 sub login :Absolute :Args(0) {

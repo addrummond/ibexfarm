@@ -12,6 +12,13 @@ services:
       IBEXFARM_front_page_html_message: ${IBEXFARM_front_page_html_message:-<span></span>}
       IBEXFARM_config_secret: ${IBEXFARM_config_secret:-unused-non-secret}
       IBEXFARM_host: ${IBEXFARM_host:-localhost}
+
+      # See https://metacpan.org/pod/Crypt::Argon2 before changing these from defaults
+      IBEXFARM_argon2id_t_cost: ${IBEXFARM_argon2id_t_cost:-5}
+      IBEXFARM_argon2id_m_factor: ${IBEXFARM_argon2id_m_factor:-32M}
+      IBEXFARM_argon2id_parallelism: ${IBEXFARM_argon2id_parallelism:-1}
+      IBEXFARM_argon2id_tag_size: ${IBEXFARM_argon2id_tag_size:-16}
+      IBEXFARM_argon2id_salt_length: ${IBEXFARM_argon2id_salt_length:-16}
     ports:
       - "${IBEXFARM_host_port:-8888}:${IBEXFARM_port:-80}"
     volumes:
