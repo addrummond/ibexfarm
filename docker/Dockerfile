@@ -106,16 +106,10 @@ RUN mkdir /var/ibexfarm && \
     mv ibex-deploy.tar.gz /var/ibexfarm
 
 RUN touch /etc/apache2/conf.d/httpdpasswd && \
-    chown apache:apache /etc/apache2/conf.d/httpdpasswd
-
-# This is the dir apache2 wants to put its PID file in.
-RUN mkdir /run/apache2
-
-## Choose port Apache listens on based on env var
-RUN sed -i 's/^Listen[\t ].*/Listen ${IBEXFARM_port}'/ /etc/apache2/httpd.conf
-
-## Append to Apache config
-RUN printf "ServerName localhost\n\
+    chown apache:apache /etc/apache2/conf.d/httpdpasswd && \
+    mkdir /run/apache2 && \
+    sed -i 's/^Listen[\t ].*/Listen ${IBEXFARM_port}'/ /etc/apache2/httpd.conf && \
+    printf "ServerName localhost\n\
 \n\
 PerlSwitches -I\${IBEXFARM_src_dir}/lib\n\
 PerlModule IbexFarm\n\
@@ -176,8 +170,7 @@ PerlSetEnv IBEXFARM_argon2id_salt_length \"\${IBEXFARM_argon2id_salt_length}\"\n
 PerlSetEnv IBEXFARM_front_page_html_message \"\${IBEXFARM_front_page_html_message}\"\n" >> /etc/apache2/httpd.conf
 
 # Create wrapper we use to run httpd.
-RUN rm -f /etc/apache2/conf.d/ssl.conf && \
-    printf "#!bin/sh\n\
+RUN printf "#!bin/sh\n\
 echo 'Starting the Ibex Farm...'\n\
 cat <<\"END\">\${IBEXFARM_src_dir}/ibexfarm.yaml\n\
 ---\n\
