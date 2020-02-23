@@ -1,31 +1,31 @@
 FROM alpine:3.8
 
 # Install required alpine linux packages.
-RUN apk update
-RUN apk add \
-    git \
-    perl \
-    perl-dev \
-    musl-dev \
-    python \
-    apache2 \
-    gcc \
-    make \
-    perl-app-cpanminus \
-    perl-namespace-autoclean \
-    perl-yaml \
-    perl-yaml-xs \
-    perl-moose \
-    perl-time-hires \
-    perl-archive-zip \
-    perl-params-classify \
-    gdbm \
-    apache2-dev \
-    curl \
-    apache2-utils \
-    apache2-ssl \
-    shadow \
-    vim
+RUN apk update && \
+    apk add \
+      git \
+      perl \
+      perl-dev \
+      musl-dev \
+      python \
+      apache2 \
+      gcc \
+      make \
+      perl-app-cpanminus \
+      perl-namespace-autoclean \
+      perl-yaml \
+      perl-yaml-xs \
+      perl-moose \
+      perl-time-hires \
+      perl-archive-zip \
+      perl-params-classify \
+      gdbm \
+      apache2-dev \
+      curl \
+      apache2-utils \
+      apache2-ssl \
+      shadow \
+      vim
 
 # Install modperl
 RUN cd /tmp && \
