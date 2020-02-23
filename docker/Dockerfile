@@ -82,7 +82,9 @@ RUN cpanm --notest --no-man-pages --no-wget --curl \
     Catalyst::Plugin::Session::State::Cookie \
     Catalyst::View::TT \
     Catalyst::Plugin::ConfigLoader::Environment \
-    Devel::OverloadInfo
+    Devel::OverloadInfo \
+    Net::SSLeay \
+    Crypt::Argon2
 
 RUN mkdir /ibexfarm.git && \
     git clone --depth 1 https://github.com/addrummond/ibexfarm.git /ibexfarm.git && \

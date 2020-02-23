@@ -9,6 +9,7 @@ use Catalyst::Authentication::User::Hash;
 use File::Spec::Functions qw( splitdir catdir catfile splitpath no_upwards );
 use JSON::XS;
 use Digest;
+use Crypt::Argon2;
 
 # Customized version of Catalyst::Authentication::User::Hash.
 # (Yeah yeah, we really shouldn't need to override this method just to
@@ -22,12 +23,18 @@ use Digest;
     sub check_password {
         my ($self, $password) = @_;
 
-        my $salt = substr($self->password, - IbexFarm->config->{user_password_salt_length});
-        my $digest = Digest->new(IbexFarm->config->{user_password_hash_algo});
-        $digest->add($password . $salt);
-        my $b64 = $digest->b64digest;
-        return $b64 eq substr($self->password, 0,
-                              IbexFarm->config->{user_password_hash_total_length} - IbexFarm->config->{user_password_salt_length});
+        if ($self->password =~ /^\$/) {
+            # It's a new password.
+            return Crypt::Argon2::argon2id_verify($self->password, $password);
+        } else {
+            # It's an old password.
+            my $salt = substr($self->password, - IbexFarm->config->{user_password_salt_length});
+            my $digest = Digest->new(IbexFarm->config->{user_password_hash_algo});
+            $digest->add($password . $salt);
+            my $b64 = $digest->b64digest;
+            return $b64 eq substr($self->password, 0,
+                                IbexFarm->config->{user_password_hash_total_length} - IbexFarm->config->{user_password_salt_length});
+        }
     }
 };
 

@@ -9,6 +9,8 @@ use IbexFarm::CheckEmail;
 use File::Path qw( rmtree );
 use Digest;
 use IbexFarm::Util qw( log_event );
+use Net::SSLeay;
+use Crypt::Argon2;
 
 sub login :Absolute :Args(0) {
     my ($self, $c) = @_;
@@ -98,19 +100,23 @@ sub update_email :Absolute :Args(0) {
     }
 }
 
-# See code in DBIx::Class::EncodedColumn::Digest.
 my $get_salt = sub {
     my $length = shift;
     my @salt_pool = ('A' .. 'Z', 'a' .. 'z', 0 .. 9, '+','/','=');
-    return join('', map { $salt_pool[int(rand(65))] } 1 .. $length);
+    my $salt_pool_length = 26 * 2 + 10 + 3;
+    my $rb = '';
+    Net::SSLeay::RAND_bytes($rb, $length);
+    my $out = '';
+    for (my $i = 0; $i < $length; ++$i) {
+        $out .= $salt_pool[ord(substr($rb, $i, $i+1)) % $salt_pool_length];
+    }
+    return $out;
 };
 
 my $make_pw_hash = sub {
     my $password = shift;
-    my $digest = Digest->new(IbexFarm->config->{user_password_hash_algo});
     my $salt = $get_salt->(IbexFarm->config->{user_password_salt_length});
-    $digest->add($password . $salt);
-    return $digest->b64digest . $salt;
+    return Crypt::Argon2::argon2id_pass($password, $salt, 3, '32M', 1, 16);
 };
 
 sub update_password :Absolute :Args(0) {
