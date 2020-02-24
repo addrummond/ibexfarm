@@ -19,6 +19,11 @@ services:
       IBEXFARM_argon2id_parallelism: ${IBEXFARM_argon2id_parallelism:-1}
       IBEXFARM_argon2id_tag_size: ${IBEXFARM_argon2id_tag_size:-16}
       IBEXFARM_argon2id_salt_length: ${IBEXFARM_argon2id_salt_length:-16}
+
+      IBEXFARM_enforce_quotas: ${IBEXFARM_enforce_quotas:-0}
+      IBEXFARM_quota_max_files_in_dir: ${IBEXFARM_quota_max_files_in_dir:-500}
+      IBEXFARM_quota_max_file_size: ${IBEXFARM_quota_max_file_size:-1048576}
+      IBEXFARM_quota_max_total_size: ${IBEXFARM_quota_max_total_size:-1048576}
     ports:
       - "${IBEXFARM_host_port:-8888}:${IBEXFARM_port:-80}"
     volumes:
