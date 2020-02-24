@@ -22,10 +22,10 @@ use Catalyst qw/ConfigLoader
                 Authentication::Credential::Password
 
                 Session
-                Session::Store::FastMmap
+                Session::Store::Cache
                 Session::State::Cookie
 
-                Cache::FastMmap
+                Cache::FileCache
                 UploadProgress
                 /;
 use IbexFarm::AuthStore;
@@ -67,6 +67,10 @@ __PACKAGE__->config(
                 }
            }
        }
+    },
+    cache => {
+        storage => '/tmp/ibexfarm_session',
+        expires => 48 * 60 * 60 # seconds
     },
     USER_FILE_NAME => 'USER',
 
