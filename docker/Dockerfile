@@ -57,13 +57,13 @@ RUN cd /tmp && \
         MooseX::Types::DateTime \
         Catalyst::Devel \
         Catalyst::Plugin::RequireSSL \
-        Catalyst::Plugin::Session::Store::FastMmap \
+        Catalyst::Plugin::Session::Store::File \
         JSON \
         JSON::XS \
         Catalyst::View::JSON \
         Template::Plugin::Filter::Minify::CSS \
         Template::Plugin::Filter::Minify::JavaScript \
-        Catalyst::Plugin::Cache::FastMmap \
+        Catalyst::Plugin::Cache::FileCache \
         Catalyst::Plugin::UploadProgress \
         HTML::GenerateUtil \
         Class::Factory \
@@ -105,6 +105,8 @@ RUN touch /etc/apache2/conf.d/httpdpasswd && \
     chown apache:apache /etc/apache2/conf.d/httpdpasswd && \
     mkdir -p /run/apache2 && \
     sed -i 's/^Listen[\t ].*/Listen ${IBEXFARM_port}'/ /etc/apache2/httpd.conf && \
+    sed -i 's/LoadModule mpm_prefork/#LoadModule mpm_prefork/' /etc/apache2/httpd.conf && \
+    sed -i 's/#LoadModule mpm_worker_module/LoadModule mpm_worker_module/' /etc/apache2/httpd.conf && \
     printf "\
 LoadModule perl_module /usr/lib/apache2/mod_perl.so\n\
 ServerName localhost\n\
