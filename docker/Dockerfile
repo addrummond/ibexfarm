@@ -1,4 +1,4 @@
-FROM alpine:3.11
+FROM alpine:3.8
 
 # Install required alpine linux packages.
 RUN apk update && \
@@ -32,11 +32,12 @@ RUN apk update && \
 # because we need to apply a patch to rijndael.h.
 # Build modperl from source because no stable alpine package available.
 RUN cd /tmp && \
-    wget https://downloads.apache.org/perl/mod_perl-2.0.11.tar.gz && \
-    tar -xzf mod_perl-2.0.11.tar.gz && \
-    cd mod_perl-2.0.11/ && \
+    wget https://archive.apache.org/dist/perl/mod_perl-2.0.10.tar.gz && \
+    tar -xzf mod_perl-2.0.10.tar.gz && \
+    cd mod_perl-2.0.10/ && \
     perl Makefile.PL MP_APXS=/usr/bin/apxs && \
     make && make install && \
+    rm -r /tmp/mod_perl-2.0.10* && \
     cd /tmp && \
     wget https://cpan.metacpan.org/authors/id/L/LE/LEONT/Crypt-Rijndael-1.13.tar.gz && \
     tar -xzf Crypt-Rijndael-1.13.tar.gz && \
@@ -45,6 +46,7 @@ RUN cd /tmp && \
     sed -i s/__uint8_t/uint8_t/g rijndael.h && \
     sed -i s/__uint32_t/uint32_t/g rijndael.h && \
     make install && \
+    rm -r /tmp/Crypt-Rijndael-1.13* && \
     cpanm --notest --no-man-pages --no-wget --curl \
         MooseX::Types \
         MooseX::ConfigFromFile \
@@ -203,7 +205,7 @@ enforce_quotas: 0\n\
 quota_max_files_in_dir: 500\n\
 quota_max_file_size: 1048576\n\
 quota_max_total_size: 1048576\n\
-quota_record_dir: '/tmp/quota'\n\
+quota_record_dir: '/ibexdata/quota'\n\
 \n\
 password_protect_apache:\n\
     htpasswd: '/usr/bin/htpasswd'\n\
@@ -228,6 +230,7 @@ END\n\
 \n\
 mkdir -p /ibexdata/deploy\n\
 mkdir -p /ibexdata/ibexexps\n\
+mkdir -p /ibexdata/quota\n\
 \n\
 chown -R apache:apache /ibexdata\n\
 \n\
