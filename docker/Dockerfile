@@ -167,7 +167,12 @@ PerlSetEnv IBEXFARM_argon2id_m_factor \"\${IBEXFARM_argon2id_m_factor}\"\n\
 PerlSetEnv IBEXFARM_argon2id_parallelism \"\${IBEXFARM_argon2id_parallelism}\"\n\
 PerlSetEnv IBEXFARM_argon2id_tag_size \"\${IBEXFARM_argon2id_tag_size}\"\n\
 PerlSetEnv IBEXFARM_argon2id_salt_length \"\${IBEXFARM_argon2id_salt_length}\"\n\
-PerlSetEnv IBEXFARM_front_page_html_message \"\${IBEXFARM_front_page_html_message}\"\n" >> /etc/apache2/httpd.conf
+PerlSetEnv IBEXFARM_front_page_html_message \"\${IBEXFARM_front_page_html_message}\"\n\
+PerlSetEnv IBEXFARM_enforce_quotas \"\${IBEXFARM_enforce_quotas}\"\n\
+PerlSetEnv IBEXFARM_quota_max_files_in_dir \"\${IBEXFARM_quota_max_files_in_dir}\"\n\
+PerlSetEnv IBEXFARM_quota_max_file_size \"\${IBEXFARM_quota_max_file_size}\"\n\
+PerlSetEnv IBEXFARM_quota_max_total_size \"\${IBEXFARM_quota_max_total_size}\"\n\" >> /etc/apache2/httpd.conf
+
 
 # Create wrapper we use to run httpd.
 RUN printf "#!bin/sh\n\
