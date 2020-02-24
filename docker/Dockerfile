@@ -40,6 +40,7 @@ RUN cd /tmp && \
     rm -r /tmp/mod_perl-2.0.10* && \
     cd /tmp && \
     wget https://cpan.metacpan.org/authors/id/L/LE/LEONT/Crypt-Rijndael-1.13.tar.gz && \
+    cd /tmp && \
     tar -xzf Crypt-Rijndael-1.13.tar.gz && \
     cd Crypt-Rijndael-1.13/ && \
     perl Makefile.PL && \
