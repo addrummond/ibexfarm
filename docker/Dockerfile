@@ -27,64 +27,58 @@ RUN apk update && \
       shadow \
       vim
 
-# Install modperl
+# Install the remaining required perl modules using cpanm.
+# Build Crypt::Rijndael perl module from source
+# because we need to apply a patch to rijndael.h.
+# Build modperl from source because no stable alpine package available.
 RUN cd /tmp && \
     wget https://downloads.apache.org/perl/mod_perl-2.0.11.tar.gz && \
     tar -xzf mod_perl-2.0.11.tar.gz && \
     cd mod_perl-2.0.11/ && \
     perl Makefile.PL MP_APXS=/usr/bin/apxs && \
-    make && make install
-
-# Load modperl in httpd conf
-RUN echo >> /etc/apache2/httpd.conf && \
-    echo "LoadModule perl_module /usr/lib/apache2/mod_perl.so" >> /etc/apache2/httpd.conf
-
-# Build Crypt::Rijndael perl module manually because we need to apply a patch
-# to rijndael.h.
-RUN cd /tmp && \
+    make && make install && \
+    cd /tmp && \
     wget https://cpan.metacpan.org/authors/id/L/LE/LEONT/Crypt-Rijndael-1.13.tar.gz && \
     tar -xzf Crypt-Rijndael-1.13.tar.gz && \
     cd Crypt-Rijndael-1.13/ && \
     perl Makefile.PL && \
     sed -i s/__uint8_t/uint8_t/g rijndael.h && \
     sed -i s/__uint32_t/uint32_t/g rijndael.h && \
-    make install
-
-# Install the remaining required perl modules using cpanm.
-RUN cpanm --notest --no-man-pages --no-wget --curl \
-    MooseX::Types \
-    MooseX::ConfigFromFile \
-    MooseX::Getopt \
-    MooseX::Role::Parameterized \
-    MooseX::SimpleConfig \
-    MooseX::StrictConstructor \
-    MooseX::Types::DateTime \
-    Catalyst::Devel \
-    Catalyst::Plugin::RequireSSL \
-    Catalyst::Plugin::Session::Store::FastMmap \
-    JSON \
-    JSON::XS \
-    Catalyst::View::JSON \
-    Template::Plugin::Filter::Minify::CSS \
-    Template::Plugin::Filter::Minify::JavaScript \
-    Catalyst::Plugin::Cache::FastMmap \
-    Catalyst::Plugin::UploadProgress \
-    HTML::GenerateUtil \
-    Class::Factory \
-    Digest \
-    Data::Validate::URI \
-    Log::Handler \
-    Crypt::OpenPGP \
-    Variable::Magic \
-    DateTime \
-    Class::ISA \
-    Catalyst::Authentication::User::Hash \
-    Catalyst::Plugin::Session::State::Cookie \
-    Catalyst::View::TT \
-    Catalyst::Plugin::ConfigLoader::Environment \
-    Devel::OverloadInfo \
-    Net::SSLeay \
-    Crypt::Argon2
+    make install && \
+    cpanm --notest --no-man-pages --no-wget --curl \
+        MooseX::Types \
+        MooseX::ConfigFromFile \
+        MooseX::Getopt \
+        MooseX::Role::Parameterized \
+        MooseX::SimpleConfig \
+        MooseX::StrictConstructor \
+        MooseX::Types::DateTime \
+        Catalyst::Devel \
+        Catalyst::Plugin::RequireSSL \
+        Catalyst::Plugin::Session::Store::FastMmap \
+        JSON \
+        JSON::XS \
+        Catalyst::View::JSON \
+        Template::Plugin::Filter::Minify::CSS \
+        Template::Plugin::Filter::Minify::JavaScript \
+        Catalyst::Plugin::Cache::FastMmap \
+        Catalyst::Plugin::UploadProgress \
+        HTML::GenerateUtil \
+        Class::Factory \
+        Digest \
+        Data::Validate::URI \
+        Log::Handler \
+        Crypt::OpenPGP \
+        Variable::Magic \
+        DateTime \
+        Class::ISA \
+        Catalyst::Authentication::User::Hash \
+        Catalyst::Plugin::Session::State::Cookie \
+        Catalyst::View::TT \
+        Catalyst::Plugin::ConfigLoader::Environment \
+        Devel::OverloadInfo \
+        Net::SSLeay \
+        Crypt::Argon2
 
 RUN mkdir /ibexfarm.git && \
     git clone --depth 1 https://github.com/addrummond/ibexfarm.git /ibexfarm.git && \
@@ -109,7 +103,9 @@ RUN touch /etc/apache2/conf.d/httpdpasswd && \
     chown apache:apache /etc/apache2/conf.d/httpdpasswd && \
     mkdir -p /run/apache2 && \
     sed -i 's/^Listen[\t ].*/Listen ${IBEXFARM_port}'/ /etc/apache2/httpd.conf && \
-    printf "ServerName localhost\n\
+    printf "\
+LoadModule perl_module /usr/lib/apache2/mod_perl.so\n\
+ServerName localhost\n\
 \n\
 PerlSwitches -I\${IBEXFARM_src_dir}/lib\n\
 PerlModule IbexFarm\n\
