@@ -171,8 +171,7 @@ PerlSetEnv IBEXFARM_front_page_html_message \"\${IBEXFARM_front_page_html_messag
 PerlSetEnv IBEXFARM_enforce_quotas \"\${IBEXFARM_enforce_quotas}\"\n\
 PerlSetEnv IBEXFARM_quota_max_files_in_dir \"\${IBEXFARM_quota_max_files_in_dir}\"\n\
 PerlSetEnv IBEXFARM_quota_max_file_size \"\${IBEXFARM_quota_max_file_size}\"\n\
-PerlSetEnv IBEXFARM_quota_max_total_size \"\${IBEXFARM_quota_max_total_size}\"\n\" >> /etc/apache2/httpd.conf
-
+PerlSetEnv IBEXFARM_quota_max_total_size \"\${IBEXFARM_quota_max_total_size}\"\n" >> /etc/apache2/httpd.conf
 
 # Create wrapper we use to run httpd.
 RUN printf "#!bin/sh\n\
@@ -241,6 +240,15 @@ mkdir -p /ibexdata/quota\n\
 \n\
 chown -R apache:apache /ibexdata\n\
 \n\
+if [ ! -z \"\${IBEXFARM_spellout_legacy_jank}\" ]; then\n\
+    mkdir -p /opt/local\n\
+    mkdir -p /opt/local/bin\n\
+    ln -s /usr/bin/python /opt/local/bin/python\n\
+    mkdir -p /var/l-apps\n\
+    mkdir -p /var/l-apps/ibexfarm\n\
+    ln -s /var/ibexfarm/deploy/ /var/l-apps/ibexfarm/deploy\n\
+fi\n\
+\n\
 exec /usr/sbin/httpd -D FOREGROUND\n\
 " > /var/ibexfarm/start.sh && \
     chmod +x /var/ibexfarm/start.sh
@@ -250,5 +258,5 @@ exec /usr/sbin/httpd -D FOREGROUND\n\
 RUN groupmod -g 987654 apache && \
     usermod -u 987654 apache
 
-EXPOSE 80 443
+EXPOSE 80
 ENTRYPOINT ["/var/ibexfarm/start.sh"]

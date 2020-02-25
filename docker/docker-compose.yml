@@ -24,6 +24,9 @@ services:
       IBEXFARM_quota_max_files_in_dir: ${IBEXFARM_quota_max_files_in_dir:-500}
       IBEXFARM_quota_max_file_size: ${IBEXFARM_quota_max_file_size:-1048576}
       IBEXFARM_quota_max_total_size: ${IBEXFARM_quota_max_total_size:-1048576}
+
+      # Don't enable this.
+      IBEXFARM_spellout_legacy_jank: ${IBEXFARM_spellout_legacy_jank:-}
     ports:
       - "${IBEXFARM_host_port:-8888}:${IBEXFARM_port:-80}"
     volumes:
