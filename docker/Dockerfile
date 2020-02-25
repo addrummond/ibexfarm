@@ -243,10 +243,10 @@ chown -R apache:apache /ibexdata\n\
 if [ ! -z \"\${IBEXFARM_spellout_legacy_jank}\" ]; then\n\
     mkdir -p /opt/local\n\
     mkdir -p /opt/local/bin\n\
-    ln -s /usr/bin/python /opt/local/bin/python\n\
+    ln -sf /usr/bin/python /opt/local/bin/python\n\
     mkdir -p /var/l-apps\n\
     mkdir -p /var/l-apps/ibexfarm\n\
-    ln -s /var/ibexfarm/deploy/ /var/l-apps/ibexfarm/deploy\n\
+    ln -sf /ibexdata/deploy/ /var/l-apps/ibexfarm/deploy\n\
 fi\n\
 \n\
 exec /usr/sbin/httpd -D FOREGROUND\n\

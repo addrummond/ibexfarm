@@ -25,8 +25,18 @@ services:
       IBEXFARM_quota_max_file_size: ${IBEXFARM_quota_max_file_size:-1048576}
       IBEXFARM_quota_max_total_size: ${IBEXFARM_quota_max_total_size:-1048576}
 
-      # Don't enable this.
+      # Don't enable this (legacy hacks for spellout.net/ibexfarm).
       IBEXFARM_spellout_legacy_jank: ${IBEXFARM_spellout_legacy_jank:-}
+
+    # Not needed except for spellout.net/ibexfarm (for legacy reasons).
+    # docker-compose syntax doesn't seem to make it possible to make
+    # these values conditional on IBEXFARM_spellout_legacy_jank being
+    # set. Nothing inside the container needs to connect to these hosts,
+    # so this shouldn't cause problems for everyone else.
+    extra_hosts:
+      - "spellout.user.openhosting.com:127.0.0.1"
+      - "spellout.net:127.0.0.1"
+
     ports:
       - "${IBEXFARM_host_port:-8888}:${IBEXFARM_port:-80}"
     volumes:
