@@ -32,7 +32,7 @@ RUN apk update && \
 # because we need to apply a patch to rijndael.h.
 # Build modperl from source because no stable alpine package available.
 RUN cd /tmp && \
-    wget https://archive.apache.org/dist/perl/mod_perl-2.0.10.tar.gz && \
+    wget https://www.cpan.org/modules/by-module/ModPerl/mod_perl-2.0.10.tar.gz && \
     tar -xzf mod_perl-2.0.10.tar.gz && \
     cd mod_perl-2.0.10/ && \
     perl Makefile.PL MP_APXS=/usr/bin/apxs && \

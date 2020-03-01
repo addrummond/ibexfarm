@@ -50,7 +50,7 @@ sudo curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-
 sudo chmod +x /usr/local/bin/docker-compose
 ```
 
-We can now start the firewall and the docker daemon:
+We can now start the docker daemon:
 
 ```sh
 sudo systemctl enable docker
