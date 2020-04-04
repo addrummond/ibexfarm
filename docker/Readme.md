@@ -247,7 +247,7 @@ IMPORTANT NOTES:
 Configure Caddy as follows:
 
 ```sh
-sudo -u caddy bash -c 'printf "http://{\$IBEXFARM_host} {\n  log syslog\n  redir https://{\$IBEXFARM_host}{uri}\n}\n\nhttps://{\$IBEXFARM_host} {\n  log syslog\n  proxy / http://127.0.0.1:8888\n  tls /caddy/ssl/fullchain.pem /caddy/ssl/privkey.pem\n}\n" > /caddy/caddy.conf'
+sudo -u caddy bash -c 'printf "{\$IBEXFARM_host} {\n  log syslog\n  proxy {\$IBEXFARM_url_prefix} http://127.0.0.1:8888 { without {\$IBEXFARM_url_prefix} }\n  proxy {\$IBEXFARM_experiment_base_url} http://127.0.0.1:8888\n  tls/caddy/ssl/fullchain.pem /caddy/ssl/privkey.pem\n}\n" > /caddy/caddy.conf'
 ```
 
 Copy the cert files to the location where Caddy expects them:
