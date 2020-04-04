@@ -1,5 +1,7 @@
 These instructions guide you through setting up an Ibex Farm instance on a
-Linode running CentOS 8.
+Linode running CentOS 8. Unlike the earlier version of these instructions
+at https://adrummond.net/posts/ibexfarmdocker, these instructions assume
+that you have a domain and want to use https.
 
 ## Creating a linode
 
@@ -30,7 +32,7 @@ adduser ibex
 passwd ibex
 usermod -aG wheel ibex
 dnf update -y
-dnf install -y firewalld git
+dnf install -y firewalld git wget
 systemctl enable firewalld
 rm -f /etc/firewalld/zones/public.xml
 firewall-cmd --complete-reload
@@ -135,9 +137,9 @@ sudo systemctl start ibexfarm-server.service
 sudo systemctl enable ibexfarm-server.service
 ```
 
-TODO TODO NOT TRUE
-At this point, you should be able to see the Ibex Farm homepage. For example,
-if the IP address of your linode is `192.192.192.192`, go to:
+At this point, if the server is up and running, you should be able to
+retrieve `index.html` by running `wget http://localhost:8888`.
+
 
 ```
 http://192.192.192.192/
@@ -159,7 +161,7 @@ more info. Be sure to add `/ibexexps` and `/deploy` dirs to your volume before
 running the docker container, and then `chown -R` everything to
 `dapache:dapache`.
 
-## Setting up https
+## Setting up Caddy with https
 
 **You'll need to get a domain name pointing to the IP of your linode before
 following these instructions.**
@@ -176,14 +178,12 @@ There's little reason to choose the manual option if you're using letsencrypt,
 but you might find the relevant instructions useful if you have another SSL
 certificate that you'd like to use.
 
-TODO
-
-Define your hostname:
+First, define your hostname:
 
 ```sh
 echo 'IBEXFARM_host="my.domain.name"' >> /etc/ibexenv.sh
 set -o allexport ; source /etc/ibexenv.sh ; set +o allexport
-```v
+```
 
 Install caddy:
 
@@ -265,21 +265,12 @@ Finally, start and enable the Caddy systemd service:
 ```sh
 sudo setenforce 0
 sudo systemctl start caddy.service
-sudo setenforce 1
 sudo systemctl enable caddy.service
 ```
 
+Unfortunately, it appears to be necessary to temporarily
+disable SELinux for caddy to start. I haven't been able to find
+a better resolution for this issue.
+
 You should now have access to your Ibex Farm instance over https. Caddy has
 been configured to redirect any http requests to https.
-
-
-## Updating the Docker image
-
-To update to the latest Docker image, run the following commands:
-
-```sh
-sudo systemctl stop ibexfarm-server
-sudo docker rmi -f docker.io/alexdrummond/ibexfarm
-sudo docker pull alexdrummond/ibexfarm
-sudo systemctl start ibexfarm-server
-```
