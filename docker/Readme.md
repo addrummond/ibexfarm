@@ -213,7 +213,7 @@ instructions in the ‘Start Caddy’ section.
 ### Option 1: Automatic SSL cert management via Caddy
 
 ```sh
-sudo -u caddy bash -c 'printf "{\$IBEXFARM_host} {\n  log syslog\n  proxy {$IBEXFARM_url_prefix} http://127.0.0.1:8888\n  tls {\$IBEXFARM_webmaster_email}\n}\n" > /caddy/caddy.conf'
+sudo -u caddy bash -c 'printf "{\$IBEXFARM_host} {\n  log syslog\n  proxy {\$IBEXFARM_url_prefix} http://127.0.0.1:8888 { without {\$IBEXFARM_url_prefix} }\n  proxy {\$IBEXFARM_experiment_base_url} http://127.0.0.1:8888\n  tls {\$IBEXFARM_webmaster_email}\n}\n" > /caddy/caddy.conf'
 ```
 
 Make sure that you've set `IBEXFARM_webmaster_email` to a real
