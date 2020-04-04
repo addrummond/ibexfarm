@@ -32,10 +32,16 @@ usermod -aG wheel ibex
 dnf update -y
 dnf install -y firewalld git
 systemctl enable firewalld
-firewall-cmd --zone=public --add-masquerade --permanent
-firewall-cmd --zone=public --add-port=80/tcp
-firewall-cmd --zone=public --add-port=443/tcp
+rm -f /etc/firewalld/zones/public.xml
+firewall-cmd --complete-reload
+sudo firewall-cmd --zone=public --add-service=http --permanent
+sudo firewall-cmd --zone=public --add-service=https --permanent
+sudo firewall-cmd --zone=public --add-service=ssh --permanent # may show 'already enabled' warning
+sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --zone=public --add-masquerade --permanent
 firewall-cmd --reload
+ulimit -n 8192 # for caddy
 shutdown -r now
 ```
 
@@ -82,19 +88,31 @@ Pull the Ibex Farm Docker container or build it:
     docker build .
 ```
 
+If you chose to build from source, you may want to add the following definition to ibexenv.sh to
+make the Ibex Farm use the Perl code in `~/ibexfarm/docker` rather than
+the code inside the Docker container:
+
+```sh
+echo 'IBEXFARM_src_dir=/code' >> /etc/ibexenv.sh
+set -o allexport ; source /etc/ibexenv.sh ; set +o allexport
+```
+
 Configure the webmaster email address and webmaster name for this instance, together with some other configuration options:
 
 ```sh
-echo 'IBEXFARM_webmaster_email="example@example.com"' >> ~/ibexenv.sh
-echo 'IBEXFARM_webmaster_name="Some person"' >> ~/ibexenv.sh
-echo 'IBEXFARM_url_prefix="/"' >> ~/ibexenv.sh
+sudo touch /etc/ibexenv.sh
+sudo chown ibex:ibex /etc/ibexenv.sh
+echo 'IBEXFARM_webmaster_email="example@example.com"' >> /etc/ibexenv.sh
+echo 'IBEXFARM_webmaster_name="Some person"' >> /etc/ibexenv.sh
+echo 'IBEXFARM_url_prefix="/"' >> /etc/ibexenv.sh
+echo 'IBEXFARM_experiment_base_url="/ibexexps"' >> /etc/ibexenv.sh
 ```
 
 Source the preceding definitions and add them to the system profile:
 
 ```sh
-set -o allexport ; source ~/ibexenv.sh ; set +o allexport
-sudo bash -c 'echo "set -o allexport ; source /home/ibex/ibexenv.sh ; set +o allexport" > /etc/profile.d/ibex.sh'
+set -o allexport ; source /etc/ibexenv.sh ; set +o allexport
+sudo bash -c 'echo "set -o allexport ; source /etc/ibexenv.sh ; set +o allexport" > /etc/profile.d/ibex.sh'
 ```
 
 Allow systemd to manage Docker containers:
@@ -106,7 +124,7 @@ sudo setsebool -P container_manage_cgroup on
 Create a systemd service called `ibexfarm-server` to run the docker container:
 
 ```sh
-printf "[Unit]\nDescription=Ibex Farm server\nWants=docker.service\nAfter=docker.service\n[Service]\nLimitNOFILE=8192\nEnvironmentFile=/home/ibex/ibexenv.sh\nUser=root\nRestart=always\nRestartSec=10\nExecStartPre=-/usr/bin/bash /usr/bin/docker-compose -f /home/ibex/ up ibexfarm_server\nExecStartPre=-/usr/bin/docker rm ibexfarm_server\nExecStartPre=/usr/bin/bash -c 'cat /home/ibex/ibexenv.sh | xargs -n 1 echo > /tmp/ibexenv_docker'\nExecStart=/usr/bin/docker run --name ibexfarm_server --restart no -p 127.0.0.1:8888:80  --env-file /tmp/ibexenv_docker -v ibexdata:/ibexdata docker.io/alexdrummond/ibexfarm\nExecStop=/usr/bin/docker stop -t 2 ibexfarm_server\n[Install]\nWantedBy=multi-user.target\n" | sudo bash -c 'tee > /etc/systemd/system/ibexfarm-server.service'
+printf "[Unit]\nDescription=Ibex Farm server\nWants=docker.service\nAfter=docker.service\n[Service]\nLimitNOFILE=8192\nEnvironmentFile=/etc/ibexenv.sh\nUser=root\nRestart=always\nRestartSec=10\nExecStartPre=/usr/bin/bash -c 'cat /etc/ibexenv.sh | xargs -n 1 echo > /tmp/ibexenv_docker'\nExecStart=/usr/local/bin/docker-compose -f /home/ibex/ibexfarm/docker/docker-compose.yml up\nExecStop=/usr/local/bin/docker-compose -f /home/ibex/ibexfarm/docker/docker-compose.yml down\n[Install]\nWantedBy=multi-user.target\n" | sudo bash -c 'tee > /etc/systemd/system/ibexfarm-server.service'
 sudo systemctl daemon-reload
 ```
 
@@ -117,6 +135,7 @@ sudo systemctl start ibexfarm-server.service
 sudo systemctl enable ibexfarm-server.service
 ```
 
+TODO TODO NOT TRUE
 At this point, you should be able to see the Ibex Farm homepage. For example,
 if the IP address of your linode is `192.192.192.192`, go to:
 
@@ -157,29 +176,14 @@ There's little reason to choose the manual option if you're using letsencrypt,
 but you might find the relevant instructions useful if you have another SSL
 certificate that you'd like to use.
 
-Begin by halting tinyproxy and disabling its service:
-
-```sh
-sudo service tinyproxy stop
-sudo systemctl disable tinyproxy
-```
-
-Open port 443, restart Docker, and ensure that the ibexfarm container is still
-up:
-
-```sh
-sudo firewall-cmd --zone=public --permanent --add-service=https
-sudo firewall-cmd --reload
-sudo systemctl restart docker
-sudo systemctl start ibexfarm-server.service
-```
+TODO
 
 Define your hostname:
 
 ```sh
-echo 'IBEXFARM_host="my.domain.name"' >> ~/ibexenv.sh
-set -o allexport ; source ~/ibexenv.sh ; set +o allexport
-```
+echo 'IBEXFARM_host="my.domain.name"' >> /etc/ibexenv.sh
+set -o allexport ; source /etc/ibexenv.sh ; set +o allexport
+```v
 
 Install caddy:
 
@@ -199,7 +203,7 @@ sudo setcap CAP_NET_BIND_SERVICE=+eip /caddy/caddy
 Create a systemd service for Caddy:
 
 ```sh
-printf "[Unit]\nDescription=Caddy HTTP/2 web server\nDocumentation=https://caddyserver.com/docs\nAfter=network-online.target\nWants=network-online.target systemd-networkd-wait-online.service\n[Service]\nRestart=on-abnormal\nUser=caddy\nGroup=caddy\nEnvironment=CADDYPATH=/caddy/ssl\nEnvironmentFile=/home/ibex/ibexenv.sh\nExecStart=/caddy/caddy -log stdout -agree=true -conf=/caddy/caddy.conf\nExecReload=/bin/kill -USR1 \$MAINPID\nKillMode=mixed\nKillSignal=SIGQUIT\nTimeoutStopSec=5s\nLimitNOFILE=1048576\nLimitNPROC=512\nPrivateTmp=true\nPrivateDevices=true\nReadWriteDirectories=/caddy/ssl\nCapabilityBoundingSet=CAP_NET_BIND_SERVICE\nAmbientCapabilities=CAP_NET_BIND_SERVICE\nNoNewPrivileges=true\n[Install]\nWantedBy=multi-user.target\n" | sudo bash -c 'tee > /etc/systemd/system/caddy.service'
+printf "[Unit]\nDescription=Caddy HTTP/2 web server\nDocumentation=https://caddyserver.com/docs\nAfter=network-online.target\nWants=network-online.target systemd-networkd-wait-online.service\n[Service]\nRestart=on-abnormal\nUser=caddy\nGroup=caddy\nEnvironment=CADDYPATH=/caddy/ssl\nEnvironmentFile=/etc/ibexenv.sh\nExecStartPre=/bin/bash -c 'env > /caddy/env_on_startup'\nExecStart=/caddy/caddy -log stdout -agree=true -conf=/caddy/caddy.conf\nExecReload=/bin/kill -USR1 \$MAINPID\nKillMode=mixed\nKillSignal=SIGQUIT\nTimeoutStopSec=5s\nLimitNOFILE=1048576\nLimitNPROC=512\nPrivateTmp=true\nPrivateDevices=true\nReadWriteDirectories=/caddy/ssl\nCapabilityBoundingSet=CAP_NET_BIND_SERVICE\nAmbientCapabilities=CAP_NET_BIND_SERVICE\nNoNewPrivileges=true\n[Install]\nWantedBy=multi-user.target\n" | sudo bash -c 'tee > /etc/systemd/system/caddy.service'
 sudo systemctl daemon-reload
 ```
 
@@ -208,15 +212,13 @@ instructions in the ‘Start Caddy’ section.
 
 ### Option 1: Automatic SSL cert management via Caddy
 
-Make sure that you've set `IBEXFARM_webmaster_email` to a real
-email address in `~/ibexenv.sh`. This email address will be associated
-with your SSL cert.
-
-Configure Caddy as follows:
-
 ```sh
-sudo -u caddy bash -c 'printf "{\$IBEXFARM_host} {\n  log syslog\n  proxy / http://127.0.0.1:8888\n  tls {\$IBEXFARM_webmaster_email}\n}\n" > /caddy/caddy.conf'
+sudo -u caddy bash -c 'printf "{\$IBEXFARM_host} {\n  log syslog\n  proxy {$IBEXFARM_url_prefix} http://127.0.0.1:8888\n  tls {\$IBEXFARM_webmaster_email}\n}\n" > /caddy/caddy.conf'
 ```
+
+Make sure that you've set `IBEXFARM_webmaster_email` to a real
+email address in `/etc/ibexenv.sh`. This email address will be associated
+with your SSL cert.
 
 ### Option 2: Manual SSL cert management
 
@@ -261,7 +263,9 @@ sudo chmod 600 /caddy/ssl/*.pem
 Finally, start and enable the Caddy systemd service:
 
 ```sh
+sudo setenforce 0
 sudo systemctl start caddy.service
+sudo setenforce 1
 sudo systemctl enable caddy.service
 ```
 

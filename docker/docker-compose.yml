@@ -4,6 +4,7 @@ services:
     environment:
       IBEXFARM_src_dir: ${IBEXFARM_src_dir:-/ibexfarm.git}
       IBEXFARM_url_prefix: ${IBEXFARM_url_prefix:-/}
+      IBEXFARM_experiment_base_url: ${IBEXFARM_experiment_base_url:-/ibexexps}
       IBEXFARM_port: ${IBEXFARM_port:-80}
       IBEXFARM_config_url_envvar: ${IBEXFARM_config_url_envvar:-IBEXFARM_config_url}
       IBEXFARM_config_url: ${IBEXFARM_config_url:-http://localhost/ajax/config}
@@ -31,8 +32,7 @@ services:
     # Not needed except for spellout.net/ibexfarm (for legacy reasons).
     # docker-compose syntax doesn't seem to make it possible to make
     # these values conditional on IBEXFARM_spellout_legacy_jank being
-    # set. Nothing inside the container needs to connect to these hosts,
-    # so this shouldn't cause problems for everyone else.
+    # set.
     #extra_hosts:
     #  - "spellout.user.openhosting.com:127.0.0.1"
     #  - "spellout.net:127.0.0.1"
