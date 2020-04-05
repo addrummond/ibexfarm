@@ -52,7 +52,7 @@ sub login :Absolute :Args(0) {
                 catfile(IbexFarm->config->{deployment_dir}, $username, IbexFarm->config->{USER_FILE_NAME}),
                 sub {
                     my $j = shift;
-                    if ($j->{password} !~ /^\$/) {
+                    if (IbexFarm->config->{rehash_old_passwords} && $j->{password} !~ /^\$/) {
                         # Rehash the password using a modern pw hash.
                         log_event("Rehashing password for user $username.");
                         $j->{password} = $make_pw_hash->($password);
