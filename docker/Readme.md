@@ -56,6 +56,7 @@ sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/dock
 sudo dnf install -y --nobest docker-ce
 sudo curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
+sudo usermod -aG docker ibex
 ```
 
 We can now start the docker daemon:
@@ -126,7 +127,7 @@ sudo setsebool -P container_manage_cgroup on
 Create a systemd service called `ibexfarm-server` to run the docker container:
 
 ```sh
-printf "[Unit]\nDescription=Ibex Farm server\nWants=docker.service\nAfter=docker.service\n[Service]\nLimitNOFILE=8192\nEnvironmentFile=/etc/ibexenv.sh\nUser=root\nRestart=always\nRestartSec=10\nExecStartPre=/usr/bin/bash -c 'cat /etc/ibexenv.sh | xargs -n 1 echo > /tmp/ibexenv_docker'\nExecStart=/usr/local/bin/docker-compose -f /home/ibex/ibexfarm/docker/docker-compose.yml up\nExecStop=/usr/local/bin/docker-compose -f /home/ibex/ibexfarm/docker/docker-compose.yml down\n[Install]\nWantedBy=multi-user.target\n" | sudo bash -c 'tee > /etc/systemd/system/ibexfarm-server.service'
+printf "[Unit]\nDescription=Ibex Farm server\nWants=docker.service\nAfter=docker.service\n[Service]\nLimitNOFILE=8192\nEnvironmentFile=/etc/ibexenv.sh\nUser=ibex\nRestart=always\nRestartSec=10\nExecStartPre=/usr/bin/bash -c 'cat /etc/ibexenv.sh | xargs -n 1 echo > /tmp/ibexenv_docker'\nExecStart=/usr/local/bin/docker-compose -f /home/ibex/ibexfarm/docker/docker-compose.yml up\nExecStop=/usr/local/bin/docker-compose -f /home/ibex/ibexfarm/docker/docker-compose.yml down\n[Install]\nWantedBy=multi-user.target\n" | sudo bash -c 'tee > /etc/systemd/system/ibexfarm-server.service'
 sudo systemctl daemon-reload
 ```
 
