@@ -9,6 +9,34 @@ use IbexFarm::CheckEmail;
 use File::Path qw( rmtree );
 use Digest;
 use IbexFarm::Util qw( log_event );
+use Net::SSLeay;
+use Crypt::Argon2;
+
+my $get_salt = sub {
+    my $length = shift;
+    my @salt_pool = ('A' .. 'Z', 'a' .. 'z', 0 .. 9, '+','/','=');
+    my $salt_pool_length = 26 * 2 + 10 + 3;
+    my $rb = '';
+    Net::SSLeay::RAND_bytes($rb, $length);
+    my $out = '';
+    for (my $i = 0; $i < $length; ++$i) {
+        $out .= $salt_pool[ord(substr($rb, $i, $i+1)) % $salt_pool_length];
+    }
+    return $out;
+};
+
+my $make_pw_hash = sub {
+    my $password = shift;
+    my $salt = $get_salt->(IbexFarm->config->{argon2id_salt_length});
+    return Crypt::Argon2::argon2id_pass(
+        $password,
+        $salt,
+        IbexFarm->config->{argon2id_t_cost},
+        IbexFarm->config->{argon2id_m_factor},
+        IbexFarm->config->{argon2id_parallelism},
+        IbexFarm->config->{argon2id_tag_size},
+    );
+};
 
 sub login :Absolute :Args(0) {
     my ($self, $c) = @_;
@@ -19,6 +47,22 @@ sub login :Absolute :Args(0) {
     if ($username && $password) {
         if ($c->authenticate({ username => $username, password => $password })) {
             log_event("User $username logged in.");
+
+            IbexFarm::Util::update_json_file(
+                catfile(IbexFarm->config->{deployment_dir}, $username, IbexFarm->config->{USER_FILE_NAME}),
+                sub {
+                    my $j = shift;
+                    if (IbexFarm->config->{rehash_old_passwords} && $j->{password} !~ /^\$/) {
+                        # Rehash the password using a modern pw hash.
+                        log_event("Rehashing password for user $username.");
+                        $j->{password} = $make_pw_hash->($password);
+                        return $j;
+                    } else {
+                        return undef; # leave the file unmodified
+                    }
+                }
+            );
+
             $c->response->redirect($c->uri_for('/myaccount'));
         }
         else {
@@ -97,21 +141,6 @@ sub update_email :Absolute :Args(0) {
         }
     }
 }
-
-# See code in DBIx::Class::EncodedColumn::Digest.
-my $get_salt = sub {
-    my $length = shift;
-    my @salt_pool = ('A' .. 'Z', 'a' .. 'z', 0 .. 9, '+','/','=');
-    return join('', map { $salt_pool[int(rand(65))] } 1 .. $length);
-};
-
-my $make_pw_hash = sub {
-    my $password = shift;
-    my $digest = Digest->new(IbexFarm->config->{user_password_hash_algo});
-    my $salt = $get_salt->(IbexFarm->config->{user_password_salt_length});
-    $digest->add($password . $salt);
-    return $digest->b64digest . $salt;
-};
 
 sub update_password :Absolute :Args(0) {
     my ($self, $c) = @_;

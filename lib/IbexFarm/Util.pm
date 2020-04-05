@@ -27,13 +27,15 @@ sub update_json_file {
     # the updates.
 
     my $newjson = $updatef->($json);
-    open my $of, ">>$filename", or die "Unable to open '$filename': $!";
-    flock $of, 2 or die "Unable to lock '$filename': $!";
-    truncate $of, 0 or die "Unable to truncate '$filename': $!";
-    seek $of, 0, 0 or die "Really?: $!";
-    print $of JSON::XS::encode_json($newjson);
-    flock $of, 8; # Unlock;
-    close $of or die "Unable to close '$filename' after writing: :$!";
+    if (defined $newjson) {
+        open my $of, ">>$filename", or die "Unable to open '$filename': $!";
+        flock $of, 2 or die "Unable to lock '$filename': $!";
+        truncate $of, 0 or die "Unable to truncate '$filename': $!";
+        seek $of, 0, 0 or die "Really?: $!";
+        print $of JSON::XS::encode_json($newjson);
+        flock $of, 8; # Unlock;
+        close $of or die "Unable to close '$filename' after writing: :$!";
+    }
 
     return $newjson;
 }

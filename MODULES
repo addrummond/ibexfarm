@@ -2,12 +2,10 @@
 # (not a complete list, but installing all these should
 # pull in the necessary dependencies).
 Catalyst::Plugin::RequireSSL
-Catalyst::Plugin::Session::Store::FastMmap
 Catalyst::View::JSON
 Catalyst::Plugin::ConfigLoader::Environment
 Template::Plugin::Filter::Minify::CSS
 Template::Plugin::Filter::Minify::JavaScript
-Catalyst::Plugin::Cache::FastMmap
 Catalyst::Plugin::UploadProgress
 HTML::GenerateUtil
 Class::Factory

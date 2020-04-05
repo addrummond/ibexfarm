@@ -22,6 +22,7 @@ Upload data files in your browser, then send your participants a link to the exp
 Currently hosting <b>[% experiment_count %]</b> experiment[% IF experiment_count != 1 %]s[% END %].
 </p>
 [% END %]
+[% front_page_html_message %]
 <p class="smallprint fpfooter">
 Contact <a href="mailto:[% webmaster_email %]">[% webmaster_email %]</a> if you have any issues, or try the <a href="https://groups.google.com/group/ibexexperiments">google group</a>.
 </p>

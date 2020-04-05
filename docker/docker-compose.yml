@@ -1,0 +1,49 @@
+version: '3'
+services:
+  ibexfarm:
+    environment:
+      IBEXFARM_src_dir: ${IBEXFARM_src_dir:-/ibexfarm.git}
+      IBEXFARM_url_prefix: ${IBEXFARM_url_prefix:-/}
+      IBEXFARM_experiment_base_url: ${IBEXFARM_experiment_base_url:-/ibexexps}
+      IBEXFARM_port: ${IBEXFARM_port:-80}
+      IBEXFARM_config_url_envvar: ${IBEXFARM_config_url_envvar:-IBEXFARM_config_url}
+      IBEXFARM_config_url: ${IBEXFARM_config_url:-http://localhost/ajax/config}
+      IBEXFARM_webmaster_email: ${IBEXFARM_webmaster_email:-example@example.com}
+      IBEXFARM_webmaster_name: ${IBEXFARM_webmaster_name:-Anonymous Coward}
+      IBEXFARM_front_page_html_message: ${IBEXFARM_front_page_html_message:-<span></span>}
+      IBEXFARM_config_secret: ${IBEXFARM_config_secret:-unused-non-secret}
+      IBEXFARM_host: ${IBEXFARM_host:-localhost}
+
+      # See https://metacpan.org/pod/Crypt::Argon2 before changing these from defaults
+      IBEXFARM_argon2id_t_cost: ${IBEXFARM_argon2id_t_cost:-5}
+      IBEXFARM_argon2id_m_factor: ${IBEXFARM_argon2id_m_factor:-32M}
+      IBEXFARM_argon2id_parallelism: ${IBEXFARM_argon2id_parallelism:-1}
+      IBEXFARM_argon2id_tag_size: ${IBEXFARM_argon2id_tag_size:-16}
+      IBEXFARM_argon2id_salt_length: ${IBEXFARM_argon2id_salt_length:-16}
+
+      IBEXFARM_rehash_old_passwords: ${IBEXFARM_IBEXFARM_rehash_old_passwords:-}
+
+      IBEXFARM_enforce_quotas: ${IBEXFARM_enforce_quotas:-0}
+      IBEXFARM_quota_max_files_in_dir: ${IBEXFARM_quota_max_files_in_dir:-500}
+      IBEXFARM_quota_max_file_size: ${IBEXFARM_quota_max_file_size:-1048576}
+      IBEXFARM_quota_max_total_size: ${IBEXFARM_quota_max_total_size:-1048576}
+
+      # Don't enable this (legacy hacks for spellout.net/ibexfarm).
+      IBEXFARM_spellout_legacy_jank: ${IBEXFARM_spellout_legacy_jank:-}
+
+    # Not needed except for spellout.net/ibexfarm (for legacy reasons).
+    # docker-compose syntax doesn't seem to make it possible to make
+    # these values conditional on IBEXFARM_spellout_legacy_jank being
+    # set.
+    #extra_hosts:
+    #  - "spellout.user.openhosting.com:127.0.0.1"
+    #  - "spellout.net:127.0.0.1"
+
+    ports:
+      - "${IBEXFARM_host_port:-8888}:${IBEXFARM_port:-80}"
+    volumes:
+      - '../:/code'
+      - ${IBEXFARM_data_volume:-ibexdata}:/ibexdata
+    build: '.'
+volumes:
+    ibexdata:
