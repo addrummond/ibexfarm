@@ -167,6 +167,7 @@ PerlSetEnv IBEXFARM_argon2id_m_factor \"\${IBEXFARM_argon2id_m_factor}\"\n\
 PerlSetEnv IBEXFARM_argon2id_parallelism \"\${IBEXFARM_argon2id_parallelism}\"\n\
 PerlSetEnv IBEXFARM_argon2id_tag_size \"\${IBEXFARM_argon2id_tag_size}\"\n\
 PerlSetEnv IBEXFARM_argon2id_salt_length \"\${IBEXFARM_argon2id_salt_length}\"\n\
+PerlSetEnv IBEXFARM_ibex_archive_root_dir \"\${IBEXFARM_ibex_archive_root_dir}\"\n\
 PerlSetEnv IBEXFARM_front_page_html_message \"\${IBEXFARM_front_page_html_message}\"\n\
 PerlSetEnv IBEXFARM_enforce_quotas \"\${IBEXFARM_enforce_quotas}\"\n\
 PerlSetEnv IBEXFARM_quota_max_files_in_dir \"\${IBEXFARM_quota_max_files_in_dir}\"\n\
@@ -186,7 +187,6 @@ webmaster_name: 'IBEX_WEBMASTER'\n\
 webmaster_email: 'IBEX_WEBMASTER_EMAIL'\n\
 \n\
 ibex_archive: '/var/ibexfarm/ibex-deploy.tar.gz'\n\
-ibex_archive_root_dir: 'ibex'\n\
 ibex_version: '0.3.9'\n\
 deployment_dir: '/ibexdata/deploy'\n\
 deployment_www_dir: '/ibexdata/ibexexps'\n\
