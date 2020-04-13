@@ -238,7 +238,9 @@ mkdir -p /ibexdata/deploy\n\
 mkdir -p /ibexdata/ibexexps\n\
 mkdir -p /ibexdata/quota\n\
 \n\
-chown -R apache:apache /ibexdata\n\
+if [ -z \"\${IBEXFARM_dont_chown_data_volume}\" ]; then\n\
+  chown -R apache:apache /ibexdata\n\
+fi\n\
 \n\
 if [ ! -z \"\${IBEXFARM_spellout_legacy_jank}\" ]; then\n\
     mkdir -p /opt/local\n\
