@@ -65,7 +65,7 @@
 <div id="login_info">
 
 <a href="[% c.uri_for("/") %]">home</a>
-[% IF ! c.user_exists %] | <a href="[% c.uri_for("/login") %]">login</a>
+[% IF ! c.user_exists %] | <a href="[% c.uri_for("/login") %]">log in</a>
 |
 <a href="[% c.uri_for("/newaccount") %]">create an account</a>
 [% END %] |

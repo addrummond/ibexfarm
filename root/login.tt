@@ -2,7 +2,7 @@
 [% META title = ' - Login' %]
 [% META js_scripts = 'newaccount.js' %]
 
-<h2>Login</h2>
+<h2>Log in</h2>
 
 [% IF login_msg %]
 <p class="message noskipto dontremove">
