@@ -3,6 +3,10 @@ Linode running CentOS 8. Unlike the earlier version of these instructions
 at https://adrummond.net/posts/ibexfarmdocker, these instructions assume
 that you have a domain and want to use https.
 
+For simplicity, these instructions assume that you will be logging in
+using a username and password. It is advisible to disable the option
+to log in via a username and password over ssh (and use keys instead).
+
 ## Creating a linode
 
 [Linode](https://linode.com) is one of many cloud hosting providers. It's cheap
@@ -91,15 +95,6 @@ Pull the Ibex Farm Docker container or build it:
     docker build .
 ```
 
-If you chose to build from source, you may want to add the following definition to ibexenv.sh to
-make the Ibex Farm use the Perl code in `~/ibexfarm/docker` rather than
-the code inside the Docker container:
-
-```sh
-echo 'IBEXFARM_src_dir=/code' >> /etc/ibexenv.sh
-set -o allexport ; source /etc/ibexenv.sh ; set +o allexport
-```
-
 Configure the webmaster email address and webmaster name for this instance, together with some other configuration options:
 
 ```sh
@@ -109,6 +104,14 @@ echo 'IBEXFARM_webmaster_email="example@example.com"' >> /etc/ibexenv.sh
 echo 'IBEXFARM_webmaster_name="Some person"' >> /etc/ibexenv.sh
 echo 'IBEXFARM_url_prefix="/"' >> /etc/ibexenv.sh
 echo 'IBEXFARM_experiment_base_url="/ibexexps"' >> /etc/ibexenv.sh
+```
+
+If you chose to build from source, you may want to add the following definition to ibexenv.sh to
+make the Ibex Farm use the Perl code in `~/ibexfarm/docker` rather than
+the code inside the Docker container:
+
+```sh
+sudo echo 'IBEXFARM_src_dir=/code' >> /etc/ibexenv.sh
 ```
 
 Source the preceding definitions and add them to the system profile:
