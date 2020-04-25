@@ -99,7 +99,7 @@ RUN mkdir /var/ibexfarm && \
     rm -f LICENSE README example_lighttpd.conf mkdist.sh server_conf.py && \
     cd .. && \
     tar -czf ibex-deploy.tar.gz ibex && \
-    mv ibex-deploy.tar.gz /var/ibexfarm
+    mv ibex-deploy-original.tar.gz /var/ibexfarm
 
 RUN touch /etc/apache2/conf.d/httpdpasswd && \
     chown apache:apache /etc/apache2/conf.d/httpdpasswd && \
@@ -253,7 +253,7 @@ if [ ! -z \"\${IBEXFARM_spellout_legacy_jank}\" ]; then\n\
 fi\n\
 \n\
 cd /tmp\n\
-tar -xzf /var/ibexfarm/ibex-deploy.tar.gz\n\
+tar -xzf /var/ibexfarm/ibex-deploy-original.tar.gz\n\
 mv ibex ${IBEXFARM_ibex_archive_root_dir}\n\
 tar -czf ibex-deploy.tar.gz ${IBEXFARM_ibex_archive_root_dir}\n\
 mv ibex-deploy.tar.gz /var/ibexfarm/ibex-deploy.tar.gz\n\
