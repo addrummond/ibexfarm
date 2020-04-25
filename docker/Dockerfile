@@ -104,7 +104,7 @@ RUN mkdir /var/ibexfarm && \
     tar -czf ibex-deploy-original.tar.gz ibex && \
     mv ibex-deploy-original.tar.gz /var/ibexfarm
 
-RUN touch /etc/apache2/conf.d/httpdpasswd && \
+RUN touch /ibexdata/htpasswd && \
     chown apache:apache /etc/apache2/conf.d/httpdpasswd && \
     mkdir -p /run/apache2 && \
     sed -i 's/^Listen[\t ].*/Listen ${IBEXFARM_port}'/ /etc/apache2/httpd.conf && \
@@ -134,7 +134,7 @@ Alias /static/ \${IBEXFARM_src_dir}/root/static/\n\
 DocumentRoot \"/var/www\"\n\
 \n\
 AddHandler cgi-script .py\n\
-Alias "/ibexexps" "/ibexdata/ibexexps"\n\
+Alias /ibexexps /ibexdata/ibexexps\n\
 \n\
 <Directory \"/ibexdata/ibexexps\" >\n\
     Options +ExecCGI +FollowSymLinks\n\
@@ -142,6 +142,9 @@ Alias "/ibexexps" "/ibexdata/ibexexps"\n\
     DirectoryIndex experiment.html\n\
     Require all granted\n\
 </Directory>\n\
+\n\
+AuthUserFile \"/ibexdata/htpasswd\"\n\
+\n\
 #\n\
 # Relax access to content within /var/www.\n\
 #\n\
@@ -219,7 +222,7 @@ quota_record_dir: '/ibexdata/quota'\n\
 \n\
 password_protect_apache:\n\
     htpasswd: '/usr/bin/htpasswd'\n\
-    passwd_file: '/etc/apache2/conf.d/httpdpasswd'\n\
+    passwd_file: '/ibexdata/htpasswd'\n\
 \n\
 max_upload_size_bytes: 1048576\n\
 \n\
