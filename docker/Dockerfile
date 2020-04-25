@@ -138,10 +138,9 @@ Alias /ibexexps /ibexdata/ibexexps\n\
     Options +ExecCGI +FollowSymLinks\n\
     AllowOverride AuthConfig\n\
     DirectoryIndex experiment.html\n\
+    AuthUserFile \"/ibexdata/htpasswd\"\n\
     Require all granted\n\
 </Directory>\n\
-\n\
-AuthUserFile \"/ibexdata/htpasswd\"\n\
 \n\
 #\n\
 # Relax access to content within /var/www.\n\
