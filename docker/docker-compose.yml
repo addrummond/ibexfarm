@@ -23,7 +23,7 @@ services:
       IBEXFARM_argon2id_tag_size: ${IBEXFARM_argon2id_tag_size:-16}
       IBEXFARM_argon2id_salt_length: ${IBEXFARM_argon2id_salt_length:-16}
 
-      IBEXFARM_rehash_old_passwords: ${IBEXFARM_IBEXFARM_rehash_old_passwords:-}
+      IBEXFARM_rehash_old_passwords: ${IBEXFARM_rehash_old_passwords:-}
 
       IBEXFARM_enforce_quotas: ${IBEXFARM_enforce_quotas:-0}
       IBEXFARM_quota_max_files_in_dir: ${IBEXFARM_quota_max_files_in_dir:-500}
