@@ -241,7 +241,7 @@ END\n\
 mkdir -p /ibexdata/deploy\n\
 mkdir -p /ibexdata/ibexexps\n\
 mkdir -p /ibexdata/quota\n\
-mkdir -p /ibexdara/tmp\n\
+mkdir -p /ibexdata/tmp\n\
 \n\
 if [ -z \"\${IBEXFARM_dont_chown_data_volume}\" ]; then\n\
   chown -R apache:apache /ibexdata\n\
