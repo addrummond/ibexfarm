@@ -83,16 +83,13 @@ Ssh in again as `ibex`. Create directory called `ibexdata` to hold the Ibex Farm
 mkdir ~/ibexdata
 ```
 
-Pull the Ibex Farm Docker container or build it:
+Build the Ibex Farm Docker container:
 
 ```sh
-# Option 1: pull from docker repository
-    sudo docker pull alexdrummond/ibexfarm
-# Option 2: build from source (takes 5-10 minutes)
-    cd ~
-    git clone https://github.com/addrummond/ibexfarm
-    cd ibexfarm/docker
-    docker build .
+cd ~
+git clone https://github.com/addrummond/ibexfarm
+cd ibexfarm/docker
+docker build .
 ```
 
 Configure the webmaster email address and webmaster name for this instance, together with some other configuration options:
