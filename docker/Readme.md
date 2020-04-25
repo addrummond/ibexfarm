@@ -222,3 +222,13 @@ configured to redirect any http requests to https.
 
 You may wish to create an `example` user with an `example` experiment, so that
 the link on the homepage isn't broken.
+
+## Long startup times
+
+If you have a large set of existing experiments, you may find that the
+`ibexfarm-server` process takes a long time to start up. (It takes about 10
+minutes on `spellout.net`.) This is due to a recursive `chown` executed in the
+entrypoint. After the server has been started for the first time, it is no
+longer necessary to run this command. You can set
+`IBEXFARM_dont_chown_data_volume=1` to prevent the `chown` from executing and
+reduce startup times. 
