@@ -110,7 +110,7 @@ sub deploy {
 
     $tar->clear;
 
-    chdir $oldcwd or die "Could not return to old PWD: $!";
+    chdir $oldcwd;
 
     }; # End of eval {
     if ($@) {
