@@ -144,9 +144,6 @@ sudo systemctl enable ibexfarm-server.service
 At this point, if the server is up and running, you should be able to retrieve
 `index.html` by running `wget http://localhost:8888`.
 
-You may wish to create an `example` user with an `example` experiment, so that
-the link on the homepage isn't broken.
-
 ## Storage space
 
 If you anticipate hosting lots of experiments on your Ibex Farm instance, you
@@ -224,3 +221,6 @@ I haven't been able to find a resolution for this issue.
 
 You should now have access to your Ibex Farm instance over https. Caddy has been
 configured to redirect any http requests to https.
+
+You may wish to create an `example` user with an `example` experiment, so that
+the link on the homepage isn't broken.
