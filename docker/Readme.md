@@ -223,6 +223,19 @@ configured to redirect any http requests to https.
 You may wish to create an `example` user with an `example` experiment, so that
 the link on the homepage isn't broken.
 
+## The docker apache user
+
+It can be useful to create a `dapache` user and group with the ids of the
+`apache` user and group inside the Docker container:
+
+```sh
+sudo groupadd dapache -g 987654
+sudo useradd -g dapache -u 987654 -s /sbin/nologin dapache
+```
+
+You can then e.g. `chown` a file to `dapache:dapache` to have it owned by the
+Docker `apache` user.
+
 ## Long startup times
 
 If you have a large set of existing experiments, you may find that the
