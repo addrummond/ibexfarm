@@ -98,7 +98,7 @@ RUN mkdir /var/ibexfarm && \
     rm -rf contrib && \
     rm -f LICENSE README example_lighttpd.conf mkdist.sh server_conf.py && \
     cd .. && \
-    tar -czf ibex-deploy.tar.gz ibex && \
+    tar -czf ibex-deploy-original.tar.gz ibex && \
     mv ibex-deploy-original.tar.gz /var/ibexfarm
 
 RUN touch /etc/apache2/conf.d/httpdpasswd && \
