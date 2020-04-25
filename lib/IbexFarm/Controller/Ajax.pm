@@ -87,7 +87,7 @@ my $post_check_quota = sub {
     return ($ok, $e);
 };
 
-sub config_ : Path("config") :Args(0) { # 'config' seems to be reserved by Catalyst.
+my $do_config = sub {
     my ($self, $c) = @_;
     my $ps = $c->req->params;
 
@@ -147,6 +147,15 @@ sub config_ : Path("config") :Args(0) { # 'config' seems to be reserved by Catal
     for my $k (keys %$json) { $c->stash->{$k} = $json->{$k}; }
 
     $c->detach($c->view("JSON"));
+};
+
+sub config_ : Path("config") :Args(0) { # 'config' seems to be reserved by Catalyst.
+    $do_config->(@_);
+}
+
+# Legacy jank for spellout.net/ibexfarm
+sub config_legacy : Path(catfile(IbexFarm->config->{url_prefix}, "config")) {
+    $do_config->(@_);
 }
 
 sub get_dirs :Path("get_dirs") :Args(0) {
