@@ -1,11 +1,12 @@
 These instructions guide you through setting up an Ibex Farm instance on a
-Linode running CentOS 8. Unlike the earlier version of these instructions
-at https://adrummond.net/posts/ibexfarmdocker, these instructions assume
-that you have a domain and want to use https.
+Linode running CentOS 8. Unlike the earlier version of these instructions at
+https://adrummond.net/posts/ibexfarmdocker, these instructions assume that you
+have a domain and want to use Caddy's automatic SSL cert management via
+[Letsencrypt](https://letsencrypt.org/).
 
-For simplicity, these instructions assume that you will be logging in
-using a username and password. It is advisible to disable the option
-to log in via a username and password over ssh (and use keys instead).
+For simplicity, these instructions assume that you will be logging in using a
+username and password. It is advisible to disable the option to log in via a
+username and password over ssh (and use keys instead).
 
 ## Creating a linode
 
@@ -16,9 +17,10 @@ and easy to use compared to more sophisticated options like
 If you anticipate hosting large number of experiments (more than a few hundred),
 then check out the ‘Storage Space’ section below.
 
-After creating a linode account, create a linode running CoreOS Container Linux. Note that
-the Apache and Docker configuration is quite tricky, so don't expect these
-exact instructions to work on other distros without significant modification.
+After creating a linode account, create a linode running CoreOS Container Linux.
+Note that the Apache and Docker configuration is quite tricky, so don't expect
+these exact instructions to work on other distros without significant
+modification.
 
 If the IP address of your linode is e.g. `192.192.192.192`, you can ssh in as
 follows:
@@ -52,8 +54,8 @@ shutdown -r now
 ```
 
 The linode will now reboot, terminating your ssh session. In a couple of
-minutes, ssh in again as user `ibex` (e.g. `ssh ibex@192.192.192.192`).
-Install docker and docker-compose:
+minutes, ssh in again as user `ibex` (e.g. `ssh ibex@192.192.192.192`). Install
+docker and docker-compose:
 
 ```sh
 sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
@@ -92,7 +94,8 @@ cd ibexfarm/docker
 docker build .
 ```
 
-Configure the webmaster email address and webmaster name for this instance, together with some other configuration options:
+Configure the webmaster email address and webmaster name for this instance,
+together with some other configuration options:
 
 ```sh
 sudo touch /etc/ibexenv.sh
@@ -103,9 +106,9 @@ echo 'IBEXFARM_url_prefix="/"' >> /etc/ibexenv.sh
 echo 'IBEXFARM_experiment_base_url="/ibexexps"' >> /etc/ibexenv.sh
 ```
 
-If you chose to build from source, you may want to add the following definition to ibexenv.sh to
-make the Ibex Farm use the Perl code in `~/ibexfarm/docker` rather than
-the code inside the Docker container:
+If you chose to build from source, you may want to add the following definition
+to ibexenv.sh to make the Ibex Farm use the Perl code in `~/ibexfarm/docker`
+rather than the code inside the Docker container:
 
 ```sh
 sudo echo 'IBEXFARM_src_dir=/code' >> /etc/ibexenv.sh
@@ -138,8 +141,8 @@ sudo systemctl start ibexfarm-server.service
 sudo systemctl enable ibexfarm-server.service
 ```
 
-At this point, if the server is up and running, you should be able to
-retrieve `index.html` by running `wget http://localhost:8888`.
+At this point, if the server is up and running, you should be able to retrieve
+`index.html` by running `wget http://localhost:8888`.
 
 
 ```
@@ -152,13 +155,12 @@ the link on the homepage isn't broken.
 ## Storage space
 
 If you anticipate hosting lots of experiments on your Ibex Farm instance, you
-should store the `ibexdata` volume on a linode volume rather
-than on the root filesystem of the linode. Whereas there's no straightforward
-way to enlarge a linode's root filesystem, it's easy to enlarge a linode
-volume. See the [docker
+should store the `ibexdata` volume on a linode volume rather than on the root
+filesystem of the linode. Whereas there's no straightforward way to enlarge a
+linode's root filesystem, it's easy to enlarge a linode volume. See the [docker
 documentation](https://docs.docker.com/engine/reference/commandline/volume_create/)
-(and in particular the `--opt device` option to `docker volume create`) for
-more info. Be sure to add `/ibexexps` and `/deploy` dirs to your volume before
+(and in particular the `--opt device` option to `docker volume create`) for more
+info. Be sure to add `/ibexexps` and `/deploy` dirs to your volume before
 running the docker container, and then `chown -R` everything to
 `dapache:dapache`.
 
@@ -167,14 +169,13 @@ running the docker container, and then `chown -R` everything to
 **You'll need to get a domain name pointing to the IP of your linode before
 following these instructions.**
 
-**Remember that DNS propagation can take a while, so wait for a few hours
-after you've associated your domain name with your linode's IP address.**
+**Remember that DNS propagation can take a while, so wait for a few hours after
+you've associated your domain name with your linode's IP address.**
 
 This section steps through the process of setting up https using a free
 [letsencrypt](https://letsencrypt.org/) certificate. You can either create and
-manage this certificate automatically via Caddy,
-or create the certificate manually — in which case you'll be
-responsible for renewing it when it expires.
+manage this certificate automatically via Caddy, or create the certificate
+manually — in which case you'll be responsible for renewing it when it expires.
 There's little reason to choose the manual option if you're using letsencrypt,
 but you might find the relevant instructions useful if you have another SSL
 certificate that you'd like to use.
@@ -208,10 +209,7 @@ printf "[Unit]\nDescription=Caddy HTTP/2 web server\nDocumentation=https://caddy
 sudo systemctl daemon-reload
 ```
 
-You can now choose either ‘Option 1’ or ‘Option 2’ below, then follow the
-instructions in the ‘Start Caddy’ section.
-
-### Option 1: Automatic SSL cert management via Caddy
+Set up Caddy with automatic SSL cert management:
 
 ```sh
 sudo -u caddy bash -c 'printf "{\$IBEXFARM_host} {\n  log syslog\n  proxy {\$IBEXFARM_url_prefix} http://127.0.0.1:8888 { without {\$IBEXFARM_url_prefix} }\n  proxy {\$IBEXFARM_experiment_base_url} http://127.0.0.1:8888\n  tls {\$IBEXFARM_webmaster_email}\n}\n" > /caddy/caddy.conf'
@@ -220,44 +218,6 @@ sudo -u caddy bash -c 'printf "{\$IBEXFARM_host} {\n  log syslog\n  proxy {\$IBE
 Make sure that you've set `IBEXFARM_webmaster_email` to a real
 email address in `/etc/ibexenv.sh`. This email address will be associated
 with your SSL cert.
-
-### Option 2: Manual SSL cert management
-
-Obtain a letsencrypt certificate:
-
-```sh
-sudo git clone https://github.com/letsencrypt/letsencrypt /opt/letsencrypt
-cd /opt/letsencrypt
-sudo -H ./letsencrypt-auto certonly --standalone -d "$IBEXFARM_host"
-```
-
-After answering some questions at the prompt, you should see output like the
-following:
-
-```
-IMPORTANT NOTES:
- - Congratulations! Your certificate and chain have been saved at:
-   /etc/letsencrypt/live/my.domain.name/fullchain.pem
-   Your key file has been saved at:
-   /etc/letsencrypt/live/my.domain.name/privkey.pem
-
-   ...
-   ...
-```
-
-Configure Caddy as follows:
-
-```sh
-sudo -u caddy bash -c 'printf "{\$IBEXFARM_host} {\n  log syslog\n  proxy {\$IBEXFARM_url_prefix} http://127.0.0.1:8888 { without {\$IBEXFARM_url_prefix} }\n  proxy {\$IBEXFARM_experiment_base_url} http://127.0.0.1:8888\n  tls/caddy/ssl/fullchain.pem /caddy/ssl/privkey.pem\n}\n" > /caddy/caddy.conf'
-```
-
-Copy the cert files to the location where Caddy expects them:
-
-```sh
-sudo find "/etc/letsencrypt/live/$IBEXFARM_host" -name '*.pem' -exec cp {} /caddy/ssl \;
-sudo chown -R caddy:caddy /caddy/ssl
-sudo chmod 600 /caddy/ssl/*.pem
-```
 
 ### Start Caddy
 
@@ -269,9 +229,8 @@ sudo systemctl start caddy.service
 sudo systemctl enable caddy.service
 ```
 
-Unfortunately, it appears to be necessary to temporarily
-disable SELinux for caddy to start. I haven't been able to find
-a better resolution for this issue.
+Unfortunately, it appears to be necessary to disable SELinux for Caddy to start.
+I haven't been able to find a resolution for this issue.
 
-You should now have access to your Ibex Farm instance over https. Caddy has
-been configured to redirect any http requests to https.
+You should now have access to your Ibex Farm instance over https. Caddy has been
+configured to redirect any http requests to https.
