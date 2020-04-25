@@ -68,7 +68,7 @@ __PACKAGE__->config(
            }
        }
     },
-    'Pluggin::Session' => {
+    'Plugin::Session' => {
         storage => '/ibexdata/ibexfarm_session',
     },
     cache => {
