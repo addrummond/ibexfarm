@@ -153,11 +153,6 @@ sub config_ : Path("config") :Args(0) { # 'config' seems to be reserved by Catal
     $do_config->(@_);
 }
 
-# Legacy jank for spellout.net/ibexfarm
-sub config_legacy : Path(catfile(IbexFarm->config->{url_prefix}, "config")) {
-    $do_config->(@_);
-}
-
 sub get_dirs :Path("get_dirs") :Args(0) {
     my ($self, $c) = @_;
 
@@ -983,5 +978,7 @@ sub unauthorized :Path { $ereq->($_[1], 401); }
 sub conflict :Path { $ereq->($_[1], 409); }
 sub request_entity_too_large :Path { $ereq->($_[1], 413); }
 sub default :Path { $ereq->($_[1], 404); }
+
+our @EXPORT_OK = qw( do_config );
 
 1;
