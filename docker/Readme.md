@@ -144,11 +144,6 @@ sudo systemctl enable ibexfarm-server.service
 At this point, if the server is up and running, you should be able to retrieve
 `index.html` by running `wget http://localhost:8888`.
 
-
-```
-http://192.192.192.192/
-```
-
 You may wish to create an `example` user with an `example` experiment, so that
 the link on the homepage isn't broken.
 
