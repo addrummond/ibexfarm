@@ -104,9 +104,7 @@ RUN mkdir /var/ibexfarm && \
     tar -czf ibex-deploy-original.tar.gz ibex && \
     mv ibex-deploy-original.tar.gz /var/ibexfarm
 
-RUN touch /ibexdata/htpasswd && \
-    chown apache:apache /etc/apache2/conf.d/httpdpasswd && \
-    mkdir -p /run/apache2 && \
+RUN mkdir -p /run/apache2 && \
     sed -i 's/^Listen[\t ].*/Listen ${IBEXFARM_port}'/ /etc/apache2/httpd.conf && \
     sed -i 's/LoadModule mpm_prefork/#LoadModule mpm_prefork/' /etc/apache2/httpd.conf && \
     sed -i 's/#LoadModule mpm_worker_module/LoadModule mpm_worker_module/' /etc/apache2/httpd.conf && \
@@ -265,6 +263,9 @@ mv ibex \${IBEXFARM_ibex_archive_root_dir}\n\
 tar -czf ibex-deploy.tar.gz \${IBEXFARM_ibex_archive_root_dir}\n\
 mv ibex-deploy.tar.gz /var/ibexfarm/ibex-deploy.tar.gz\n\
 cd ~\n\
+\n\
+touch /ibexdata/htpasswd\n\
+chown apache:apache /ibexdata/htpasswd\n\
 \n\
 exec /usr/sbin/httpd -D FOREGROUND\n\
 " > /var/ibexfarm/start.sh && \
