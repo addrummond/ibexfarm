@@ -47,6 +47,9 @@ RUN cd /tmp && \
     sed -i s/__uint8_t/uint8_t/g rijndael.h && \
     sed -i s/__uint32_t/uint32_t/g rijndael.h && \
     make install && \
+    cd .. && \
+    rm -rf Crypt-Rijndael-1.13/ && \
+    cd ~ && \
     cpanm --notest --no-man-pages --no-wget --curl \
         MooseX::Types \
         MooseX::ConfigFromFile \
