@@ -162,6 +162,7 @@ PerlSetEnv IBEXFARM_webmaster_email \"\${IBEXFARM_webmaster_email}\"\n\
 PerlSetEnv IBEXFARM_webmaster_name \"\${IBEXFARM_webmaster_name}\"\n\
 PerlSetEnv IBEXFARM_config_secret \"\${IBEXFARM_config_secret}\"\n\
 PerlSetEnv IBEXFARM_config_url_envvar \"\${IBEXFARM_config_url_envvar}\"\n\
+PerlSetEnv IBEXFARM_rehash_old_passwords \"\${IBEXFARM_rehash_old_passwords}\"\n\
 PerlSetEnv IBEXFARM_argon2id_t_cost \"\${IBEXFARM_argon2id_t_cost}\"\n\
 PerlSetEnv IBEXFARM_argon2id_m_factor \"\${IBEXFARM_argon2id_m_factor}\"\n\
 PerlSetEnv IBEXFARM_argon2id_parallelism \"\${IBEXFARM_argon2id_parallelism}\"\n\
