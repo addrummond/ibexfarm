@@ -7,7 +7,7 @@ use File::Spec::Functions qw( catdir catfile );
 use Archive::Zip;
 use IbexFarm::AjaxHeaders qw( ajax_headers );
 use IbexFarm::Util;
-use IbexFarm::Controller::Ajax qw( do_config );
+use IbexFarm::Controller::Ajax;
 
 #
 # Sets the actions in this controller to be registered with no prefix
@@ -105,7 +105,7 @@ sub zip_archive :Path("zip_archive") {
 
 # Legacy jank for spellout.net/ibexfarm
 sub config_legacy :Path("ibexfarm/ajax/config") :Args(0) {
-    $do_config->(@_);
+    $IbexFarm::Controller::Ajax::do_config->(@_);
 }
 
 sub bad_request :Path {

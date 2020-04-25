@@ -87,7 +87,7 @@ my $post_check_quota = sub {
     return ($ok, $e);
 };
 
-my $do_config = sub {
+our $do_config = sub {
     my ($self, $c) = @_;
     my $ps = $c->req->params;
 
@@ -979,6 +979,6 @@ sub conflict :Path { $ereq->($_[1], 409); }
 sub request_entity_too_large :Path { $ereq->($_[1], 413); }
 sub default :Path { $ereq->($_[1], 404); }
 
-our @EXPORT_OK = qw( do_config );
+our @EXPORT_OK = qw( $do_config );
 
 1;
