@@ -173,12 +173,7 @@ following these instructions.**
 you've associated your domain name with your linode's IP address.**
 
 This section steps through the process of setting up https using a free
-[letsencrypt](https://letsencrypt.org/) certificate. You can either create and
-manage this certificate automatically via Caddy, or create the certificate
-manually — in which case you'll be responsible for renewing it when it expires.
-There's little reason to choose the manual option if you're using letsencrypt,
-but you might find the relevant instructions useful if you have another SSL
-certificate that you'd like to use.
+[letsencrypt](https://letsencrypt.org/) certificate.
 
 First, define your hostname:
 
