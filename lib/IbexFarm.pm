@@ -68,8 +68,10 @@ __PACKAGE__->config(
            }
        }
     },
-    cache => {
+    'Pluggin::Session' => {
         storage => '/ibexdata/ibexfarm_session',
+    },
+    cache => {
         expires => 48 * 60 * 60 # seconds
     },
     USER_FILE_NAME => 'USER',
