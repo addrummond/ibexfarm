@@ -254,6 +254,7 @@ if [ ! -z \"\${IBEXFARM_spellout_legacy_jank}\" ]; then\n\
     mkdir -p /var/l-apps\n\
     mkdir -p /var/l-apps/ibexfarm\n\
     ln -sf /ibexdata/deploy/ /var/l-apps/ibexfarm/deploy\n\
+    ln -sf /ibexdata/deploy /var/ibexfarm/deploy\n\
 fi\n\
 \n\
 cd /tmp\n\
