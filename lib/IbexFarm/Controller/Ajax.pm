@@ -516,7 +516,7 @@ sub upload_file :Path("upload_file") {
         # Assume the file contents are given as 'contents' in the post data. (This happens when
         # the file is uploaded via an inline edit.)
         my $tmpfilename;
-        ($up, $tmpfilename) = File::Temp::tempfile() or die "Unable to create temporary file during processing of upload request: $!";
+        ($up, $tmpfilename) = File::Temp::tempfile(DIR => IbexFarm->config->{data_volume}) or die "Unable to create temporary file during processing of upload request: $!";
         binmode $up, ':utf8';
         if (! (print $up $contents)) {
             close $up;
@@ -855,11 +855,11 @@ sub from_git_repo :Path("from_git_repo") {
     );
 
     # Get a temporary dir for checking out the git repo.
-    my $tmpdir = File::Temp::tempdir();
+    my $tmpdir = File::Temp::tempdir(DIR => IbexFarm->config->{data_volume});
     $tmpdir or die "Unable to create temporary dir for checking out git repo: $!";
 
     # Get a temporary file for storing any error messages from git.
-    my ($tempefilefh, $tempefile) = File::Temp::tempfile();
+    my ($tempefilefh, $tempefile) = File::Temp::tempfile(DIR => IbexFarm->config->{data_volume});
     $tempefilefh or die "Unable to create temporary error file for checking out git repo: $!";
 
     # Checkout the repo. Setting a timeout here to prevent checking out of enormous
