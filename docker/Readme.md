@@ -182,7 +182,7 @@ echo 'IBEXFARM_host="my.domain.name"' >> /etc/ibexenv.sh
 set -o allexport ; source /etc/ibexenv.sh ; set +o allexport
 ```
 
-Install caddy:
+Install Caddy:
 
 ```sh
 cd ~
