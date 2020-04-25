@@ -152,9 +152,7 @@ filesystem of the linode. Whereas there's no straightforward way to enlarge a
 linode's root filesystem, it's easy to enlarge a linode volume. See the [docker
 documentation](https://docs.docker.com/engine/reference/commandline/volume_create/)
 (and in particular the `--opt device` option to `docker volume create`) for more
-info. Be sure to add `/ibexexps` and `/deploy` dirs to your volume before
-running the docker container, and then `chown -R` everything to
-`dapache:dapache`.
+info.
 
 ## Setting up Caddy with https
 
