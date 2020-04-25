@@ -252,6 +252,13 @@ if [ ! -z \"\${IBEXFARM_spellout_legacy_jank}\" ]; then\n\
     ln -sf /ibexdata/deploy/ /var/l-apps/ibexfarm/deploy\n\
 fi\n\
 \n\
+cd /tmp\n\
+tar -xzf /var/ibexfarm/ibex-deploy.tar.gz\n\
+mv ibex ${IBEXFARM_ibex_archive_root_dir}\n\
+tar -czf ibex-deploy.tar.gz ${IBEXFARM_ibex_archive_root_dir}\n\
+mv ibex-deploy.tar.gz /var/ibexfarm/ibex-deploy.tar.gz\n\
+cd ~\n\
+\n\
 exec /usr/sbin/httpd -D FOREGROUND\n\
 " > /var/ibexfarm/start.sh && \
     chmod +x /var/ibexfarm/start.sh
