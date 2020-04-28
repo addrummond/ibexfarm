@@ -106,7 +106,7 @@ echo 'IBEXFARM_url_prefix="/"' >> /etc/ibexenv.sh
 echo 'IBEXFARM_experiment_base_url="/ibexexps"' >> /etc/ibexenv.sh
 ```
 
-If you chose to build from source, you may want to add the following definition
+You may want to add the following definition
 to ibexenv.sh to make the Ibex Farm use the Perl code in `~/ibexfarm/docker`
 rather than the code inside the Docker container:
 
