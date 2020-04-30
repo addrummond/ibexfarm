@@ -259,7 +259,9 @@ fi\n\
 \n\
 cd /tmp\n\
 tar -xzf /var/ibexfarm/ibex-deploy-original.tar.gz\n\
-mv ibex \${IBEXFARM_ibex_archive_root_dir}\n\
+if [ \"\${IBEXFARM_ibex_archive_root_dir}\" != \"ibex\" ]; then\n\
+    mv ibex \${IBEXFARM_ibex_archive_root_dir}\n\
+fi\n\
 tar -czf ibex-deploy.tar.gz \${IBEXFARM_ibex_archive_root_dir}\n\
 mv ibex-deploy.tar.gz /var/ibexfarm/ibex-deploy.tar.gz\n\
 rm -rf \${IBEXFARM_ibex_archive_root_dir}\n\
