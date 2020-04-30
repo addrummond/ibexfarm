@@ -32,7 +32,8 @@ sub update_json_file {
         flock $of, 2 or die "Unable to lock '$filename': $!";
         truncate $of, 0 or die "Unable to truncate '$filename': $!";
         seek $of, 0, 0 or die "Really?: $!";
-        print $of JSON::XS::encode_json($newjson);
+        my $coder = JSON::XS->new->convert_blessed->allow_blessed;
+        print $of $coder->encode($newjson);
         flock $of, 8; # Unlock;
         close $of or die "Unable to close '$filename' after writing: :$!";
     }

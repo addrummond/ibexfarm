@@ -248,7 +248,8 @@ sub newaccount :Absolute :Args(0) {
 
                 # Write the user info to the 'USER' file.
                 open my $f, '>' . catfile($udir, IbexFarm->config->{USER_FILE_NAME}) or die "Unable to open '", IbexFarm->config->{USER_FILE_NAME}, "' file: $!";
-                print $f JSON::XS::encode_json($user);
+                my $coder = JSON::XS->new->convert_blessed->allow_blessed;
+                print $f $coder->encode($user);
                 close $f;
             };
             if ($@) {
