@@ -799,7 +799,7 @@ my $git_check_ref_format = sub {
         $ref !~ /[\/.]$/ &&
         $ref !~ /\.lock$/ &&
         $ref !~ /@\{/ &&
-	$ref ne "@" &&
+        $ref ne "@" &&
         $ref !~ /\\/ &&
         # Additional checks not required by check-ref-format, but which seem prudent.
         $ref !~ /[;&|]/
