@@ -60,7 +60,8 @@ sub find_user {
     open my $f, $ufile or die "Unable to open '", IbexFarm->config->{USER_FILE_NAME}, "' file: $!";
     local $/;
     my $contents = <$f>;
-    my $json = JSON::XS::decode_json($contents);
+    my $coder = JSON::XS->new->boolean_values(\0, \1);
+    my $json = $coder->decode($contents);
     die "Bad JSON in '", IbexFarm->config->{USER_FILE_NAME}, "' file" unless (ref($json) eq 'HASH');
     close $f or die "Unable to close '", IbexFarm->config->{USER_FILE_NAME}, "' file: $!";
 

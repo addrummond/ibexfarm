@@ -248,8 +248,7 @@ sub newaccount :Absolute :Args(0) {
 
                 # Write the user info to the 'USER' file.
                 open my $f, '>' . catfile($udir, IbexFarm->config->{USER_FILE_NAME}) or die "Unable to open '", IbexFarm->config->{USER_FILE_NAME}, "' file: $!";
-                my $coder = JSON::XS->new->convert_blessed->allow_blessed;
-                print $f $coder->encode($user);
+                print $f JSON::XS::encode_json($user);
                 close $f;
             };
             if ($@) {
@@ -277,7 +276,8 @@ sub myaccount :Absolute :Args(0) {
     local $/;
     my $contents = <$f>;
     close $f or die "Unable to close '", IbexFarm->config->{USER_FILE_NAME}, "' file after reading.";
-    my $u = JSON::XS::decode_json($contents);
+    my $coder = JSON::XS->new->boolean_values(\0, \1);
+    my $u = $coder->decode($contents);
     die "Bad JSON for user" unless (ref($u) eq 'HASH');
 
     $c->stash->{email_address} = $u->{email_address};

@@ -16,7 +16,8 @@ sub update_json_file {
     local $/;
     my $contents = <$f>;
     close $f or die "Unable to close '$filename' after reading: $!";
-    my $json = JSON::XS::decode_json($contents);
+    my $coder = JSON::XS->new->boolean_values(\0, \1);
+    my $json = $coder->decode($contents);
     die "Bad JSON in '$filename' file" unless (ref($json) eq "HASH");
 
     # Note: in principle, we could read version 1 of the file, then
@@ -32,8 +33,7 @@ sub update_json_file {
         flock $of, 2 or die "Unable to lock '$filename': $!";
         truncate $of, 0 or die "Unable to truncate '$filename': $!";
         seek $of, 0, 0 or die "Really?: $!";
-        my $coder = JSON::XS->new->convert_blessed->allow_blessed;
-        print $of $coder->encode($newjson);
+        print $of JSON::XS::encode_json($newjson);
         flock $of, 8; # Unlock;
         close $of or die "Unable to close '$filename' after writing: :$!";
     }

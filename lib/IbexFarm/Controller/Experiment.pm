@@ -30,7 +30,8 @@ sub manage :Absolute {
     my $contents = <$uf>;
     defined $contents or die "Error reading '", IbexFarm->config->{USER_FILE_NAME}, "' file: $!";
     close $uf or die "Error closing '", IbexFarm->config->{USER_FILE_NAME}, "' file: $!";
-    my $json = JSON::XS::decode_json($contents) or die "Error decoding JSON";
+    my $coder = JSON::XS->new->boolean_values(\0, \1);
+    my $json = $coder->decode($contents) or die "Error decoding JSON";
 
     # So that other pages can point back to this one.
     $c->flash->{back_uri} = $c->uri_for('/manage/' . $experiment);

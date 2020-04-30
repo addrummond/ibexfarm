@@ -142,7 +142,8 @@ our $do_config = sub {
     my $contents = <$cnf>;
     close $cnf or die "Unable to close 'CONFIG' after reading: $!";
     die "Oh dear" unless (defined $contents);
-    my $json = JSON::XS::decode_json($contents);
+    my $coder = JSON::XS->new->boolean_values(\0, \1);
+    my $json = $coder->decode($contents);
     die "Bad JSON in 'CONFIG' file." unless (ref($json) eq "HASH");
     for my $k (keys %$json) { $c->stash->{$k} = $json->{$k}; }
 
@@ -367,8 +368,7 @@ sub newexperiment :Path("newexperiment") :Args(0) {
             # Write a record of the configuration (file containing JSON dict).
             my $ibexdir = catfile($dir, $ps->{name}, IbexFarm->config->{ibex_archive_root_dir});
             open my $cnf, ">" . catfile($ibexdir, "CONFIG") or die "Unable to open 'CONFIG' file: $!";
-            my $coder = JSON::XS->new->convert_blessed->allow_blessed;
-            print $cnf $coder->encode(
+            print $cnf JSON::XS::encode_json(
                 $get_default_config->(
                     IBEX_WORKING_DIR => $ibexdir
                 )
@@ -656,19 +656,14 @@ sub rename_experiment :Path("rename_experiment") {
         }
 
         # Update the working dir config paramater.
-        open my $cnf, catfile($edir, IbexFarm->config->{ibex_archive_root_dir}, 'CONFIG')
-            or die "Unable to open 'CONFIG' for reading: $!";
-        local $/;
-        my $contents = <$cnf>;
-        close $cnf or die "Unable to close 'CONFIG' after reading: $!";
-        die "Oh dear" unless (defined $contents);
-        my $json = JSON::XS::decode_json($contents);
-        die "Bad JSON in 'CONFIG' file." unless (ref($json) eq "HASH" && $json->{IBEX_WORKING_DIR});
-        $json->{IBEX_WORKING_DIR} = catdir($newedir, IbexFarm->config->{ibex_archive_root_dir});
-        open my $ocnf, '>' . catfile($edir, IbexFarm->config->{ibex_archive_root_dir}, 'CONFIG');
-        my $coder = JSON::XS->new->convert_blessed->allow_blessed;
-        print $ocnf $coder->encode($json);
-        close $ocnf or die "Unable to close 'CONFIG' after writing: $!";
+        IbexFarm::Util::update_json_file(
+            catfile($edir, IbexFarm->config->{ibex_archive_root_dir}, 'CONFIG'),
+            sub {
+                my $json = shift;
+                $json->{IBEX_WORKING_DIR} = catdir($newedir, IbexFarm->config->{ibex_archive_root_dir});
+                return $json;
+            }
+        );
 
         # Finally, move the dir(s).
         move($edir, $newedir) or die "Error moving: $!";
