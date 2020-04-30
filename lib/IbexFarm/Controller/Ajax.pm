@@ -367,7 +367,8 @@ sub newexperiment :Path("newexperiment") :Args(0) {
             # Write a record of the configuration (file containing JSON dict).
             my $ibexdir = catfile($dir, $ps->{name}, IbexFarm->config->{ibex_archive_root_dir});
             open my $cnf, ">" . catfile($ibexdir, "CONFIG") or die "Unable to open 'CONFIG' file: $!";
-            print $cnf JSON::XS::encode_json(
+            my $coder = JSON::XS->new->convert_blessed->allow_blessed;
+            print $cnf $coder->encode(
                 $get_default_config->(
                     IBEX_WORKING_DIR => $ibexdir
                 )
@@ -665,7 +666,8 @@ sub rename_experiment :Path("rename_experiment") {
         die "Bad JSON in 'CONFIG' file." unless (ref($json) eq "HASH" && $json->{IBEX_WORKING_DIR});
         $json->{IBEX_WORKING_DIR} = catdir($newedir, IbexFarm->config->{ibex_archive_root_dir});
         open my $ocnf, '>' . catfile($edir, IbexFarm->config->{ibex_archive_root_dir}, 'CONFIG');
-        print $ocnf JSON::XS::encode_json($json);
+        my $coder = JSON::XS->new->convert_blessed->allow_blessed;
+        print $ocnf $coder->encode($json);
         close $ocnf or die "Unable to close 'CONFIG' after writing: $!";
 
         # Finally, move the dir(s).
