@@ -45,7 +45,7 @@ services:
       - "127.0.0.1:${IBEXFARM_host_port:-8888}:${IBEXFARM_port:-80}"
     volumes:
       - '../:/code'
-      - ${IBEXFARM_data_volume}:/ibexdata
+      - ${IBEXFARM_data_volume:-ibexdata}:/ibexdata
     build: '.'
 volumes:
     ibexdata:
