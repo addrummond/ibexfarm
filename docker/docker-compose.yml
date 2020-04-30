@@ -23,6 +23,8 @@ services:
       IBEXFARM_argon2id_tag_size: ${IBEXFARM_argon2id_tag_size:-16}
       IBEXFARM_argon2id_salt_length: ${IBEXFARM_argon2id_salt_length:-16}
 
+      # Set to 1 to rehash old passwords using Argon2id (only useful if upgrading
+      # from older IbexFarm version).
       IBEXFARM_rehash_old_passwords: ${IBEXFARM_rehash_old_passwords:-}
 
       IBEXFARM_enforce_quotas: ${IBEXFARM_enforce_quotas:-0}

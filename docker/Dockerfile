@@ -159,24 +159,7 @@ LoadModule cgi_module modules/mod_cgi.so\n\
 # SetEnv rather than PerlSetEnv for IBEXFARM_config_url because\n\
 # it needs to go through to CGI scripts, not modperl code.\n\
 SetEnv IBEXFARM_config_url \"\${IBEXFARM_config_url}\"\n\
-PerlSetEnv IBEXFARM_host \"\${IBEXFARM_host}\"\n\
-PerlSetEnv IBEXFARM_url_prefix \"\${IBEXFARM_url_prefix}\"\n\
-PerlSetEnv IBEXFARM_webmaster_email \"\${IBEXFARM_webmaster_email}\"\n\
-PerlSetEnv IBEXFARM_webmaster_name \"\${IBEXFARM_webmaster_name}\"\n\
-PerlSetEnv IBEXFARM_config_secret \"\${IBEXFARM_config_secret}\"\n\
-PerlSetEnv IBEXFARM_config_url_envvar \"\${IBEXFARM_config_url_envvar}\"\n\
-PerlSetEnv IBEXFARM_rehash_old_passwords \"\${IBEXFARM_rehash_old_passwords}\"\n\
-PerlSetEnv IBEXFARM_argon2id_t_cost \"\${IBEXFARM_argon2id_t_cost}\"\n\
-PerlSetEnv IBEXFARM_argon2id_m_factor \"\${IBEXFARM_argon2id_m_factor}\"\n\
-PerlSetEnv IBEXFARM_argon2id_parallelism \"\${IBEXFARM_argon2id_parallelism}\"\n\
-PerlSetEnv IBEXFARM_argon2id_tag_size \"\${IBEXFARM_argon2id_tag_size}\"\n\
-PerlSetEnv IBEXFARM_argon2id_salt_length \"\${IBEXFARM_argon2id_salt_length}\"\n\
-PerlSetEnv IBEXFARM_ibex_archive_root_dir \"\${IBEXFARM_ibex_archive_root_dir}\"\n\
-PerlSetEnv IBEXFARM_front_page_html_message \"\${IBEXFARM_front_page_html_message}\"\n\
-PerlSetEnv IBEXFARM_enforce_quotas \"\${IBEXFARM_enforce_quotas}\"\n\
-PerlSetEnv IBEXFARM_quota_max_files_in_dir \"\${IBEXFARM_quota_max_files_in_dir}\"\n\
-PerlSetEnv IBEXFARM_quota_max_file_size \"\${IBEXFARM_quota_max_file_size}\"\n\
-PerlSetEnv IBEXFARM_quota_max_total_size \"\${IBEXFARM_quota_max_total_size}\"\n" >> /etc/apache2/httpd.conf
+Include /etc/apache2/perlenv\n" >> /etc/apache2/httpd.conf
 
 # Create wrapper we use to run httpd.
 RUN printf "#!bin/sh\n\
@@ -269,6 +252,64 @@ cd ~\n\
 \n\
 touch /ibexdata/htpasswd\n\
 chown apache:apache /ibexdata/htpasswd\n\
+\n\
+# Work around issue with PerlSetEnv not liking empty second arg\n\
+echo "" > /etc/apache2/perlenv\n\
+if [ -n \"\$IBEXFARM_host\" ]; then\n\
+    echo PerlSetEnv IBEXFARM_host \\\"\\\${IBEXFARM_host}\\\" >> /etc/apache2/perlenv\n\
+fi\n\
+if [ -n \"\$IBEXFARM_url_prefix\" ]; then\n\
+    echo PerlSetEnv IBEXFARM_url_prefix \\\"\\\${IBEXFARM_url_prefix}\\\" >> /etc/apache2/perlenv\n\
+fi\n\
+if [ -n \"\$IBEXFARM_webmaster_email\" ]; then\n\
+    echo PerlSetEnv IBEXFARM_webmaster_email \\\"\\\${IBEXFARM_webmaster_email}\\\" >> /etc/apache2/perlenv\n\
+fi\n\
+if [ -n \"\$IBEXFARM_webmaster_name\" ]; then\n\
+    echo PerlSetEnv IBEXFARM_webmaster_name \\\"\\\${IBEXFARM_webmaster_name}\\\" >> /etc/apache2/perlenv\n\
+fi\n\
+if [ -n \"\$IBEXFARM_config_secret\" ]; then\n\
+    echo PerlSetEnv IBEXFARM_config_secret \\\"\\\${IBEXFARM_config_secret}\\\" >> /etc/apache2/perlenv\n\
+fi\n\
+if [ -n \"\$IBEXFARM_config_url_envvar\" ]; then\n\
+    echo PerlSetEnv IBEXFARM_config_url_envvar \\\"\\\${IBEXFARM_config_url_envvar}\\\" >> /etc/apache2/perlenv\n\
+fi\n\
+if [ -n \"\$IBEXFARM_rehash_old_passwords\" ]; then\n\
+    echo PerlSetEnv IBEXFARM_rehash_old_passwords \\\"\\\${IBEXFARM_rehash_old_passwords}\\\" >> /etc/apache2/perlenv\n\
+fi\n\
+if [ -n \"\$IBEXFARM_argon2id_t_cost\" ]; then\n\
+    echo PerlSetEnv IBEXFARM_argon2id_t_cost \\\"\\\${IBEXFARM_argon2id_t_cost}\\\" >> /etc/apache2/perlenv\n\
+fi\n\
+if [ -n \"\$IBEXFARM_argon2id_m_factor\" ]; then\n\
+    echo PerlSetEnv IBEXFARM_argon2id_m_factor \\\"\\\${IBEXFARM_argon2id_m_factor}\\\" >> /etc/apache2/perlenv\n\
+fi\n\
+if [ -n \"\$IBEXFARM_argon2id_parallelism\" ]; then\n\
+    echo PerlSetEnv IBEXFARM_argon2id_parallelism \\\"\\\${IBEXFARM_argon2id_parallelism}\\\" >> /etc/apache2/perlenv\n\
+fi\n\
+if [ -n \"\$IBEXFARM_argon2id_tag_size\" ]; then\n\
+    echo PerlSetEnv IBEXFARM_argon2id_tag_size \\\"\\\${IBEXFARM_argon2id_tag_size}\\\" >> /etc/apache2/perlenv\n\
+fi\n\
+if [ -n \"\$IBEXFARM_argon2id_salt_length\" ]; then\n\
+    echo PerlSetEnv IBEXFARM_argon2id_salt_length \\\"\\\${IBEXFARM_argon2id_salt_length}\\\" >> /etc/apache2/perlenv\n\
+fi\n\
+if [ -n \"\$IBEXFARM_ibex_archive_root_dir\" ]; then\n\
+    echo PerlSetEnv IBEXFARM_ibex_archive_root_dir \\\"\\\${IBEXFARM_ibex_archive_root_dir}\\\" >> /etc/apache2/perlenv\n\
+fi\n\
+if [ -n \"\$IBEXFARM_front_page_html_message\" ]; then\n\
+    echo PerlSetEnv IBEXFARM_front_page_html_message \\\"\\\${IBEXFARM_front_page_html_message}\\\" >> /etc/apache2/perlenv\n\
+fi\n\
+if [ -n \"\$IBEXFARM_enforce_quotas\" ]; then\n\
+    echo PerlSetEnv IBEXFARM_enforce_quotas \\\"\\\${IBEXFARM_enforce_quotas}\\\" >> /etc/apache2/perlenv\n\
+fi\n\
+if [ -n \"\$IBEXFARM_quota_max_files_in_dir\" ]; then\n\
+    echo PerlSetEnv IBEXFARM_quota_max_files_in_dir \\\"\\\${IBEXFARM_quota_max_files_in_dir}\\\" >> /etc/apache2/perlenv\n\
+fi\n\
+if [ -n \"\$IBEXFARM_quota_max_file_size\" ]; then\n\
+    echo PerlSetEnv IBEXFARM_quota_max_file_size \\\"\\\${IBEXFARM_quota_max_file_size}\\\" >> /etc/apache2/perlenv\n\
+fi\n\
+if [ -n \"\$IBEXFARM_quota_max_total_size\" ]; then\n\
+    echo PerlSetEnv IBEXFARM_quota_max_total_size \\\"\\\${IBEXFARM_quota_max_total_size}\\\" >> /etc/apache2/perlenv\n\
+fi\n\
+chown apache:apache /etc/apache2/perlenv\n\
 \n\
 exec /usr/sbin/httpd -D FOREGROUND\n\
 " > /var/ibexfarm/start.sh && \
