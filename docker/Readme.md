@@ -215,7 +215,9 @@ sudo systemctl enable caddy.service
 ```
 
 Unfortunately, it appears to be necessary to disable SELinux for Caddy to start.
-I haven't been able to find a resolution for this issue.
+I haven't yet been able to find a resolution for this issue. You could try
+looking [here](https://caddy.community/t/caddy-under-centos-8-fedora-redhat/6791/6),
+which seems to have been updated since last I looked.
 
 You should now have access to your Ibex Farm instance over https. Caddy has been
 configured to redirect any http requests to https.
