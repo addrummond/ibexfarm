@@ -933,8 +933,9 @@ sub from_git_repo :Path("from_git_repo") {
                     $moddir->();
                 }
                 else {
-                    open my $of, $oldf;
-                    open my $nf, $newf;
+                    my ($of, $nf);
+                    open $of, $oldf;
+                    open $nf, $newf;
                     local $/;
                     my ($oldc, $newc) = (<$of>, <$nf>);
                     close $of; close $nf;
