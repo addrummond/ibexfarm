@@ -1,12 +1,6 @@
 use strict;
 use warnings;
 use IbexFarm;
-# use File::Spec::Functions qw( catfile catdir );
-# use IbexFarm::FNames;
-# use IbexFarm::CheckEmail;
-# use File::Path qw( rmtree );
-# use Digest;
-# use IbexFarm::Util qw( log_event );
 use Net::SSLeay;
 use Crypt::Argon2;
 use File::Spec::Functions qw( catfile );
