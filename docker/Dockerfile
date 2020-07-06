@@ -95,7 +95,7 @@ RUN mkdir /var/ibexfarm && \
     cd /tmp && \
     git clone https://github.com/addrummond/ibex && \
     cd ibex && \
-    git checkout 9e903f9 && \
+    git checkout 812f40d5465646ac45dd04fb52c728170259efeb && \
     rm -rf .git* && \
     rm -rf docs && \
     rm -rf contrib && \
