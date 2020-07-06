@@ -247,3 +247,12 @@ entrypoint. After the server has been started for the first time, it is no
 longer necessary to run this command. You can set
 `IBEXFARM_dont_chown_data_volume=1` to prevent the `chown` from executing and
 reduce startup times. 
+
+## Admin tasks
+
+To reset the password for a user, use the reset_password.sh script:
+
+```sh
+~/ibexfarm/script/reset_password.sh username # generates new random password for user (and prints it to console)
+~/ibexfarm/script/reset_password.sh username newpassword # resets the password for the user to the one specified
+```
