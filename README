@@ -1,4 +1,4 @@
-This is the code used for the [Ibex Farm](https://spellout.net/ibexfarm) website.
+This is the code used for the web app at https://spellout.net/ibexfarm.
 
 If you want to deploy your own Ibex Farm instance, take a look at the instructions
 in docker/Readme.md.
