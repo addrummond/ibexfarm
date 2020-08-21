@@ -1,17 +1,7 @@
-Run script/ibexfarm_server.pl to test the application.
+This is the code used for the [Ibex Farm](https://spellout.net/ibexfarm) website.
 
-You should set the environment variable STATIC=1 so that the test
-server will serve static files.
-
-To run in debug mode, set the environment variable CATALYST_DEBUG=1.
-
-Example:
-
-    STATIC=1 CATALYST_DEBUG=1 perl script/ibexfarm_server.pl
-
-You need to create a configuration file 'ibexfarm.yml'. An example is
-given in 'test_ibexfarm.yml'. You can get a complete list of config
-variables by running 'findconfigvars.pl'.
+If you want to deploy your own Ibex Farm instance, take a look at the instructions
+in `docker/Readme.md`.
 
 
 --------------------------------------------------------------------------------
