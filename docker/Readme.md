@@ -176,13 +176,13 @@ Install Caddy:
 
 ```sh
 cd ~
-curl -o caddy.tar.gz https://caddyserver.com/api/download?os=linux&arch=amd64
+wget https://github.com/caddyserver/caddy/releases/download/v1.0.3/caddy_v1.0.3_linux_amd64.tar.gz
 sudo mkdir /caddy
 sudo useradd -r -d /caddy -M -s /sbin/nologin caddy
 sudo chown caddy:caddy /caddy
-sudo tar -xzf caddy.tar.gz -C /caddy
+sudo tar -xzf caddy_v1.0.3_linux_amd64.tar.gz -C /caddy
 sudo chown -R caddy:caddy /caddy
-rm ~/caddy.tar.gz
+rm ~/caddy_v1.0.3_linux_amd64.tar.gz
 sudo -u caddy mkdir /caddy/ssl
 sudo setcap CAP_NET_BIND_SERVICE=+eip /caddy/caddy
 ```
