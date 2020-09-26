@@ -176,7 +176,7 @@ Install Caddy:
 
 ```sh
 cd ~
-curl -o caddy.tar.gz https://caddyserver.com/download/linux/amd64?license=personal&telemetry=off
+curl -o caddy.tar.gz https://caddyserver.com/api/download?os=linux&arch=amd64
 sudo mkdir /caddy
 sudo useradd -r -d /caddy -M -s /sbin/nologin caddy
 sudo chown caddy:caddy /caddy
