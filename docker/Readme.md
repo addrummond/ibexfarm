@@ -111,7 +111,7 @@ to ibexenv.sh to make the Ibex Farm use the Perl code in `~/ibexfarm/docker`
 rather than the code inside the Docker container:
 
 ```sh
-sudo echo 'IBEXFARM_src_dir=/code' >> /etc/ibexenv.sh
+echo 'IBEXFARM_src_dir=/code' >> /etc/ibexenv.sh
 ```
 
 Source the preceding definitions and add them to the system profile:
