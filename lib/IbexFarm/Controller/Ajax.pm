@@ -578,40 +578,42 @@ sub upload_file :Path("upload_file") {
     # concurrently to the same location (have to find a way of interfacing with the UploadProgress
     # plugin without modifying its code). I should fix this at some point, but it's not a
     # huge deal -- the second upload will just overwrite the first.
-    if (! $up) { $c->detach('bad_request'); return; }
-    else { # TODO: Else not actually necessary here.
-        # Check that either (a) the file doesn't currently exist
-        # or (b) that the user has permission to write to this file.
-        my @wables = $get_wables->(catdir(IbexFarm->config->{deployment_dir},
-                                            $c->user->username,
-                                            $expname,
-                                            IbexFarm->config->{ibex_archive_root_dir}));
-        my $fff = catfile($dir, $fname);
-        if ((-e $file) && (! grep { $check_match->($_, $fff); } @wables)) {
-            ajax_headers($c, 'text/html', 'UTF-8');
-            $c->res->body("You do not have permission to upload to this location.");
-        }
-        else {
-            $move_up_to->($file) or die "Unable to copy uploaded file to final location: $!";
+    if (! $up) {
+        $c->detach('bad_request');
+        return;
+    }
 
-            # Keep a record of the fact that the user uploaded this file, so that
-            # we know they're ed to write to it. (First check that the user
-            # hasn't already uploaded this file to make sure that we don't add
-            # duplicate entries).
-            $manage_UPLOADED->($c->user->username,
-                                $expname,
-                                add => [ catfile($dir, $fname) ]);
+    # Check that either (a) the file doesn't currently exist
+    # or (b) that the user has permission to write to this file.
+    my @wables = $get_wables->(catdir(IbexFarm->config->{deployment_dir},
+                                        $c->user->username,
+                                        $expname,
+                                        IbexFarm->config->{ibex_archive_root_dir}));
+    my $fff = catfile($dir, $fname);
+    if ((-e $file) && (! grep { $check_match->($_, $fff); } @wables)) {
+        ajax_headers($c, 'text/html', 'UTF-8');
+        $c->res->body("You do not have permission to upload to this location.");
+    }
+    else {
+        $move_up_to->($file) or die "Unable to copy uploaded file to final location: $!";
 
-            # If the user is now in violation of their quota, keep a record of this.
-            $post_check_quota->($c);
+        # Keep a record of the fact that the user uploaded this file, so that
+        # we know they're ed to write to it. (First check that the user
+        # hasn't already uploaded this file to make sure that we don't add
+        # duplicate entries).
+        $manage_UPLOADED->($c->user->username,
+                            $expname,
+                            add => [ catfile($dir, $fname) ]);
 
-            ajax_headers($c, 'text/html', 'UTF-8');
-            $c->res->body(" "); # Have to set it to something because otherwise Catalyst thinks it hasn't been set (!)
+        # If the user is now in violation of their quota, keep a record of this.
+        $post_check_quota->($c);
 
-            log_event("User " . $c->user->username . " modified experiment $expname.");
+        ajax_headers($c, 'text/html', 'UTF-8');
+        $c->res->body(" "); # Have to set it to something because otherwise Catalyst thinks it hasn't been set (!)
 
-            return 0;
-        }
+        log_event("User " . $c->user->username . " modified experiment $expname.");
+
+        return 0;
     }
 }
 
