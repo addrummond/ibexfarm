@@ -13,7 +13,6 @@ use File::Spec::Functions qw( splitdir catdir catfile splitpath no_upwards );
 use File::stat;
 use File::Path qw( make_path rmtree );
 use File::Copy qw( move copy );
-#use File::Copy::Recursive qw( dircopy );
 use File::Temp;
 use DateTime;
 use Encode;
