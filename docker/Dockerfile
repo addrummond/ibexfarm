@@ -83,7 +83,8 @@ RUN cd /tmp && \
         Catalyst::Plugin::ConfigLoader::Environment \
         Devel::OverloadInfo \
         Net::SSLeay \
-        Crypt::Argon2
+        Crypt::Argon2 \
+        String::Random
 
 RUN mkdir /ibexfarm.git && \
     git clone --depth 1 https://github.com/addrummond/ibexfarm.git /ibexfarm.git && \

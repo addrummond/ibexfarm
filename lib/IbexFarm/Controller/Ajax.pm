@@ -24,6 +24,11 @@ use JSON::XS;
 use IbexFarm::Util qw( log_event );
 use Digest::MD5;
 use Data::Validate::URI;
+use String::Random qw( random_string );
+
+sub randstring {
+  return random_string("..........")
+}
 
 my $get_default_config = sub {
     my %additions = @_;
@@ -521,7 +526,7 @@ sub upload_file :Path("upload_file") {
         # Assume the file contents are given as 'contents' in the post data. (This happens when
         # the file is uploaded via an inline edit.)
         my $tmpfilename;
-        ($up, $tmpfilename) = File::Temp::tempfile(DIR => catfile(IbexFarm->config->{data_volume}, '/tmp')) or die "Unable to create temporary file during processing of upload request: $!";
+        ($up, $tmpfilename) = File::Temp::tempfile(randstring(), DIR => catfile(IbexFarm->config->{data_volume}, '/tmp')) or die "Unable to create temporary file during processing of upload request: $!";
         binmode $up, ':utf8';
         if (! (print $up $contents)) {
             close $up;
@@ -857,11 +862,11 @@ sub from_git_repo :Path("from_git_repo") {
     );
 
     # Get a temporary dir for checking out the git repo.
-    my $tmpdir = File::Temp::tempdir(DIR => catfile(IbexFarm->config->{data_volume}, '/tmp'));
+    my $tmpdir = File::Temp::tempdir(randstring(), DIR => catfile(IbexFarm->config->{data_volume}, '/tmp'));
     $tmpdir or die "Unable to create temporary dir for checking out git repo: $!";
 
     # Get a temporary file for storing any error messages from git.
-    my ($tempefilefh, $tempefile) = File::Temp::tempfile(DIR => catfile(IbexFarm->config->{data_volume}, '/tmp'));
+    my ($tempefilefh, $tempefile) = File::Temp::tempfile(randstring(), DIR => catfile(IbexFarm->config->{data_volume}, '/tmp'));
     $tempefilefh or die "Unable to create temporary error file for checking out git repo: $!";
 
     # Checkout the repo. Setting a timeout here to prevent checking out of enormous
