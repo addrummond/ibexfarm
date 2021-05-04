@@ -205,7 +205,7 @@ password_protect_apache:\n\
     htpasswd: '/usr/bin/htpasswd'\n\
     passwd_file: '/ibexdata/htpasswd'\n\
 \n\
-max_upload_size_bytes: 1048576\n\
+max_upload_size_bytes: 5242880\n\
 \n\
 experiment_password_protection: Apache\n\
 \n\

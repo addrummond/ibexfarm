@@ -492,12 +492,9 @@ sub upload_file :Path("upload_file") {
     $c->detach('unauthorized') unless $c->user_exists;
     $c->detach('bad_request') unless (scalar(@_) == 3 || scalar(@_) == 2) && $c->req->method eq "POST";
 
-    my $finalize = sub { $c->engine->finalize_read($c); };
-
     # Check that the user hasn't exceeded their quota.
     my ($ok, $qerror) = $pre_check_quota->($c);
     if (! $ok) {
-        $finalize->();
         ajax_headers($c, 'text/html', 'UTF-8');
         $c->res->body("You have exceeded your quota. Please contact " .
                       escape_html(IbexFarm->config->{webmaster_name}) .
@@ -508,7 +505,6 @@ sub upload_file :Path("upload_file") {
 
     # Check file size.
     unless ($c->req->content_length <= IbexFarm->config->{max_upload_size_bytes}) {
-        $finalize->();
         ajax_headers($c, 'text/html', 'UTF-8');
         $c->res->body("The maximum size for uploaded files is " . sprintf("%.2f", IbexFarm->config->{max_upload_size_bytes} / 1024.0 / 1024.0) . "MB.");
         return 0;
