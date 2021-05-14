@@ -26,7 +26,7 @@ use Data::Validate::URI;
 use String::Random qw( random_string );
 
 sub randstring {
-  return random_string("..........")
+  return random_string("..........") . "XXXX";
 }
 
 my $get_default_config = sub {
